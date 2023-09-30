@@ -15,11 +15,14 @@
                             <span class="recipe-difficulty">@recipe.Difficulty</span>
                             <p>@recipe.RecipeType</p>
                             <button @onclick="() => ToggleRecipeDetails(recipe)" class="recipe-expand-btn">
-                                <i class="fa-light fa-arrow-down"></i>
+                                <p>see details</p>
                             </button>
                         </div>
                         <div class="recipe-details" style="display: @(IsDetailsVisible.ContainsKey(recipe) && IsDetailsVisible[recipe] ? "flex" : "none")">
-                            <p>@recipe.Description</p>
+                            <div class="desc-box">
+                                <h3>Description</h3>
+                                <p>@recipe.Description</p>
+                            </div>
                             
                             <div class="recipe-ingr-steps-box">
                             <fieldset class="details-recipe-box">
@@ -43,11 +46,11 @@
                                 
                             </div>
 
-                            <button type="button" @onclick="()=>RemoveRecipe(recipe)">
-                                <i class="fas fa-times"></i>
+                            <button type="button" class="alterBtn removeBtn" @onclick="()=>RemoveRecipe(recipe)">
+                                <p>remove</p>
                             </button>
-                            <button type="button" @onclick="()=>SendRecipeToEdit(recipe)">
-                                <i class="fas fa-edit"></i>
+                            <button type="button" class="alterBtn updateBtn" @onclick="()=>SendRecipeToEdit(recipe)">
+                                <p>edit</p>
                             </button>
                         <!-- Add your recipe details content here -->
                         </div>
@@ -75,8 +78,6 @@
     {
         OnEditRecipe?.Invoke(recipe);
     }
-
-
 
     private Dictionary<Recipe, bool> IsDetailsVisible { get; set; } = new Dictionary<Recipe, bool>();
 

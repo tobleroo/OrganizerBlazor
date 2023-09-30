@@ -1,6 +1,6 @@
 ﻿
 .cookbook-main-box {
-    color: lightgray;
+    color: black;
 }
 
 /*recipe list*/
@@ -88,6 +88,11 @@
 
 
 /*end serach bar*/
+
+input , select, textarea{
+    background-color: lightblue;
+}
+
 .simple-input-box {
     border: 1px solid black;
 }

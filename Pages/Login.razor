@@ -1,0 +1,54 @@
+@page "/login"
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+
+
+<div class="login-box">
+    <h1>Login</h1>
+
+    <p>@errorMessage</p>
+    <form @onsubmit="HandleLogin">
+        <label for="username">Name</label>
+        <input id="username" type="text" @bind="username" />
+        <label for="password">Password</label>
+        <input id="password" type="password" @bind="password" />
+        <button type="submit">Login</button>
+    </form>
+
+</div>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string errorMessage = "";
+
+    async Task HandleLogin(){
+
+        var user = new UserLoginDto
+        {
+            Username = username,
+            Password = password
+        };
+
+        //make http post 
+        var response = await Http.PostAsJsonAsync("api/Auth/login", user);
+        if (!response.IsSuccessStatusCode)
+        {
+            //show error message
+            errorMessage = "wrong username or password";
+            return;
+        }
+        var token = await response.Content.ReadAsStringAsync();
+
+        //save token to local storage
+        await LocalStorageService.SetItemAsync("JwtToken", token);
+
+        //set auth state
+        await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        //navigate to home page
+        NavigationManager.NavigateTo("/");
+    }
+
+}

@@ -1,0 +1,77 @@
+﻿@page "/register"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div class="Register-box">
+    <h1>Register</h1>
+
+    @if(regFailed)
+    {
+        <div class="reg-failed-box">
+            <p>Registration failed</p>
+            <p>@ErrorMsg</p>
+        </div>
+    }
+
+    <form @onsubmit="HandleRegister">
+        <label for="username">Name</label>
+        <input id="username" type="text" @bind="Username" />
+        <label for="email">Email</label>
+        <input id="email" type="text" @bind="Email" />
+        <label for="password">Password</label>
+        <input id="password" type="password" @bind="Password" />
+        <label for="regiCode">Registration code</label>
+        <input id="regiCode" type="text" @bind="RegiCode" />
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+@code {
+
+    private bool regFailed = false;
+    private string ErrorMsg = "";
+
+    private string Username = "";
+    private string Password = "";
+    private string RegiCode = "";
+    private string Email = "";
+
+    async Task HandleRegister()
+    {
+
+        if(RegiCode == "jeffkaff2000")
+        {
+
+            var user = new UserRegisterDto
+            {
+                name = Username,
+                emailAddress = Email,
+                password = Password,
+                registrationCode = RegiCode
+            };
+
+            // Console.WriteLine("username:" +user.Name + "password: " + user.Password + "email: " +user.Email +"regicode: "+user.RegistrationCode);
+
+            //make http post 
+            var response = await Http.PostAsJsonAsync("api/Auth/register", user);
+
+            if (response.IsSuccessStatusCode)
+            {
+                //navigate to home page
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                ErrorMsg = await response.Content.ReadAsStringAsync();
+                regFailed = true;
+            }
+
+        }
+        else
+        {
+            regFailed = true;
+            ErrorMsg = "Wrong registration code";
+        }
+
+    }
+}

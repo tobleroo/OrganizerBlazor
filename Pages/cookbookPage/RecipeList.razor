@@ -1,0 +1,111 @@
+﻿@using OrganizerBlazor.Models
+@using System.Collections.Generic
+
+<div class="recipe-box">
+
+    @if (Recipes != null && Recipes.Count > 0)
+    {
+        <div class="recipe-list">
+                @foreach (var recipe in Recipes)
+                {
+                    <div class="recipe-item">
+                        <div class="recipe-header">
+                            <h3>@recipe.RecipeName</h3>
+                            <span class="recipe-cook-time">@recipe.CookTime minutes</span>
+                            <span class="recipe-difficulty">@recipe.Difficulty</span>
+                            <p>@recipe.RecipeType</p>
+                            <button @onclick="() => ToggleRecipeDetails(recipe)" class="recipe-expand-btn">
+                                <i class="fa-light fa-arrow-down"></i>
+                            </button>
+                        </div>
+                        <div class="recipe-details" style="display: @(IsDetailsVisible.ContainsKey(recipe) && IsDetailsVisible[recipe] ? "flex" : "none")">
+                            <p>@recipe.Description</p>
+                            
+                            <div class="recipe-ingr-steps-box">
+                            <fieldset class="details-recipe-box">
+                                    <legend>Ingredients</legend>
+                                    <ul class="recipe-ingredients">
+                                        @foreach (var ingredient in recipe.Ingredients)
+                                        {
+                                            <li>@ingredient.Quantity @ingredient.Unit of @ingredient.Name</li>
+                                        }
+                                    </ul>
+                                </fieldset>
+                                <fieldset class="details-recipe-box">
+                                    <legend>Steps</legend>
+                                    <ul class="recipe-steps">
+                                        @foreach (var step in recipe.Steps)
+                                        {
+                                            <li>@step</li>
+                                        }
+                                    </ul>
+                                </fieldset>
+                                
+                            </div>
+
+                            <button type="button" @onclick="()=>RemoveRecipe(recipe)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" @onclick="()=>SendRecipeToEdit(recipe)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        <!-- Add your recipe details content here -->
+                        </div>
+                    </div>
+                }
+            </div>
+    }
+    else
+    {
+        <p>No recipes found.</p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<Recipe>? Recipes { get; set; }
+
+    [Parameter]
+    public Action<Recipe> OnRemoveRecipe { get; set; }
+
+    [Parameter]
+    public Action<Recipe> OnEditRecipe { get; set; }
+
+    public void SendRecipeToEdit(Recipe recipe)
+    {
+        OnEditRecipe?.Invoke(recipe);
+    }
+
+
+
+    private Dictionary<Recipe, bool> IsDetailsVisible { get; set; } = new Dictionary<Recipe, bool>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // Initialize all recipe details to false initially
+        foreach (var recipe in Recipes)
+        {
+            IsDetailsVisible[recipe] = false;
+        }
+    }
+
+    private void RemoveRecipe(Recipe recipe)
+    {
+        OnRemoveRecipe?.Invoke(recipe);
+    }
+
+
+    private void ToggleRecipeDetails(Recipe recipe)
+    {
+        if (IsDetailsVisible.ContainsKey(recipe))
+        {
+            IsDetailsVisible[recipe] = !IsDetailsVisible[recipe];
+        }
+        else
+        {
+            IsDetailsVisible[recipe] = true;
+        }
+    }
+}

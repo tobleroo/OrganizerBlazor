@@ -1,0 +1,130 @@
+@page "/cookbook"
+@using System.Net.Http.Headers;
+@attribute [Authorize]
+
+@inject HttpClient Http
+@inject ILocalStorageService LocalStorageService
+
+<PageTitle>Cookbook</PageTitle>
+<link rel="stylesheet" href="./css/demo.css">
+
+<div class="cookbook-main-box">
+
+    @if (userCookBook != null)
+    {
+        @if (showAddRecipe)
+        {
+            <AddnewRecipe OnAddNewRecipe="AddNewRecipe" onToggleAddRecipe="ToggleAddRecipe" RecipeToUpdate="RecipeToUpdate"/>
+            <button type="button" @onclick="ToggleAddRecipe">Cancel</button>
+        }
+        else
+        {
+            @* add search bar *@
+            <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
+            <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
+            <button type="button" @onclick="ToggleAddRecipe">Add new recipe</button>
+            <button type="button" @onclick="UpdateBackendCookBook">save changes</button>
+        }
+    }
+    else
+    {
+        <p>userCookBook is null</p>
+    }
+
+    @* generator box *@
+</div>
+
+@code {
+    private UserCookBook? userCookBook;
+    private List<Recipe>? FilteredRecipes;
+    private bool showAddRecipe = false;
+    private Recipe RecipeToUpdate = null;
+
+    public void AddNewRecipe(Recipe newRecipe)
+    {
+        //check if recipe already exists and update it if true
+        if (RecipeToUpdate != null)
+        {
+            // var existingRecipe = userCookBook?.Recipes.FirstOrDefault(x => x.RecipeName == newRecipe.RecipeName);
+            // if (existingRecipe != null)
+            // {
+
+            //     userCookBook.Recipes = userCookBook.Recipes
+            //         .Select(recipe => recipe.RecipeName == newRecipe.RecipeName ? newRecipe : recipe)
+            //         .ToList();
+            // }
+
+            //use linq to replace the recipe in list with same name
+            for(int i = 0; i < userCookBook.Recipes.Count; i++)
+            {
+                if(userCookBook.Recipes[i].RecipeName == newRecipe.RecipeName){
+                    userCookBook.Recipes[i] = newRecipe;
+                    break;
+                }
+            }
+
+        }
+        else
+        {
+            userCookBook?.Recipes.Add(newRecipe);
+        }
+        StateHasChanged();
+    }
+
+    public void RemoveRecipe(Recipe recipe)
+    {
+        userCookBook?.Recipes.Remove(recipe);
+        StateHasChanged();
+    }
+
+    public async void UpdateBackendCookBook()
+    {
+        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await Http.PostAsJsonAsync<UserCookBook>("cookbook/update-cookbook", userCookBook);
+    }
+
+    public void ToggleAddRecipe()
+    {
+        showAddRecipe = !showAddRecipe;
+    }
+
+    public void ChangeRecipeListOnSearch(List<Recipe> UpdatedList)
+    {
+        FilteredRecipes = UpdatedList;
+        StateHasChanged();
+    }
+
+    public void EditRecipe(Recipe recipe)
+    {
+        Console.WriteLine("can i get recipe details here? -> " + recipe.RecipeName);
+        // from here, we need to send the recipe to the edit page
+        RecipeToUpdate = recipe;
+        showAddRecipe = true;
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Get the JWT token
+            string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+
+            // Set the Authorization header with the JWT token
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Replace the URL with the actual endpoint URL
+            var response = await Http.GetFromJsonAsync<UserCookBook>("cookbook/get-cookbook");
+            userCookBook = response;
+            FilteredRecipes = userCookBook.Recipes;
+
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions here
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

@@ -24,6 +24,7 @@
             <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
             <button type="button" @onclick="ToggleAddRecipe">Add new recipe</button>
             <button type="button" @onclick="UpdateBackendCookBook">save changes</button>
+            <MealPlanner></MealPlanner>
         }
     }
     else

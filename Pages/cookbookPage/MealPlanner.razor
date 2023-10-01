@@ -3,43 +3,14 @@
 <div class="mealplanner-box">
 
     <div class="howManyRecipesBox">
-        <label for="howManyRec">Recipes wanted</label>
-        <input type="number" id="howManyRec" name="howManyRec" min="1" max="20" @bind="recipesWanted">
+        <button @onclick="addRecipeToList">+</button>
+        <button @onclick="removeRecipeFromList"></button>
     </div>
 
     <form @onsubmit="SubmitMealPlanner">
         <div class="AllRecipeInBox">
-            @for(int i =0; i < recipesWanted; i++){
-                <div class="oneRecipeInBox">
-                    <div class="portions-in-box meal-input-box">
-                        <label for="howManyIn">Portions</label>
-                        <input type="number" class="inputPortions" name="howManyIn" min="1" max="10" value="1">
-                    </div>
-                    <div class="meal-input-box">
-                        <label for="difficultyIn">Difficulty</label>
-                        <select name="difficultyIn">
-                            <option value="any">Any</option>
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="recipeType">Recipe type</label>
-                        <select name="recipeType">
-                            <option value="any">Any</option>
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch">Lunch</option>
-                            <option value="dinner">Dinner</option>
-                            <option value="dessert">Dessert</option>
-                            <option value="snack">Snack</option>
-                        </select>
-                    </div>
-                    <div class="cooktimeIn-box meal-input-box">
-                        <label for="maxCookTimeIN">Max cook time</label>
-                        <input type="number" min="1" max="999" value="1"/>
-                    </div>
-                </div>
+            @for(int i =0; i < recipeRequests.Count; i++){
+                <RecipeRequestBoxComp RecipeRequest="recipeRequests[i]" />
             }
         </div>
         <button type="submit">Generate</button>
@@ -49,21 +20,26 @@
 
 @code {
 
-    private int recipesWanted = 1;
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
     {
+        new RecipeRequestEasyDTO()
     };
 
     private void SubmitMealPlanner()
     {   
-
+        //all recipe requests are now saved and avaiable here. do the post request and get the recipes back
 
     }
 
-    // private void demo()
-    // {
-    //     recipeRequests.Add(new RecipeRequestEasyDTO());
-    //     Console.WriteLine("demo");
-    // }
+    private void addRecipeToList()
+    {
+        recipeRequests.Add(new RecipeRequestEasyDTO());
+    }
+
+    private void removeRecipeFromList()
+    {
+        recipeRequests.RemoveAt(recipeRequests.Count - 1);
+    }
+
 }

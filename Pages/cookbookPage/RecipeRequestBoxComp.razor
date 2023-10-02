@@ -36,6 +36,13 @@
     [Parameter]
     public RecipeRequestEasyDTO RecipeRequest { get; set; }
 
+    protected override void OnInitialized()
+    {
+        // Set the default value for RecipeRequest.category to "Any"
+        RecipeRequest.category = "Any";
+        RecipeRequest.difficulty = "Any";
+    }
+
     // private int portions = 1;
     // private string difficulty = "any";
     // private string recipeType = "any";

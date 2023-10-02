@@ -1,7 +1,5 @@
 ﻿@inject HttpClient Http
 
-@using System.Text.Json;
-
 <div class="mealplanner-box">
 
     <h2>@errorMessage</h2>
@@ -20,11 +18,59 @@
         <button type="submit">Generate</button>
     </form>
 
+
+    <div class="mealplan-box">
+        @if (MealPlannedRecipes != null)
+        {
+            foreach (var recipe in MealPlannedRecipes)
+            {
+                <div class="recipe-card">
+                    <h1>@recipe.RecipeName</h1>
+                    <p>@recipe.Description</p>
+
+                    <div class="ingredients">
+                        <h2>Ingredients:</h2>
+                        <ul>
+                            @foreach (var ingredient in recipe.Ingredients)
+                            {
+                                <li>@ingredient.Name - @ingredient.Quantity @ingredient.Unit</li>
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="instructions">
+                        <h2>Cooking Instructions:</h2>
+                        <ol>
+                            @foreach (var step in recipe.Steps)
+                            {
+                                <li>@step</li>
+                            }
+                        </ol>
+                    </div>
+
+                    <div class="recipe-details">
+                        <p>Cook Time: @recipe.CookTime minutes</p>
+                        <p>Difficulty: @(recipe.Difficulty)</p>
+                        <p>Times Cooked: @recipe.TimesCooked</p>
+                        <p>Vegan: @recipe.IsVegan</p>
+                        <p>Portions: @recipe.Portions</p>
+                        <p>Recipe Type: @(recipe.RecipeType)</p>
+                        <p>Spiciness: @(recipe.Spicyness)</p>
+                    </div>
+                </div>
+            }
+
+            <button>Generate shopping list</button>
+        }
+    </div>
+
+
 </div>
 
 @code {
 
     private string errorMessage = "";
+    private List<Recipe>? MealPlannedRecipes;
 
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
@@ -35,38 +81,33 @@
     private async void SubmitMealPlanner()
     {
 
-        //demo stuff 
-
-        // var json = JsonSerializer.Serialize(recipeRequests);
-        // Console.WriteLine(json);
-        // --- end demo stuff
-
-        Console.WriteLine("starting meal plan request");
         try
         {
             var response = await Http.PostAsJsonAsync("meal/easy", recipeRequests);
             if (!response.IsSuccessStatusCode)
             {
                 //show error message
-                errorMessage = "wrong username or password";
+                errorMessage = "check console log for error message!";
                 Console.WriteLine(response);
                 return;
             }
 
-            Console.WriteLine("meal plan request done");
-
             var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
             foreach(var recipe in recipes)
             {
-                Console.WriteLine(recipe.RecipeName);
+                Console.WriteLine(recipe.Description);
             }
 
-            Console.WriteLine("all done bruh " + recipes.Count);
+            MealPlannedRecipes = recipes;
+
+            StateHasChanged();
+
 
         }catch(Exception e)
         {
             Console.WriteLine(e.Message);
         }
+
 
     }
 

@@ -11,7 +11,7 @@
            <option value="dessert">Dessert</option>
     </select>
     <label for="cookTime">Cook time:</label>
-    <input type="number" placeholder="cook time" @bind="CookTime"/>
+    <input type="number" placeholder="cook time" @bind="MaxTimeCook"/>
     <button type="button" @onclick="Search">Search</button>
 </div>
 
@@ -28,19 +28,19 @@
 
     private string SearchTerm { get; set; }
     private string TypeTerm { get; set; }
-    private int CookTime { get; set; }
+    private int MaxTimeCook { get; set; }
 
     private void Search()
     {
-        List<Recipe> FilteredRecipes = new List<Recipe>();
+        List<Recipe> FilteredRecipes = OriginalList;
 
         //use linq to filter list of recipes
-        if (SearchTerm == "") FilteredRecipes = OriginalList;
+        if (SearchTerm == "" || SearchTerm == null) FilteredRecipes = OriginalList;
         else FilteredRecipes = ListOfRecipes.Where(recipe => recipe.RecipeName.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
-        if (CookTime != 0)
+        if (MaxTimeCook != 0)
         {
-            FilteredRecipes = FilteredRecipes.Where(recipe => recipe.CookTime < CookTime).ToList();
+            FilteredRecipes = FilteredRecipes.Where(recipe => recipe.CookTime < MaxTimeCook).ToList();
         }
 
         switch (TypeTerm)

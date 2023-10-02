@@ -93,13 +93,15 @@
             }
 
             var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
-            foreach(var recipe in recipes)
+
+            if(recipes.Count == 0)
             {
-                Console.WriteLine(recipe.Description);
+                errorMessage = "no recipies fit requirements!";
+                return;
             }
 
             MealPlannedRecipes = recipes;
-
+            errorMessage = "";
             StateHasChanged();
 
 

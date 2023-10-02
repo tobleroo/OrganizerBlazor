@@ -2,10 +2,10 @@
 {
     public class RecipeRequestEasyDTO
     {
-        public int Portions { get; set; } = 1;
-        public string Difficulty = "any";
-        public string Category = "any";
-        public int MaxCookTime { get; set; } = 120;
+        public int portions { get; set; } = 1;
+        public string difficulty { get; set; }
+        public string category { get; set; }
+        public int maxCookTime { get; set; } = 120;
 
     }
 }

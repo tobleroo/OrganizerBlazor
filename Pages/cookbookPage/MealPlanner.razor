@@ -1,6 +1,10 @@
-﻿
+﻿@inject HttpClient Http
+
+@using System.Text.Json;
 
 <div class="mealplanner-box">
+
+    <h2>@errorMessage</h2>
 
     <div class="howManyRecipesBox">
         <button @onclick="addRecipeToList">+</button>
@@ -20,15 +24,49 @@
 
 @code {
 
+    private string errorMessage = "";
+
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
     {
         new RecipeRequestEasyDTO()
     };
 
-    private void SubmitMealPlanner()
-    {   
-        //all recipe requests are now saved and avaiable here. do the post request and get the recipes back
+    private async void SubmitMealPlanner()
+    {
+
+        //demo stuff 
+
+        // var json = JsonSerializer.Serialize(recipeRequests);
+        // Console.WriteLine(json);
+        // --- end demo stuff
+
+        Console.WriteLine("starting meal plan request");
+        try
+        {
+            var response = await Http.PostAsJsonAsync("meal/easy", recipeRequests);
+            if (!response.IsSuccessStatusCode)
+            {
+                //show error message
+                errorMessage = "wrong username or password";
+                Console.WriteLine(response);
+                return;
+            }
+
+            Console.WriteLine("meal plan request done");
+
+            var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
+            foreach(var recipe in recipes)
+            {
+                Console.WriteLine(recipe.RecipeName);
+            }
+
+            Console.WriteLine("all done bruh " + recipes.Count);
+
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
 
     }
 

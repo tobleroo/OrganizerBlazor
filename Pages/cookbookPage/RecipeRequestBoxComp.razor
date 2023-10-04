@@ -1,33 +1,34 @@
 ﻿
-
-<div class="oneRecipeInBox">
-    <div class="portions-in-box meal-input-box">
-        <label for="howManyIn">Portions</label>
-        <input type="number" class="inputPortions" name="howManyIn" min="1" max="10" @bind="RecipeRequest.portions">
-    </div>
-    <div class="meal-input-box">
-        <label for="difficultyIn">Difficulty</label>
-        <select name="difficultyIn" @bind="RecipeRequest.difficulty">
-            <option value="Any">Any</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-        </select>
-    </div>
-    <div>
-        <label for="recipeType">Recipe type</label>
-        <select name="recipeType" @bind="RecipeRequest.category">
-            <option value="Any">Any</option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Dinner">Dinner</option>
-            <option value="Dessert">Dessert</option>
-            <option value="Snack">Snack</option>
-        </select>
-    </div>
-    <div class="cooktimeIn-box meal-input-box">
-        <label for="maxCookTimeIN">Max cook time</label>
-        <input type="number" min="1" max="999" @bind="RecipeRequest.maxCookTime" />
+<div class="recipe-card">
+    <div class="oneRecipeInBox">
+        <div class="portions-in-box meal-input-box">
+            <label for="howManyIn">Portions</label>
+            <input type="number" class="inputPortions" name="howManyIn" min="1" max="10" @bind="RecipeRequest.portions">
+        </div>
+        <div class="meal-input-box">
+            <label for="difficultyIn">Difficulty</label>
+            <select name="difficultyIn" @bind="RecipeRequest.difficulty">
+                <option value="Any">Any</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
+        <div>
+            <label for="recipeType">Recipe type</label>
+            <select name="recipeType" @bind="RecipeRequest.category">
+                <option value="Any">Any</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Dessert">Dessert</option>
+                <option value="Snack">Snack</option>
+            </select>
+        </div>
+        <div class="cooktimeIn-box meal-input-box">
+            <label for="maxCookTimeIN">Max cook time</label>
+            <input type="number" min="1" max="999" @bind="RecipeRequest.maxCookTime" />
+        </div>
     </div>
 </div>
 
@@ -42,23 +43,6 @@
         RecipeRequest.category = "Any";
         RecipeRequest.difficulty = "Any";
     }
-
-    // private int portions = 1;
-    // private string difficulty = "any";
-    // private string recipeType = "any";
-    // private int maxCookTime = 1;
-
-    // private void SubmitMealPlanner()
-    // {
-        
-    //     RecipeRequest.Portions = portions;
-    //     RecipeRequest.Difficulty = difficulty;
-    //     RecipeRequest.Category = recipeType;
-    //     RecipeRequest.MaxCookTime = maxCookTime;
-
-    //     //recipeRequests.Add(recipeRequest);
-    //     Console.WriteLine("im in one recipe in box" + RecipeRequest.Category);
-    // }
 
 
 }

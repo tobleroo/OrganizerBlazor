@@ -1,51 +1,21 @@
 ﻿
 .cookbook-main-box {
     color: black;
+    text-align:center;
 }
 
-/*recipe list*/
-
-.recipe-item {
-    border: 2px solid lightblue;
-    margin: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.recipe-header {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 15px;
-    padding: 10px;
-    border: 2px solid black;
-}
-
-    .recipe-header h3, span, button {
-        margin: 0 30px 0 30px;
-    }
-
-.recipe-details {
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-}
-
-.recipe-ingr-steps-box {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-    border: 2px solid black;
-}
-
-.details-recipe-box {
-    margin: 15px 30px;
+.cookbookItems{
+    border: double black 3px;
+    margin: 3rem;
 }
 
 /*end recipe list*/
 
 /* search bar */
+.search-bar{
+    border-bottom: solid black 2px;
+}
+
 .search-bar input[type="text"],
 .search-bar select,
 .search-bar input[type="number"] {
@@ -83,12 +53,30 @@
         margin: 4px;
     }
 }
-
-
-
-
 /*end serach bar*/
 
+/* save recipe to backend btn*/
+
+#updateCookBookBtnId{
+    margin: 3rem;
+    border: solid yellow 2px;
+    border-radius: 15px;
+    background-color: greenyellow;
+    font-size: large;
+    padding: 5px 15px;
+}
+
+.newRecipeBtn{
+    margin: 2rem;
+}
+
+#updateCookBookBtnId:hover{
+    background-color: lightyellow;
+}
+/* end save btn */
+
+
+/* add new recipe box */
 input , select, textarea{
     background-color: lightblue;
 }
@@ -237,3 +225,255 @@ input , select, textarea{
     height: 150px;
     overflow-y: scroll;
 }
+
+/* end add new recipe box*/
+
+/* start view recipes box*/
+
+.recipe-list-box{
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 2rem;
+
+}
+
+.recipe-item {
+    border: 2px solid lightblue;
+    margin: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.recipe-header {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 15px;
+    padding: 10px;
+    border: 2px solid black;
+}
+
+    .recipe-header h3, span, button {
+        margin: 0 30px 0 30px;
+    }
+
+.recipe-details {
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+}
+
+.recipe-ingr-steps-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    border: 2px solid black;
+}
+
+.details-recipe-box {
+    margin: 15px 30px;
+}
+
+/* end view recipe box*/
+
+
+/* start meal planner */
+
+.AllRecipeInBox{
+    margin-bottom: 3rem;
+}
+
+.recipe-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 300px; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the card horizontally */
+}
+
+.oneRecipeInBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.recipe-input-box {
+    margin: 10px 0;
+}
+
+.oneRecipeInBox label {
+    font-weight: bold;
+}
+
+.oneRecipeInBox input[type="number"],
+.oneRecipeInBox select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    outline: none;
+}
+
+    input[type="number"]:hover,
+    select:hover {
+        border-color: #555;
+    }
+
+/* end meal planner */
+
+/* meal generated box*/
+
+/* Base styles for recipe card */
+.recipe-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin: 20px;
+}
+
+    /* Header styles */
+    .recipe-card h1 {
+        font-size: 24px;
+    }
+
+/* Ingredients and instructions styles */
+.ingredients,
+.instructions {
+    margin: 20px 0;
+}
+
+    .ingredients h2,
+    .instructions h2 {
+        font-size: 20px;
+    }
+
+/* Recipe details styles */
+
+.desc-box i{
+    text-align:left;
+}
+
+.ingredients h2{
+    text-align: left;
+}
+
+.recipe-details{
+    border:solid black 2px;
+    text-align:left;
+    padding:1rem;
+}
+
+.recipe-details p {
+    font-size: 16px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .recipe-card {
+        margin: 10px;
+    }
+
+        .recipe-card h1 {
+            font-size: 20px;
+        }
+
+    .ingredients h2,
+    .instructions h2 {
+        font-size: 18px;
+    }
+
+    .recipe-details p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .recipe-card {
+        padding: 10px;
+    }
+
+        .recipe-card h1 {
+            font-size: 18px;
+        }
+
+    .ingredients h2,
+    .instructions h2 {
+        font-size: 16px;
+    }
+
+    .recipe-details p {
+        font-size: 12px;
+    }
+}
+
+/* end meal generator box
+*/
+
+/* start shopping list generator*/
+
+.mealplan-box{
+    display:flex;
+    flex-flow: column wrap;
+}
+.all-gen-recipies{
+    display:flex;
+    flex-flow: row wrap;
+}
+
+.shopping-List-info {
+    display: flex;
+    flex-flow: column wrap;
+
+}
+
+.shopping-List-info button{
+    background-color: lightblue;
+    color: black;
+    font-weight:700;
+    border-radius:15px;
+    border: none;
+    max-width: 20rem;
+}
+
+.shopping-List-info button:hover{
+    background-color: blue;
+    color:white;
+}
+
+
+.shoppinglist-box {
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.recipe {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+    .recipe h4 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+.ingredient-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .ingredient-list li {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+/* end shopping list generator*/

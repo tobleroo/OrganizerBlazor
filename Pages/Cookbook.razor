@@ -20,11 +20,13 @@
         else
         {
             @* add search bar *@
-            <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
-            <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
-            <button type="button" @onclick="ToggleAddRecipe">Add new recipe</button>
-            <button type="button" @onclick="UpdateBackendCookBook">save changes</button>
+            <div class="cookbookItems">
+                <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
+                <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
+                <button type="button" class="cookbookBtn newRecipeBtn" @onclick="ToggleAddRecipe">Add new recipe</button>
+            </div>
             <MealPlanner></MealPlanner>
+            <button type="button" class="cookbookBtn" id="updateCookBookBtnId" @onclick="UpdateBackendCookBook">save changes to DB</button>
         }
     }
     else

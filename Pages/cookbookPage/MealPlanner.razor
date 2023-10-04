@@ -5,8 +5,14 @@
     <h2>@errorMessage</h2>
 
     <div class="howManyRecipesBox">
-        <button @onclick="addRecipeToList">+</button>
-        <button @onclick="removeRecipeFromList"></button>
+        <div class="mealplanner-info-box">
+            <h2>Meal plan generator</h2>
+            <i> Select how many Recipies you want to generate from your own cookbook:</i>
+        </div>
+        <div class="mealplan-add-remove-box">
+            <button @onclick="addRecipeToList">Add</button>
+            <button @onclick="removeRecipeFromList">Remove</button>
+        </div>
     </div>
 
     <form @onsubmit="SubmitMealPlanner">
@@ -20,53 +26,76 @@
 
 
     <div class="mealplan-box">
-        @if (MealPlannedRecipes != null)
-        {
-            foreach (var recipe in MealPlannedRecipes)
+        <div class="all-gen-recipies">
+
+            @if (MealPlannedRecipes != null)
             {
-                <div class="recipe-card">
-                    <h1>@recipe.RecipeName</h1>
-                    <p>@recipe.Description</p>
+                foreach (var recipe in MealPlannedRecipes)
+                {
+                    <div class="recipe-card">
+                        <h1>@recipe.RecipeName</h1>
 
-                    <div class="ingredients">
-                        <h2>Ingredients:</h2>
-                        <ul>
-                            @foreach (var ingredient in recipe.Ingredients)
+                        <div class="desc-box">
+                            <i>Description</i>
+                            <p>@recipe.Description</p>
+                        </div>
+
+
+                        <div class="ingredients">
+                            <h2>Ingredients:</h2>
+                            <ul>
+                                @foreach (var ingredient in recipe.Ingredients)
+                                {
+                                    <li>@ingredient.Name - @ingredient.Quantity @ingredient.Unit</li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="instructions">
+                            <h2>Cooking Instructions:</h2>
+                            @if (recipe.Steps.Count == 0)
                             {
-                                <li>@ingredient.Name - @ingredient.Quantity @ingredient.Unit</li>
+                                <i>No steps added!</i>
                             }
-                        </ul>
-                    </div>
-
-                    <div class="instructions">
-                        <h2>Cooking Instructions:</h2>
-                        <ol>
-                            @foreach (var step in recipe.Steps)
+                            else
                             {
-                                <li>@step</li>
+                                <ol>
+                                    @foreach (var step in recipe.Steps)
+                                    {
+                                        <li>@step</li>
+                                    }
+                                </ol>
                             }
-                        </ol>
-                    </div>
+                        </div>
 
-                    <div class="recipe-details">
-                        <p>Cook Time: @recipe.CookTime minutes</p>
-                        <p>Difficulty: @(recipe.Difficulty)</p>
-                        <p>Times Cooked: @recipe.TimesCooked</p>
-                        <p>Vegan: @recipe.IsVegan</p>
-                        <p>Portions: @recipe.Portions</p>
-                        <p>Recipe Type: @(recipe.RecipeType)</p>
-                        <p>Spiciness: @(recipe.Spicyness)</p>
+                        <i>Details:</i>
+                        <div class="recipe-details">
+                            <p>Cook Time: @recipe.CookTime minutes</p>
+                            <p>Difficulty: @(recipe.Difficulty)</p>
+                            <p>Vegan: @recipe.IsVegan</p>
+                            <p>Portions: @recipe.Portions</p>
+                            <p>Recipe Type: @(recipe.RecipeType)</p>
+                            <p>Spiciness: @(recipe.Spicyness)</p>
+                        </div>
                     </div>
-                </div>
+                }
             }
+        </div>
 
-            <button @onclick=SubmitToShoppingList>Generate shopping list</button>
+         @if (MealPlannedRecipes != null)
+        {
+            <div class="shopping-List-info">
+                <i>If you are satisfied with the generated meals, you can create shoppinglist based on selected recipies</i>
+                <button @onclick=SubmitToShoppingList>Generate shopping list</button>
+            </div>
         }
+
     </div>
 
     <div classm="shoppinglist-box">
         @if(SavedShoppingList != null)
         {
+            <h3>Shopping list</h3>
             @foreach (var recipe in SavedShoppingList)
             {
                 <div class="recipe">
@@ -134,12 +163,14 @@
 
     private void addRecipeToList()
     {
-        recipeRequests.Add(new RecipeRequestEasyDTO());
+        if(recipeRequests.Count >= 10) errorMessage = "Max amount of requests added!";
+        else recipeRequests.Add(new RecipeRequestEasyDTO());
     }
 
     private void removeRecipeFromList()
     {
         recipeRequests.RemoveAt(recipeRequests.Count - 1);
+        if (errorMessage == "Max amount of requests added!") errorMessage = "";
     }
 
     private List<ShoppingListDetailsDTO> CreateShoppingList()
@@ -182,12 +213,6 @@
             }
 
             var shoppingList = await response.Content.ReadFromJsonAsync<List<ShoppingListRecipeDetails>>();
-
-            // foreach(var item in shoppingList)
-            // {
-            //     Console.WriteLine(item.RecipeName);
-            //     Console.WriteLine($"first iten new quant -> {item.Ingredients[0].Quantity}");
-            // }
 
             SavedShoppingList = shoppingList;
             StateHasChanged();

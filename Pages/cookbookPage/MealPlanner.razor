@@ -60,7 +60,25 @@
                 </div>
             }
 
-            <button>Generate shopping list</button>
+            <button @onclick=SubmitToShoppingList>Generate shopping list</button>
+        }
+    </div>
+
+    <div classm="shoppinglist-box">
+        @if(SavedShoppingList != null)
+        {
+            @foreach (var recipe in SavedShoppingList)
+            {
+                <div class="recipe">
+                    <h4>@recipe.RecipeName</h4>
+                    <ul class="ingredient-list">
+                        @foreach (var ingredient in recipe.Ingredients)
+                        {
+                            <li>@ingredient.Name - @ingredient.Quantity @ingredient.Unit</li>
+                        }
+                    </ul>
+                </div>
+            }
         }
     </div>
 
@@ -71,6 +89,7 @@
 
     private string errorMessage = "";
     private List<Recipe>? MealPlannedRecipes;
+    private List<ShoppingListRecipeDetails>? SavedShoppingList;
 
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
@@ -121,6 +140,62 @@
     private void removeRecipeFromList()
     {
         recipeRequests.RemoveAt(recipeRequests.Count - 1);
+    }
+
+    private List<ShoppingListDetailsDTO> CreateShoppingList()
+    {
+        List<ShoppingListDetailsDTO> shoppingListRecipesWanted = new List<ShoppingListDetailsDTO>();
+        if (MealPlannedRecipes != null || MealPlannedRecipes.Count != 0)
+        {
+
+            int portionsAmounts = 0;
+            foreach(var recipe in MealPlannedRecipes)
+            {
+                shoppingListRecipesWanted.Add(new ShoppingListDetailsDTO()
+                {
+                        RecipeName = recipe.RecipeName,
+                        PortionsAmount = recipeRequests[portionsAmounts].portions
+                });
+
+                portionsAmounts++;
+            }
+        }
+
+        return shoppingListRecipesWanted;
+    }
+
+    private async void SubmitToShoppingList()
+    {
+        var shoppingListInfo = CreateShoppingList();
+        //Console.WriteLine(shoppingListInfo.Count);
+
+        //do the api call
+        try
+        {
+            var response = await Http.PostAsJsonAsync("meal/shoppinglist", shoppingListInfo);
+            if (!response.IsSuccessStatusCode)
+            {
+                //show error message
+                errorMessage = "check console log for error message!";
+                Console.WriteLine(response);
+                return;
+            }
+
+            var shoppingList = await response.Content.ReadFromJsonAsync<List<ShoppingListRecipeDetails>>();
+
+            // foreach(var item in shoppingList)
+            // {
+            //     Console.WriteLine(item.RecipeName);
+            //     Console.WriteLine($"first iten new quant -> {item.Ingredients[0].Quantity}");
+            // }
+
+            SavedShoppingList = shoppingList;
+            StateHasChanged();
+
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 
 }

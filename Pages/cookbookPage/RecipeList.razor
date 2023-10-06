@@ -19,39 +19,44 @@
                             </button>
                         </div>
                         <div class="recipe-details" style="display: @(IsDetailsVisible.ContainsKey(recipe) && IsDetailsVisible[recipe] ? "flex" : "none")">
-                            <div class="desc-box">
-                                <h3>Description</h3>
-                                <p>@recipe.Description</p>
-                            </div>
+                            <div class="desc-and-ingr-steps-box">
+                                <div class="desc-box">
+                                    <h3>Description</h3>
+                                    <p>@recipe.Description</p>
+                                </div>
                             
-                            <div class="recipe-ingr-steps-box">
-                            <fieldset class="details-recipe-box">
-                                    <legend>Ingredients</legend>
-                                    <ul class="recipe-ingredients">
-                                        @foreach (var ingredient in recipe.Ingredients)
-                                        {
-                                            <li>@ingredient.Quantity @ingredient.Unit of @ingredient.Name</li>
-                                        }
-                                    </ul>
-                                </fieldset>
-                                <fieldset class="details-recipe-box">
-                                    <legend>Steps</legend>
-                                    <ul class="recipe-steps">
-                                        @foreach (var step in recipe.Steps)
-                                        {
-                                            <li>@step</li>
-                                        }
-                                    </ul>
-                                </fieldset>
+                                <div class="recipe-ingr-steps-box">
+                                    <fieldset class="details-recipe-box">
+                                        <legend>Ingredients</legend>
+                                        <ul class="recipe-ingredients">
+                                            @foreach (var ingredient in recipe.Ingredients)
+                                            {
+                                                <li>@ingredient.Quantity @ingredient.Unit of @ingredient.Name</li>
+                                            }
+                                        </ul>
+                                    </fieldset>
+                                    <fieldset class="details-recipe-box">
+                                        <legend>Steps</legend>
+                                        <ul class="recipe-steps">
+                                            @foreach (var step in recipe.Steps)
+                                            {
+                                                <li>@step</li>
+                                            }
+                                        </ul>
+                                    </fieldset>
                                 
+                                </div>
+                            </div>
+                            <div class="Btn-box">
+
+                                <button type="button" class="alterBtn removeBtn" @onclick="()=>RemoveRecipe(recipe)">
+                                    <p>remove</p>
+                                </button>
+                                <button type="button" class="alterBtn updateBtn" @onclick="()=>SendRecipeToEdit(recipe)">
+                                    <p>edit</p>
+                                </button>
                             </div>
 
-                            <button type="button" class="alterBtn removeBtn" @onclick="()=>RemoveRecipe(recipe)">
-                                <p>remove</p>
-                            </button>
-                            <button type="button" class="alterBtn updateBtn" @onclick="()=>SendRecipeToEdit(recipe)">
-                                <p>edit</p>
-                            </button>
                         <!-- Add your recipe details content here -->
                         </div>
                     </div>

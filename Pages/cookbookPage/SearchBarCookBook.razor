@@ -1,18 +1,25 @@
 ﻿@using System.Linq;
 
 <div class="search-bar">
+
     <input type="text" placeholder="Search name..." @bind="SearchTerm" />
-    <label for="type">Type of meal:</label>
-    <select @bind="TypeTerm">
-           <option value="all" selected="selected">All</option>
-           <option value="breakfast">Breakfast</option>
-           <option value="lunch">Lunch</option>
-           <option value="dinner">Dinner</option>
-           <option value="dessert">Dessert</option>
-    </select>
-    <label for="cookTime">Cook time:</label>
-    <input type="number" placeholder="cook time" @bind="MaxTimeCook"/>
-    <button type="button" @onclick="Search">Search</button>
+    <div class="search-details-box">
+        <div class="mealtype-box">
+            <label for="type">Type of meal:</label>
+            <select @bind="TypeTerm">
+                   <option value="all" selected="selected">All</option>
+                   <option value="breakfast">Breakfast</option>
+                   <option value="lunch">Lunch</option>
+                   <option value="dinner">Dinner</option>
+                   <option value="dessert">Dessert</option>
+            </select>
+        </div>
+        <div class="cooktime-box">
+            <label for="cookTime">Cook time (minutes):</label>
+            <input type="number" @bind="MaxTimeCook"/>
+        </div>
+        <button type="button" @onclick="Search">Search</button>
+    </div>
 </div>
 
 @code {
@@ -28,7 +35,7 @@
 
     private string SearchTerm { get; set; }
     private string TypeTerm { get; set; }
-    private int MaxTimeCook { get; set; }
+    private int MaxTimeCook { get; set; } = 120;
 
     private void Search()
     {

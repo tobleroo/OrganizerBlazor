@@ -1,479 +1,612 @@
 ﻿
-.cookbook-main-box {
-    color: black;
-    text-align:center;
-}
+
+/* whole page settings*/
 
 .cookbookItems{
-    border: double black 3px;
-    margin: 3rem;
+    margin-bottom: 2rem;
 }
 
-/*end recipe list*/
+/* ------------- */
 
-/* search bar */
-.search-bar{
-    border-bottom: solid black 2px;
-}
-
-.search-bar input[type="text"],
-.search-bar select,
-.search-bar input[type="number"] {
-    padding: 12px 20px;
-    margin: 8px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.search-bar button[type="button"] {
-    padding: 10px 20px;
-    background-color: dodgerblue;
+/* -- search bar -- */
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
     color: white;
-    border: none;
-    border-radius: 4px;
+}
+
+    .search-bar input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 20px;
+        background-color: #393e7d; /* Set background to transparent */
+        color: white; /* Set text color to white */
+    }
+
+.search-details-box {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.mealtype-box,
+.cooktime-box {
+    flex-grow: 1;
+}
+
+    .mealtype-box select,
+    .cooktime-box input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 20px;
+        background-color: #393e7d; /* Set background to transparent */
+        color: white; /* Set text color to white */
+    }
+
+.search-bar label {
+    font-weight: bold;
+}
+
+.search-bar button {
+    background-color: #1f29a6; /* Set background to transparent */
+    color: white; /* Set text color to white */
+    color: #fff;
     cursor: pointer;
-    margin: 4px 8px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-    .search-bar button[type="button"]:hover {
-        background-color: #1e90ff;
+    .search-bar button:hover {
+        background-color: #0056b3;
     }
 
-@media only screen and (max-width: 768px) {
-    .search-bar input[type="text"],
-    .search-bar select,
-    .search-bar input[type="number"] {
-        width: 100%;
-        margin: 4px;
-    }
+/* ------------ */
 
-    .search-bar button[type="button"] {
-        width: 100%;
-        margin: 4px;
-    }
+
+
+
+/* --- recipe list ---*/
+
+.recipe-list-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem;
+    color: white;
 }
-/*end serach bar*/
 
-/* save recipe to backend btn*/
+.recipe-item {
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+}
 
-#updateCookBookBtnId{
-    margin: 3rem;
-    border: solid yellow 2px;
+.recipe-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+    .recipe-header h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .recipe-header span {
+        font-size: 0.8rem;
+        margin-right: 0.5rem;
+    }
+
+    .recipe-header p {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+
+.recipe-expand-btn {
+    background-color: #41435e;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: white;
+    border-radius:15px;
+}
+
+.recipe-expand-btn:hover{
+    background-color: grey;
+    color:black;
+}
+
+.recipe-details {
+    display: flex;
+    flex-direction:column;
+    justify-content:space-evenly;
+    padding: 1rem;
+}
+
+    .recipe-details h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .recipe-details p {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+
+.desc-and-ingr-steps-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    color: white;
+    border: solid #343ecf 2px;
     border-radius: 15px;
-    background-color: greenyellow;
-    font-size: large;
-    padding: 5px 15px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.recipe-ingr-steps-box{
+    display:flex;
+    flex-flow: row wrap;
+    justify-content:space-between;
+    width: 50%;
+    
+}
+
+.Btn-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    margin-top:2rem;
+}
+
+.recipe-ingredients {
+    list-style-type: none;
+    padding: 0;
+}
+
+    .recipe-ingredients li {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+.recipe-steps {
+    list-style-type: none;
+    padding: 0;
+}
+
+    .recipe-steps li {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+.alterBtn {
+    background-color: #ccc;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+    .alterBtn:hover {
+        background-color: #ddd;
+    }
+
+.removeBtn {
+    background-color: #41435e;
+    color: white;
+}
+
+.updateBtn {
+    background-color: #41435e;
+    color: white;
+}
+
+@media (max-width: 576px) {
+    .recipe-list-box {
+        padding: 0.5rem;
+    }
+
+    .recipe-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .recipe-header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .recipe-expand-btn {
+        width: 100%;
+    }
+
+    .recipe-details {
+        padding: 0.5rem;
+    }
+
+    .recipe-ingredients li {
+        font-size: 0.7rem;
+    }
+
+    .recipe-steps li {
+        font-size: 0.7rem;
+    }
+
+    .alterBtn {
+        font-size: 0.7rem;
+    }
 }
 
 .newRecipeBtn{
+    margin:0 auto;
+    color:black;
+    background-color: lightgreen;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.saveToBackend-box{
+    display:flex;
+    flex-flow: column wrap;
+    font-size: 20px;
+    border: solid yellow 1px;
+    border-radius: 15px;
     margin: 2rem;
+    padding: 15px;
 }
 
-#updateCookBookBtnId:hover{
-    background-color: lightyellow;
+.saveToBackend-box i {
+    font-size: 1.3rem;
 }
-/* end save btn */
 
-
-/* add new recipe box */
-input , select, textarea{
+.saveToBackend-box button{
+    width: 70%;
+    margin: 0 auto;
+    border-radius: 15px;
     background-color: lightblue;
 }
 
+
+/* --------------------- */
+
+/* --- add new recipe / update recipe --- */
+
+.all-input-box {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 .simple-input-box {
-    border: 1px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .one-input-box {
-    display: flex;
-    flex-direction: column;
+    width: 30%;
+    margin-bottom: 0.5rem;
 }
 
-    .one-input-box label {
-        font-size: 18px;
-        margin-bottom: 5px;
-    }
-
-    .one-input-box input {
-        font-size: 16px;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-    }
-
-    .one-input-box label {
-        font-size: 18px;
-        margin-bottom: 5px;
-        color: #555555;
-    }
-
-.input-check {
-    display: flex;
-    flex-direction: row;
+label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
-.one-input-box input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    outline: none;
-    border: 2px solid #555555;
-    border-radius: 5px;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    position: relative;
-    top: 5px;
-}
-
-    .one-input-box input[type="checkbox"]:after {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 2px;
-        left: 4px;
-        width: 6px;
-        height: 11px;
-        border: solid #555555;
-        border-width: 0 2px 2px 0;
-        transform: rotate(45deg);
-        opacity: 0;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .one-input-box input[type="checkbox"]:checked:after {
-        opacity: 1;
-    }
-
-@media only screen and (max-width: 768px) {
-    .one-input-box {
-        margin: 10px;
-    }
-
-        .one-input-box label {
-            font-size: 16px;
-        }
-
-        .one-input-box input {
-            font-size: 14px;
-            padding: 8px 10px;
-        }
+input,
+textarea,
+select {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
 }
 
 .ingr-and-steps-box {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-}
-
-@media only screen and (max-width: 768px) {
-    .ingr-and-steps-box {
-        flex-direction: column;
-    }
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
 .enter-ingredients-box {
-    border: 1px solid black;
-    margin: 30px;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.see-ingr-box {
+    width: 100%;
+    height: 100px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
 }
 
 .one-ingredient-box {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
 }
 
-.ingrName, .ingrQuant, .ingrUnit {
-    margin: 10px;
+.ingrName {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.ingrQuant {
+    font-size: 1rem;
 }
 
 .add-ingr-box {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.see-steps-box {
+    width: 100%;
+    height: 100px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
 }
 
 .one-step-box {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
 }
 
-    .one-step-box button {
-        border: 2px solid dodgerblue;
-        background-color: dodgerblue;
-        padding: 5px;
-        margin: 5px;
-        color: white;
-        font-size: 14px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-    }
-
-        .one-step-box button:hover {
-            background-color: white;
-            color: dodgerblue;
-        }
-
-        .one-step-box button:focus {
-            outline: none;
-        }
-
-.see-ingr-box, .see-steps-box {
-    height: 150px;
-    overflow-y: scroll;
-}
-
-/* end add new recipe box*/
-
-/* start view recipes box*/
-
-.recipe-list-box{
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 2rem;
-
-}
-
-.recipe-item {
-    border: 2px solid lightblue;
-    margin: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.recipe-header {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 15px;
-    padding: 10px;
-    border: 2px solid black;
-}
-
-    .recipe-header h3, span, button {
-        margin: 0 30px 0 30px;
-    }
-
-.recipe-details {
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-}
-
-.recipe-ingr-steps-box {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-    border: 2px solid black;
-}
-
-.details-recipe-box {
-    margin: 15px 30px;
-}
-
-/* end view recipe box*/
-
-
-/* start meal planner */
-
-.AllRecipeInBox{
-    margin-bottom: 3rem;
-}
-
-.recipe-card {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    max-width: 300px; /* Adjust the width as needed */
-    margin: 0 auto; /* Center the card horizontally */
-}
-
-.oneRecipeInBox {
+.add-steps-box {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.recipe-input-box {
-    margin: 10px 0;
+.input-check {
+    display: flex;
+    align-items: center;
 }
 
-.oneRecipeInBox label {
-    font-weight: bold;
-}
-
-.oneRecipeInBox input[type="number"],
-.oneRecipeInBox select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    outline: none;
-}
-
-    input[type="number"]:hover,
-    select:hover {
-        border-color: #555;
+    .input-check label {
+        margin-right: 0.5rem;
     }
 
-/* end meal planner */
-
-/* meal generated box*/
-
-/* Base styles for recipe card */
-.recipe-card {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    margin: 20px;
+button {
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
 }
 
-    /* Header styles */
-    .recipe-card h1 {
-        font-size: 24px;
+    button:hover {
+        background-color: #444;
     }
-
-/* Ingredients and instructions styles */
-.ingredients,
-.instructions {
-    margin: 20px 0;
-}
-
-    .ingredients h2,
-    .instructions h2 {
-        font-size: 20px;
-    }
-
-/* Recipe details styles */
-
-.desc-box i{
-    text-align:left;
-}
-
-.ingredients h2{
-    text-align: left;
-}
-
-.recipe-details{
-    border:solid black 2px;
-    text-align:left;
-    padding:1rem;
-}
-
-.recipe-details p {
-    font-size: 16px;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    .recipe-card {
-        margin: 10px;
-    }
-
-        .recipe-card h1 {
-            font-size: 20px;
-        }
-
-    .ingredients h2,
-    .instructions h2 {
-        font-size: 18px;
-    }
-
-    .recipe-details p {
-        font-size: 14px;
-    }
-}
 
 @media (max-width: 576px) {
-    .recipe-card {
-        padding: 10px;
+    .all-input-box {
+        max-width: 100%;
     }
 
-        .recipe-card h1 {
-            font-size: 18px;
-        }
-
-    .ingredients h2,
-    .instructions h2 {
-        font-size: 16px;
+    .simple-input-box {
+        flex-direction: column;
     }
 
-    .recipe-details p {
-        font-size: 12px;
+    .one-input-box {
+        width: 100%;
+    }
+
+    .ingr-and-steps-box {
+        flex-direction: column;
+    }
+
+    .enter-ingredients-box {
+        width: 100%;
+    }
+
+    .see-ingr-box {
+        height: 200px;
+    }
+
+    .see-steps-box {
+        height: 200px;
     }
 }
+/* --------------------------------------- */
 
-/* end meal generator box
-*/
 
-/* start shopping list generator*/
+/* --- meal planner ---*/
 
-.mealplan-box{
-    display:flex;
-    flex-flow: column wrap;
+
+.mealplanner-box {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 }
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+i {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.howManyRecipesBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.mealplanner-info-box {
+    width: 50%;
+}
+
+.mealplan-add-remove-box {
+    width: 50%;
+    text-align: right;
+}
+
 .all-gen-recipies{
     display:flex;
     flex-flow: row wrap;
 }
 
-.shopping-List-info {
+.AllRecipeInBox {
     display: flex;
-    flex-flow: column wrap;
-
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
-.shopping-List-info button{
-    background-color: lightblue;
-    color: black;
-    font-weight:700;
-    border-radius:15px;
-    border: none;
-    max-width: 20rem;
+.recipe-card {
+    width: 300px;
+    margin: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
 }
 
-.shopping-List-info button:hover{
-    background-color: blue;
-    color:white;
-}
+    .recipe-card h1 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
 
+    .recipe-card .desc-box {
+        margin-bottom: 1rem;
+    }
+
+    .recipe-card .ingredients {
+        margin-bottom: 1rem;
+    }
+
+    .recipe-card .instructions {
+        margin-bottom: 1rem;
+    }
+
+    .recipe-card .recipe-details {
+        margin-bottom: 1rem;
+    }
+
+.shopping-list-info {
+    margin-bottom: 1rem;
+}
 
 .shoppinglist-box {
-    background-color: #f8f8f8;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
-    margin: 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y:auto;
 }
 
-.recipe {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    .shoppinglist-box h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .shoppinglist-box .recipe {
+        margin-bottom: 1rem;
+    }
+
+        .shoppinglist-box .recipe h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+    .shoppinglist-box .ingredient-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        .shoppinglist-box .ingredient-list li {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .shoppinglist-box .ingredient-list li::before {
+                content: "• ";
+            }
+
+            .shoppinglist-box .ingredient-list li:last-child {
+                margin-bottom: 0;
+            }
+
+@media (max-width: 576px) {
+    .shoppinglist-box {
+        max-width: 100%;
+    }
+
+        .shoppinglist-box h3 {
+            text-align: left;
+        }
 }
 
-    .recipe h4 {
-        font-size: 18px;
+
+
+@media (max-width: 576px) {
+    .mealplanner-box {
+        max-width: 100%;
         margin: 0;
     }
 
-.ingredient-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    i {
+        font-size: 0.7rem;
+    }
+
+    .howManyRecipesBox {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .mealplanner-info-box,
+    .mealplan-add-remove-box {
+        width: 100%;
+    }
+
+    .AllRecipeInBox {
+        flex-direction: column;
+    }
+
+    .recipe-card {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+
 }
 
-    .ingredient-list li {
-        font-size: 16px;
-        margin-bottom: 6px;
-    }
-/* end shopping list generator*/
+/* -------------------- */

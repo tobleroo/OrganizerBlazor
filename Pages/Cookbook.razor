@@ -24,9 +24,12 @@
                 <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
                 <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
                 <button type="button" class="cookbookBtn newRecipeBtn" @onclick="ToggleAddRecipe">Add new recipe</button>
+                <div class="saveToBackend-box">
+                    <i>When you have added/removed/updated any recipies, click this button to update the database with the changes made:</i>
+                    <button type="button" class="cookbookBtn" id="updateCookBookBtnId" @onclick="UpdateBackendCookBook">save changes to DB</button>
+                </div>
             </div>
             <MealPlanner></MealPlanner>
-            <button type="button" class="cookbookBtn" id="updateCookBookBtnId" @onclick="UpdateBackendCookBook">save changes to DB</button>
         }
     }
     else

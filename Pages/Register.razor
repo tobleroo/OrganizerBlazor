@@ -53,7 +53,7 @@
             // Console.WriteLine("username:" +user.Name + "password: " + user.Password + "email: " +user.Email +"regicode: "+user.RegistrationCode);
 
             //make http post 
-            var response = await Http.PostAsJsonAsync("api/Auth/register", user);
+            var response = await Http.PostAsJsonAsync("auth/register", user);
 
             if (response.IsSuccessStatusCode)
             {

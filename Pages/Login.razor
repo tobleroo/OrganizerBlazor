@@ -33,7 +33,7 @@
         };
 
         //make http post 
-        var response = await Http.PostAsJsonAsync("api/Auth/login", user);
+        var response = await Http.PostAsJsonAsync("auth/login", user);
         if (!response.IsSuccessStatusCode)
         {
             //show error message

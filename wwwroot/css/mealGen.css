@@ -1,0 +1,180 @@
+﻿
+
+/* --- meal planner ---*/
+
+
+.mealplanner-box {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+i {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.howManyRecipesBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.mealplanner-info-box {
+    width: 50%;
+}
+
+.mealplan-add-remove-box {
+    width: 50%;
+    text-align: right;
+}
+
+.all-gen-recipies {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.AllRecipeInBox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.recipe-card {
+    width: 300px;
+    margin: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+    .recipe-card h1 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .recipe-card .desc-box {
+        margin-bottom: 1rem;
+    }
+
+    .recipe-card .ingredients {
+        margin-bottom: 1rem;
+    }
+
+    .recipe-card .instructions {
+        margin-bottom: 1rem;
+    }
+
+    .recipe-card .recipe-details {
+        margin-bottom: 1rem;
+    }
+
+.shopping-list-info {
+    margin-bottom: 1rem;
+}
+
+.shoppinglist-box {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+    .shoppinglist-box h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .shoppinglist-box .recipe {
+        margin-bottom: 1rem;
+    }
+
+        .shoppinglist-box .recipe h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+    .shoppinglist-box .ingredient-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        .shoppinglist-box .ingredient-list li {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .shoppinglist-box .ingredient-list li::before {
+                content: "• ";
+            }
+
+            .shoppinglist-box .ingredient-list li:last-child {
+                margin-bottom: 0;
+            }
+
+@media (max-width: 576px) {
+    .shoppinglist-box {
+        max-width: 100%;
+    }
+
+        .shoppinglist-box h3 {
+            text-align: left;
+        }
+}
+
+
+
+@media (max-width: 576px) {
+    .mealplanner-box {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    i {
+        font-size: 0.7rem;
+    }
+
+    .howManyRecipesBox {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .mealplanner-info-box,
+    .mealplan-add-remove-box {
+        width: 100%;
+    }
+
+    .AllRecipeInBox {
+        flex-direction: column;
+    }
+
+    .recipe-card {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+
+/* -------------------- */

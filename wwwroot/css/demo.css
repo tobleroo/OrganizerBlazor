@@ -8,6 +8,17 @@
 
 /* ------------- */
 
+/* --- loading animation box --- */
+
+.loading-box{
+    text-align: center;
+    margin-top: 4rem;
+}
+
+/* ----------------- */
+
+
+
 /* -- search bar -- */
 .search-bar {
     display: flex;
@@ -285,6 +296,17 @@
     margin: 0 auto;
 }
 
+.all-input-box input, select, textarea {
+    background-color: #9BA8CB;
+    border: none;
+    border-radius: 15px;
+}
+
+.see-ingr-box, .see-steps-box {
+    background-color: #9BA8CB;
+    color: black;
+}
+
 .simple-input-box {
     display: flex;
     flex-wrap: wrap;
@@ -322,6 +344,9 @@ select {
 .enter-ingredients-box {
     width: 100%;
     margin-bottom: 1rem;
+    border: solid black 2px;
+    padding: 1rem;
+    border-radius: 15px;
 }
 
 .see-ingr-box {
@@ -353,6 +378,12 @@ select {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+
+.enter-steps-box{
+    border:solid black 2px;
+    padding: 1rem;
+    border-radius: 15px;
 }
 
 .see-steps-box {

@@ -8,14 +8,27 @@
 <div class="login-box">
     <h1>Login</h1>
 
-    <p>@errorMessage</p>
-    <form @onsubmit="HandleLogin">
-        <label for="username">Name</label>
-        <input id="username" type="text" @bind="username" />
-        <label for="password">Password</label>
-        <input id="password" type="password" @bind="password" />
-        <button type="submit">Login</button>
-    </form>
+
+    @if (!waitingOnSignIn)
+    {
+        <p>@errorMessage</p>
+        <form @onsubmit="HandleLogin">
+            <label for="username">Name</label>
+            <input id="username" type="text" @bind="username" />
+            <label for="password">Password</label>
+            <input id="password" type="password" @bind="password" />
+            <button type="submit">Login</button>
+        </form>
+    }
+    else
+    {
+        <div class="loading-box">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3>Signing in...</h3>
+        </div>
+    }
 
 </div>
 
@@ -23,8 +36,11 @@
     private string username = "";
     private string password = "";
     private string errorMessage = "";
+    private bool waitingOnSignIn = false;
 
     async Task HandleLogin(){
+
+        waitingOnSignIn = true;
 
         var user = new UserLoginDto
         {
@@ -38,6 +54,7 @@
         {
             //show error message
             errorMessage = "wrong username or password";
+            waitingOnSignIn = false;
             return;
         }
         var token = await response.Content.ReadAsStringAsync();

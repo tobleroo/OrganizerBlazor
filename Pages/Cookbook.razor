@@ -1,5 +1,6 @@
 @page "/cookbook"
 @using System.Net.Http.Headers;
+@using System.Net;
 @attribute [Authorize]
 
 @inject HttpClient Http
@@ -24,10 +25,22 @@
                 <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
                 <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
                 <button type="button" class="cookbookBtn newRecipeBtn" @onclick="ToggleAddRecipe">Add new recipe</button>
-                <div class="saveToBackend-box">
-                    <i>When you have added/removed/updated any recipies, click this button to update the database with the changes made:</i>
-                    <button type="button" class="cookbookBtn" id="updateCookBookBtnId" @onclick="UpdateBackendCookBook">save changes to DB</button>
-                </div>
+                @if (!UpdatingCookbook)
+                {
+                    <div class="saveToBackend-box">
+                        <i>When you have added/removed/updated any recipies, click this button to update the database with the changes made:</i>
+                        <button type="button" class="cookbookBtn" id="updateCookBookBtnId" @onclick="UpdateBackendCookBook">save changes to DB</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="loading-box">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h3>Updating...</h3>
+                    </div>
+                }
             </div>
             <MealPlanner></MealPlanner>
         }
@@ -50,20 +63,13 @@
     private List<Recipe>? FilteredRecipes;
     private bool showAddRecipe = false;
     private Recipe RecipeToUpdate = null;
+    private bool UpdatingCookbook = false;
 
     public void AddNewRecipe(Recipe newRecipe)
     {
         //check if recipe already exists and update it if true
         if (RecipeToUpdate != null)
         {
-            // var existingRecipe = userCookBook?.Recipes.FirstOrDefault(x => x.RecipeName == newRecipe.RecipeName);
-            // if (existingRecipe != null)
-            // {
-
-            //     userCookBook.Recipes = userCookBook.Recipes
-            //         .Select(recipe => recipe.RecipeName == newRecipe.RecipeName ? newRecipe : recipe)
-            //         .ToList();
-            // }
 
             //use linq to replace the recipe in list with same name
             for(int i = 0; i < userCookBook.Recipes.Count; i++)
@@ -90,10 +96,17 @@
 
     public async void UpdateBackendCookBook()
     {
+        UpdatingCookbook = true;
         string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await Http.PostAsJsonAsync<UserCookBook>("cookbook/update-cookbook", userCookBook);
+
+        if (response.IsSuccessStatusCode)
+        {
+            UpdatingCookbook = false;
+            StateHasChanged();
+        }
     }
 
     public void ToggleAddRecipe()

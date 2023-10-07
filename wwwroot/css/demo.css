@@ -8,6 +8,17 @@
 
 /* ------------- */
 
+/* --- loading animation box --- */
+
+.loading-box{
+    text-align: center;
+    margin-top: 4rem;
+}
+
+/* ----------------- */
+
+
+
 /* -- search bar -- */
 .search-bar {
     display: flex;

@@ -12,23 +12,35 @@
             <p>@ErrorMsg</p>
         </div>
     }
-
-    <form @onsubmit="HandleRegister">
-        <label for="username">Name</label>
-        <input id="username" type="text" @bind="Username" />
-        <label for="email">Email</label>
-        <input id="email" type="text" @bind="Email" />
-        <label for="password">Password</label>
-        <input id="password" type="password" @bind="Password" />
-        <label for="regiCode">Registration code</label>
-        <input id="regiCode" type="text" @bind="RegiCode" />
-        <button type="submit">Register</button>
-    </form>
+    @if (loadingRegistration)
+    {
+        <div class="loading-box">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3>Signing up...</h3>
+        </div>
+    }
+    else
+    {
+        <form @onsubmit="HandleRegister">
+            <label for="username">Name</label>
+            <input id="username" type="text" @bind="Username" />
+            <label for="email">Email</label>
+            <input id="email" type="text" @bind="Email" />
+            <label for="password">Password</label>
+            <input id="password" type="password" @bind="Password" />
+            <label for="regiCode">Registration code</label>
+            <input id="regiCode" type="text" @bind="RegiCode" />
+            <button type="submit">Register</button>
+        </form>
+    }
 </div>
 
 @code {
 
     private bool regFailed = false;
+    private bool loadingRegistration = false;
     private string ErrorMsg = "";
 
     private string Username = "";
@@ -41,6 +53,8 @@
 
         if(RegiCode == "jeffkaff2000")
         {
+
+            loadingRegistration = true;
 
             var user = new UserRegisterDto
             {
@@ -55,6 +69,7 @@
             //make http post 
             var response = await Http.PostAsJsonAsync("auth/register", user);
 
+            loadingRegistration = false;
             if (response.IsSuccessStatusCode)
             {
                 //navigate to home page

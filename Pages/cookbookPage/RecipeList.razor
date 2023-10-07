@@ -23,12 +23,20 @@
                                 <div class="desc-box">
                                     <h3>Description</h3>
                                     <p>@recipe.Description</p>
-                                </div>
+                                    @if(recipe.Description == "")
+                                    {
+                                        <p>Description not set</p>
+                                    }
+                            </div>
                             
                                 <div class="recipe-ingr-steps-box">
                                     <fieldset class="details-recipe-box">
                                         <legend>Ingredients</legend>
                                         <ul class="recipe-ingredients">
+                                            @if (recipe.Ingredients.Count == 0)
+                                            {
+                                                <li>No Ingredients added!</li>
+                                            }
                                             @foreach (var ingredient in recipe.Ingredients)
                                             {
                                                 <li>@ingredient.Quantity @ingredient.Unit of @ingredient.Name</li>
@@ -38,6 +46,10 @@
                                     <fieldset class="details-recipe-box">
                                         <legend>Steps</legend>
                                         <ul class="recipe-steps">
+                                            @if(recipe.Steps.Count == 0)
+                                            {
+                                                <li>No steps added!</li>
+                                            }
                                             @foreach (var step in recipe.Steps)
                                             {
                                                 <li>@step</li>

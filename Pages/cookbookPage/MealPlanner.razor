@@ -80,6 +80,15 @@
                     </div>
                 }
             }
+            @if (MealGeneratorLoading)
+            {
+                <div class="loading-box">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h3>Generating...</h3>
+                </div>
+            }
         </div>
 
          @if (MealPlannedRecipes != null)
@@ -109,6 +118,17 @@
                 </div>
             }
         }
+
+        @if (ShoppingListLoading)
+        {
+            <div class="loading-box">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h3>Generating...</h3>
+            </div>
+        }
+
     </div>
 
 
@@ -120,6 +140,9 @@
     private List<Recipe>? MealPlannedRecipes;
     private List<ShoppingListRecipeDetails>? SavedShoppingList;
 
+    private bool MealGeneratorLoading = false;
+    private bool ShoppingListLoading = false;
+
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
     {
@@ -128,6 +151,9 @@
 
     private async void SubmitMealPlanner()
     {
+        if (SavedShoppingList != null) SavedShoppingList = null;
+        if (MealPlannedRecipes != null) MealPlannedRecipes = null;
+        MealGeneratorLoading = true;
 
         try
         {
@@ -150,6 +176,7 @@
 
             MealPlannedRecipes = recipes;
             errorMessage = "";
+            MealGeneratorLoading = false;
             StateHasChanged();
 
 
@@ -197,6 +224,8 @@
 
     private async void SubmitToShoppingList()
     {
+        if (SavedShoppingList != null) SavedShoppingList = null;
+        ShoppingListLoading = true;
         var shoppingListInfo = CreateShoppingList();
         //Console.WriteLine(shoppingListInfo.Count);
 
@@ -215,6 +244,7 @@
             var shoppingList = await response.Content.ReadFromJsonAsync<List<ShoppingListRecipeDetails>>();
 
             SavedShoppingList = shoppingList;
+            ShoppingListLoading = false;
             StateHasChanged();
 
         }catch(Exception e)

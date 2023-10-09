@@ -85,6 +85,18 @@
 
 /* --- recipe list ---*/
 
+.recipe-box{
+    max-height: 30rem;
+    overflow-y:auto;
+
+    margin: 1rem 0;
+    padding: 1rem 0;
+}
+
+.icons{
+    font-size: 40px;
+}
+
 .recipe-list-box {
     display: flex;
     flex-direction: column;

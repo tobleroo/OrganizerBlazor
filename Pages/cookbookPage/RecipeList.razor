@@ -11,9 +11,18 @@
                     <div class="recipe-item">
                         <div class="recipe-header">
                             <h3>@recipe.RecipeName</h3>
-                            <span class="recipe-cook-time">@recipe.CookTime minutes</span>
-                            <span class="recipe-difficulty">@recipe.Difficulty</span>
-                            <p>@recipe.RecipeType</p>
+                            <div class="time-box">
+                                <span class="oi oi-clock" style="font-size: 20px;" aria-hidden="true"></span>
+                                <span class="recipe-cook-time">@recipe.CookTime minutes</span>
+                            </div>
+                            <div class="difficulty-box" >
+                                <span class="oi oi-star" style="font-size: 20px;" aria-hidden="true"></span>
+                                <span class="recipe-difficulty">@recipe.Difficulty</span>
+                            </div>
+                            <div class="type-box">
+                                <span class="oi oi-steam" aria-hidden="true"></span>
+                                <span>@recipe.RecipeType</span>
+                            </div>
                             <button @onclick="() => ToggleRecipeDetails(recipe)" class="recipe-expand-btn">
                                 <p>see details</p>
                             </button>

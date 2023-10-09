@@ -83,7 +83,7 @@
                     <input id="newIngr" type="text" @bind="ingrName" />
 
                     <label for="newIngrAmount">Amount</label>
-                    <input id="newIngrAmount" type="number" @bind="ingrAmount" />
+                    <input id="newIngrAmount" type="number" step="0.01" @bind="ingrAmount" />
 
                     <label for="newIngrUnit">Unit</label>
                     <input id="newIngrUnit" type="text" @bind="ingrUnit" />
@@ -119,7 +119,7 @@
        </div>
        
 
-        <button type="submit">Add to list</button>
+        <button type="submit">@AddOrUpdate</button>
     </form>
 
 </div>
@@ -127,7 +127,7 @@
 @code {
     private string recipeName = "";
     private string recipeDescription = "";
-    private int recipeCooktime = 0;
+    private int recipeCooktime = 1;
     private string difficulty = "Easy";
     private bool isVegan = false;
     private int spicyness = 1;
@@ -135,12 +135,14 @@
     private string recipeType = "Breakfast";
 
     private string ingrName = "";
-    private int ingrAmount = 0;
+    private double ingrAmount = 1;
     private string ingrUnit = "";
     private List<Ingredient> ingredients = new List<Ingredient>();
     private List<string> steps = new List<string>();
 
     private string stepsIN = "";
+
+    private string AddOrUpdate = "Add";
 
     [Parameter]
     public Recipe? RecipeToUpdate { get; set; }
@@ -193,6 +195,7 @@
     {
         @if (RecipeToUpdate != null)
         {
+
             recipeName = RecipeToUpdate.RecipeName;
             recipeDescription = RecipeToUpdate.Description;
             recipeCooktime = RecipeToUpdate.CookTime;
@@ -204,14 +207,20 @@
             ingredients = RecipeToUpdate.Ingredients;
             steps = RecipeToUpdate.Steps;
 
-           
+            AddOrUpdate = "Update";
         }
+
+        if (AddOrUpdate == "Update" && RecipeToUpdate == null)
+        {
+            AddOrUpdate = "Add";
+
+        };
+
     }
 
     private void AddNewRecipe()
     {
 
-        //get the difficulty enum with swtich statement 
         //add new recipe to the database
         Recipe newRecipe = new Recipe()
         {
@@ -264,6 +273,7 @@
                 break;
         }
 
+        RecipeToUpdate = null;
         OnAddNewRecipe?.Invoke(newRecipe);
         onToggleAddRecipe.Invoke();
         //i want to use the toggle visibility method here

@@ -234,6 +234,11 @@
             Portions = portions
         };
 
+        if(RecipeToUpdate != null)
+        {
+            newRecipe.Guid = RecipeToUpdate.Guid;
+        }
+
         switch (difficulty)
         {
             case "Easy":

@@ -83,7 +83,7 @@
                     <input id="newIngr" type="text" @bind="ingrName" />
 
                     <label for="newIngrAmount">Amount</label>
-                    <input id="newIngrAmount" type="number" @bind="ingrAmount" />
+                    <input id="newIngrAmount" type="number" step="0.01" @bind="ingrAmount" />
 
                     <label for="newIngrUnit">Unit</label>
                     <input id="newIngrUnit" type="text" @bind="ingrUnit" />
@@ -127,7 +127,7 @@
 @code {
     private string recipeName = "";
     private string recipeDescription = "";
-    private int recipeCooktime = 0;
+    private int recipeCooktime = 1;
     private string difficulty = "Easy";
     private bool isVegan = false;
     private int spicyness = 1;
@@ -135,7 +135,7 @@
     private string recipeType = "Breakfast";
 
     private string ingrName = "";
-    private int ingrAmount = 0;
+    private double ingrAmount = 1;
     private string ingrUnit = "";
     private List<Ingredient> ingredients = new List<Ingredient>();
     private List<string> steps = new List<string>();
@@ -193,6 +193,7 @@
     {
         @if (RecipeToUpdate != null)
         {
+
             recipeName = RecipeToUpdate.RecipeName;
             recipeDescription = RecipeToUpdate.Description;
             recipeCooktime = RecipeToUpdate.CookTime;

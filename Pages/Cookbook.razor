@@ -24,7 +24,7 @@
             <div class="cookbookItems">
                 <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
                 <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
-                <button type="button" class="cookbookBtn newRecipeBtn" @onclick="ToggleAddRecipe">Add new recipe</button>
+                <button type="button" class="cookbookBtn newRecipeBtn" @onclick="AddNewRecipe">Add new recipe</button>
                 @if (!UpdatingCookbook)
                 {
                     <div class="saveToBackend-box">
@@ -73,7 +73,7 @@
             //use linq to replace the recipe in list with same name
             for(int i = 0; i < userCookBook.Recipes.Count; i++)
             {
-                if(userCookBook.Recipes[i].RecipeName == newRecipe.RecipeName){
+                if(userCookBook.Recipes[i].Guid == newRecipe.Guid){
                     userCookBook.Recipes[i] = newRecipe;
                     break;
                 }
@@ -113,6 +113,13 @@
         showAddRecipe = !showAddRecipe;
     }
 
+    public void AddNewRecipe()
+    {
+        RecipeToUpdate = null;
+        ToggleAddRecipe();
+        StateHasChanged();
+    }
+
     public void ChangeRecipeListOnSearch(List<Recipe> UpdatedList)
     {
         FilteredRecipes = UpdatedList;
@@ -121,7 +128,6 @@
 
     public void EditRecipe(Recipe recipe)
     {
-        Console.WriteLine("can i get recipe details here? -> " + recipe.RecipeName);
         // from here, we need to send the recipe to the edit page
         RecipeToUpdate = recipe;
         showAddRecipe = true;

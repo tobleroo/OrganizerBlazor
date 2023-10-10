@@ -22,7 +22,7 @@
         {
             @* add search bar *@
             <div class="cookbookItems">
-                <SearchBarCookBook ListOfRecipes="FilteredRecipes" onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
+                <SearchBarCookBook onChangeRecipeListOnSearch="ChangeRecipeListOnSearch" OriginalList="userCookBook.Recipes"/>
                 <RecipeList Recipes=FilteredRecipes OnRemoveRecipe="RemoveRecipe" OnEditRecipe="EditRecipe"></RecipeList>
                 <button type="button" class="cookbookBtn newRecipeBtn" @onclick="AddNewRecipe">Add new recipe</button>
                 @if (!UpdatingCookbook)

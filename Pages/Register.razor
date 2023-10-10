@@ -24,14 +24,22 @@
     else
     {
         <form @onsubmit="HandleRegister">
-            <label for="username">Name</label>
-            <input id="username" type="text" @bind="Username" />
-            <label for="email">Email</label>
-            <input id="email" type="text" @bind="Email" />
-            <label for="password">Password</label>
-            <input id="password" type="password" @bind="Password" />
-            <label for="regiCode">Registration code</label>
-            <input id="regiCode" type="text" @bind="RegiCode" />
+            <div class ="reg-input-box">
+                <label for="username">Name</label>
+                <input id="username" type="text" @bind="Username" />
+            </div>
+            <div class="reg-input-box">
+                <label for="email">Email</label>
+                <input id="email" type="text" @bind="Email" />
+            </div>
+            <div class="reg-input-box">
+                <label for="password">Password</label>
+                <input id="password" type="password" @bind="Password" />
+            </div>
+            <div class="reg-input-box">
+                <label for="regiCode">Registration code</label>
+                <input id="regiCode" type="text" @bind="RegiCode" />
+            </div>
             <button type="submit">Register</button>
         </form>
     }

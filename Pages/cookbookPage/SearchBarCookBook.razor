@@ -28,46 +28,43 @@
     public List<Recipe>? OriginalList { get; set; }
 
     [Parameter]
-    public List<Recipe>? ListOfRecipes { get; set; }
+    public Action<List<Recipe>>? onChangeRecipeListOnSearch { get; set; }
 
-    [Parameter]
-    public Action<List<Recipe>> onChangeRecipeListOnSearch { get; set; }
-
-    private string SearchTerm { get; set; }
-    private string TypeTerm { get; set; }
+    private string? SearchTerm { get; set; }
+    private string? TypeTerm { get; set; }
     private int MaxTimeCook { get; set; } = 120;
 
     private void Search()
     {
-        List<Recipe> FilteredRecipes = OriginalList;
+        List<Recipe>? FilteredRecipes;
 
         //use linq to filter list of recipes
         if (SearchTerm == "" || SearchTerm == null) FilteredRecipes = OriginalList;
-        else FilteredRecipes = ListOfRecipes.Where(recipe => recipe.RecipeName.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        else FilteredRecipes = OriginalList?.Where(recipe => recipe.RecipeName.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         if (MaxTimeCook != 0)
         {
-            FilteredRecipes = FilteredRecipes.Where(recipe => recipe.CookTime < MaxTimeCook).ToList();
+            FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.CookTime < MaxTimeCook).ToList();
         }
 
         switch (TypeTerm)
         {
             case "breakfast":
-                FilteredRecipes = FilteredRecipes.Where(recipe => recipe.RecipeType == RecipeTypes.Breakfast).ToList();
+                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Breakfast).ToList();
                 break;
             case "lunch":
-                FilteredRecipes = FilteredRecipes.Where(recipe => recipe.RecipeType == RecipeTypes.Lunch).ToList();
+                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Lunch).ToList();
                 break;
             case "dinner":
-                FilteredRecipes = FilteredRecipes.Where(recipe => recipe.RecipeType == RecipeTypes.Dinner).ToList();
+                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Dinner).ToList();
                 break;
             case "dessert":
-                FilteredRecipes = FilteredRecipes.Where(recipe => recipe.RecipeType == RecipeTypes.Dessert).ToList();
+                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Dessert).ToList();
                 break;
             case "all":
                 break;
         }
 
-        onChangeRecipeListOnSearch.Invoke(FilteredRecipes);
+        onChangeRecipeListOnSearch?.Invoke(FilteredRecipes);
     }
 }

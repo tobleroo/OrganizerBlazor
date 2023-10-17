@@ -137,3 +137,29 @@ ul, ol {
 .ingredient-list {
     margin-left: 1.5rem;
 }
+
+.selectRanOrSpecBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 200px; /* adjust this width as needed */
+    margin: 0 auto;
+}
+
+.selectionButton {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+
+    .selectionButton.active {
+        background-color: green; /* or another dark color of your choice */
+    }
+
+    .selectionButton:not(.active) {
+        background-color: lightgray; /* or another light color of your choice */
+    }

@@ -12,25 +12,50 @@
 
     <h2>@errorMessage</h2>
 
-    <div class="howManyRecipesBox">
-        <div class="mealplanner-info-box">
-            <h2>Meal plan generator</h2>
-            <i> Select how many Recipies you want to generate from your own cookbook:</i>
-        </div>
-        <div class="mealplan-add-remove-box">
-            <button @onclick="addRecipeToList">Add</button>
-            <button @onclick="removeRecipeFromList">Remove</button>
-        </div>
+    <div class="selectRanOrSpecBox">
+        <button class="selectionButton @(RandomOrSpecificBox ? "active" : "")" @onclick="() => RandomOrSpecificBox = true">Random</button>
+        <button class="selectionButton @(RandomOrSpecificBox ? "" : "active")" @onclick="() => RandomOrSpecificBox = false">Specific</button>
     </div>
 
-    <form @onsubmit="SubmitMealPlanner">
-        <div class="AllRecipeInBox">
-            @for(int i =0; i < recipeRequests.Count; i++){
-                <RecipeRequestBoxComp RecipeRequest="recipeRequests[i]" />
-            }
+    @if (RandomOrSpecificBox)
+    {
+        <div class="randomMealInputBox">
+            <div class="howManyRecipesBox">
+                <div class="mealplanner-info-box">
+                    <h2>Meal plan generator</h2>
+                    <i> Select how many Recipies you want to generate from your own cookbook:</i>
+                </div>
+                <div class="mealplan-add-remove-box">
+                    <button @onclick="addRecipeToList">Add</button>
+                    <button @onclick="removeRecipeFromList">Remove</button>
+                </div>
+            </div>
+
+            <form @onsubmit="SubmitMealPlanner">
+                <div class="AllRecipeInBox">
+                    @for (int i = 0; i < recipeRequests.Count; i++)
+                    {
+                        <RecipeRequestBoxComp RecipeRequest="recipeRequests[i]" />
+                    }
+                </div>
+                <button type="submit">Generate</button>
+            </form>
         </div>
-        <button type="submit">Generate</button>
-    </form>
+    }
+    else
+    {
+        <div class="specificMealInputBox">
+            <form @onsubmit="SubmitSpecificPlan">
+
+            </form>
+        </div>
+    }
+
+
+    
+    
+
+    
 
 
     <div class="mealplan-box">
@@ -150,6 +175,7 @@
 
     private bool MealGeneratorLoading = false;
     private bool ShoppingListLoading = false;
+    private bool RandomOrSpecificBox = true;
 
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
@@ -264,6 +290,16 @@
         {
             Console.WriteLine(e.Message);
         }
+    }
+
+    private async void SubmitSpecificPlan()
+    {
+        
+    }
+
+    private void ToggleSelection()
+    {
+        RandomOrSpecificBox = !RandomOrSpecificBox;
     }
 
 }

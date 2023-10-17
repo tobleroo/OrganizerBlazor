@@ -52,11 +52,6 @@ button {
     font-weight: bold;
 }
 
-.mealplan-box {
-    background-color: red;
-
-}
-
 .all-gen-recipies {
     display: flex;
     flex-flow: row wrap;

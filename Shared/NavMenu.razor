@@ -1,6 +1,8 @@
-﻿@inject NavigationManager NavigationManager
+﻿
+@inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorageService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient http
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -67,6 +69,7 @@
 
     async Task logout(){
         await localStorageService.RemoveItemAsync("JwtToken");
+        http.DefaultRequestHeaders.Authorization = null;
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
         NavigationManager.NavigateTo("login");
     }

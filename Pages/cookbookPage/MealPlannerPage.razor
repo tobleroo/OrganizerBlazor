@@ -1,6 +1,8 @@
 ﻿@page "/mealGen"
+@using System.Net.Http.Headers;
 
 @inject HttpClient Http
+@inject ILocalStorageService LocalStorageService
 @attribute [Authorize]
 
 
@@ -163,9 +165,13 @@
 
         try
         {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
             var response = await Http.PostAsJsonAsync("meal/easy", recipeRequests);
+
             if (!response.IsSuccessStatusCode)
             {
+                MealGeneratorLoading = false;
                 //show error message
                 errorMessage = "check console log for error message!";
                 Console.WriteLine(response);
@@ -188,6 +194,7 @@
 
         }catch(Exception e)
         {
+            Console.WriteLine("im in catch!");
             Console.WriteLine(e.Message);
         }
 

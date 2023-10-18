@@ -1,5 +1,6 @@
 ﻿@page "/mealGen"
 @using System.Net.Http.Headers;
+@using OrganizerBlazor.Models.CookBookDTO;
 
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
@@ -172,6 +173,7 @@
     private string errorMessage = "";
     private List<Recipe>? MealPlannedRecipes;
     private List<ShoppingListRecipeDetails>? SavedShoppingList;
+    Dictionary<string, SpecificRecipeGen>? cookbookRecipeNames;
 
     private bool MealGeneratorLoading = false;
     private bool ShoppingListLoading = false;
@@ -294,7 +296,24 @@
 
     private async void SubmitSpecificPlan()
     {
-        
+
+    }
+
+    private async void getCookbookRecipeNamesFromBackend()
+    {
+        try
+        {
+
+            cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, SpecificRecipeGen>>("specific-Meal-Gen-Recipe-Details");
+
+            // Now, you can use the 'result' dictionary as needed
+            Console.WriteLine($" amount of types (should be 5?) -> {cookbookRecipeNames?.Count}");
+        }
+        catch (HttpRequestException ex)
+        {
+            // Handle the exception (e.g., show an error message to the user or log it)
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
     }
 
     private void ToggleSelection()

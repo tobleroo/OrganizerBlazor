@@ -2,7 +2,7 @@
 {
     public class SpecificRecipeGen
     {
-        public string? Id { get; set; }
+        public string? id { get; set; }
         public string? RecipeName { get; set; }
     }
 }

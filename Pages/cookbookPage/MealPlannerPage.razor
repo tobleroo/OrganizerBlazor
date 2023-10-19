@@ -45,6 +45,7 @@
     }
     else
     {
+        <button @onclick="getCookbookRecipeNamesFromBackend">click demo</button>
         <div class="specificMealInputBox">
             <form @onsubmit="SubmitSpecificPlan">
 
@@ -304,7 +305,7 @@
         try
         {
 
-            cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, SpecificRecipeGen>>("specific-Meal-Gen-Recipe-Details");
+            cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, SpecificRecipeGen>>("meal/specific-Meal-Gen-Recipe-Details");
 
             // Now, you can use the 'result' dictionary as needed
             Console.WriteLine($" amount of types (should be 5?) -> {cookbookRecipeNames?.Count}");

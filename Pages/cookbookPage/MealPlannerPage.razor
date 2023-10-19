@@ -15,7 +15,10 @@
 
     <div class="selectRanOrSpecBox">
         <button class="selectionButton @(RandomOrSpecificBox ? "active" : "")" @onclick="() => RandomOrSpecificBox = true">Random</button>
-        <button class="selectionButton @(RandomOrSpecificBox ? "" : "active")" @onclick="() => RandomOrSpecificBox = false">Specific</button>
+        <button class="selectionButton @(RandomOrSpecificBox ? "" : "active")"
+                @onclick="() => { RandomOrSpecificBox = false; getCookbookRecipeNamesFromBackend(); }">
+            Specific
+        </button>
     </div>
 
     @if (RandomOrSpecificBox)
@@ -45,20 +48,35 @@
     }
     else
     {
-        <button @onclick="getCookbookRecipeNamesFromBackend">click demo</button>
+        @* <button @onclick="getCookbookRecipeNamesFromBackend">click demo</button> *@
         <div class="specificMealInputBox">
+            <div class="add-remove-specific-mealplan-box">
+                <button @onclick="addSpecificRecipeReq">add</button>
+                <button @onclick="removeSpecificRecipeReq">remove</button>
+            </div>
             <form @onsubmit="SubmitSpecificPlan">
 
+                <div class="specificRequestMEalGenBox">
+                    @if(cookbookRecipeNames != null)
+                    {
+                        foreach(var recipeReq in specificRecipeRequests)
+                        {
+                            <RecipeSpecificRequestGenerator MealTypes="cookbookRecipeNames" RecipeRequest="recipeReq" />
+                        }
+                        
+                    }else{
+                        <div class="loading-box">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h3>Generating...</h3>
+                        </div>
+                    }
+                </div>
+                <button type="submit">Generate</button>
             </form>
         </div>
     }
-
-
-    
-    
-
-    
-
 
     <div class="mealplan-box">
         <div class="all-gen-recipies">
@@ -174,12 +192,16 @@
     private string errorMessage = "";
     private List<Recipe>? MealPlannedRecipes;
     private List<ShoppingListRecipeDetails>? SavedShoppingList;
-    Dictionary<string, SpecificRecipeGen>? cookbookRecipeNames;
+    Dictionary<string, List<SpecificRecipeGen>>? cookbookRecipeNames;
 
     private bool MealGeneratorLoading = false;
     private bool ShoppingListLoading = false;
     private bool RandomOrSpecificBox = true;
 
+    private List<SpecificRecipeRequest> specificRecipeRequests = new List<SpecificRecipeRequest>()
+    {
+        new SpecificRecipeRequest()
+    };
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
     {
@@ -297,23 +319,72 @@
 
     private async void SubmitSpecificPlan()
     {
+        // run create specific
+        if (SavedShoppingList != null) SavedShoppingList = null;
+        MealGeneratorLoading = true;
 
+        try
+        {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+
+            var response = await Http.PostAsJsonAsync("meal/specific", specificRecipeRequests);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MealGeneratorLoading = false;
+                //show error message
+                errorMessage = "check console log for error message!";
+                Console.WriteLine(response);
+                return;
+            }
+
+            var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
+
+            if (recipes.Count == 0)
+            {
+                errorMessage = "no recipies fit requirements!";
+                return;
+            }
+
+            MealPlannedRecipes = recipes;
+            errorMessage = "";
+            MealGeneratorLoading = false;
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("im in catch!");
+            Console.WriteLine(e.Message);
+        }
     }
+
+
 
     private async void getCookbookRecipeNamesFromBackend()
     {
         try
         {
 
-            cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, SpecificRecipeGen>>("meal/specific-Meal-Gen-Recipe-Details");
-
-            // Now, you can use the 'result' dictionary as needed
-            Console.WriteLine($" amount of types (should be 5?) -> {cookbookRecipeNames?.Count}");
+            cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, List<SpecificRecipeGen>>>("meal/specific-Meal-Gen-Recipe-Details");
+            StateHasChanged();
         }
         catch (HttpRequestException ex)
         {
-            // Handle the exception (e.g., show an error message to the user or log it)
             Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    private void addSpecificRecipeReq()
+    {
+        specificRecipeRequests.Add(new SpecificRecipeRequest());
+    }
+
+    private void removeSpecificRecipeReq()
+    {   
+        if (specificRecipeRequests.Count > 0)
+        {
+            specificRecipeRequests.RemoveAt(specificRecipeRequests.Count - 1);
         }
     }
 

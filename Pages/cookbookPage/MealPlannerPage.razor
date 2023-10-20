@@ -197,6 +197,7 @@
     private bool MealGeneratorLoading = false;
     private bool ShoppingListLoading = false;
     private bool RandomOrSpecificBox = true;
+    private bool randomMealsWanted = true;
 
     private List<SpecificRecipeRequest> specificRecipeRequests = new List<SpecificRecipeRequest>()
     {
@@ -213,6 +214,7 @@
         if (SavedShoppingList != null) SavedShoppingList = null;
         if (MealPlannedRecipes != null) MealPlannedRecipes = null;
         MealGeneratorLoading = true;
+        randomMealsWanted = true;
 
         try
         {
@@ -269,18 +271,35 @@
         List<ShoppingListDetailsDTO> shoppingListRecipesWanted = new List<ShoppingListDetailsDTO>();
         if (MealPlannedRecipes != null || MealPlannedRecipes.Count != 0)
         {
-
-            int portionsAmounts = 0;
-            foreach(var recipe in MealPlannedRecipes)
+            if (randomMealsWanted)
             {
-                shoppingListRecipesWanted.Add(new ShoppingListDetailsDTO()
+                int portionsAmounts = 0;
+                foreach(var recipe in MealPlannedRecipes)
                 {
-                        RecipeName = recipe.RecipeName,
-                        PortionsAmount = recipeRequests[portionsAmounts].portions
-                });
+                    shoppingListRecipesWanted.Add(new ShoppingListDetailsDTO()
+                    {
+                            RecipeName = recipe.RecipeName,
+                            PortionsAmount = recipeRequests[portionsAmounts].portions
+                    });
 
-                portionsAmounts++;
+                    portionsAmounts++;
+                }
             }
+            else
+            {
+                int portionsAmounts = 0;
+                foreach(var recipe in specificRecipeRequests)
+                {
+                    shoppingListRecipesWanted.Add(new ShoppingListDetailsDTO()
+                        {
+                            RecipeName = recipe.Name,
+                            PortionsAmount = specificRecipeRequests[portionsAmounts].Portions
+                        });
+
+                    portionsAmounts++;
+                }
+            }
+
         }
 
         return shoppingListRecipesWanted;
@@ -323,44 +342,43 @@
         if (SavedShoppingList != null) SavedShoppingList = null;
         if (MealPlannedRecipes != null) MealPlannedRecipes = null;
         MealGeneratorLoading = true;
+        randomMealsWanted = false;
 
-        Console.WriteLine(specificRecipeRequests[0].Name);
+        try
+        {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
-        // try
-        // {
-        //     string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
-        //     Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+            var response = await Http.PostAsJsonAsync("meal/specific", specificRecipeRequests);
 
-        //     var response = await Http.PostAsJsonAsync("meal/specific", specificRecipeRequests);
+            if (!response.IsSuccessStatusCode)
+            {
+                MealGeneratorLoading = false;
+                //show error message
+                errorMessage = "check console log for error message!";
+                Console.WriteLine(response);
+                return;
+            }
 
-        //     if (!response.IsSuccessStatusCode)
-        //     {
-        //         MealGeneratorLoading = false;
-        //         //show error message
-        //         errorMessage = "check console log for error message!";
-        //         Console.WriteLine(response);
-        //         return;
-        //     }
+            var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
 
-        //     var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
+            if (recipes.Count == 0)
+            {
+                errorMessage = "no recipies fit requirements!";
+                StateHasChanged();
+                return;
+            }
 
-        //     if (recipes.Count == 0)
-        //     {
-        //         errorMessage = "no recipies fit requirements!";
-        //         StateHasChanged();
-        //         return;
-        //     }
-
-        //     MealPlannedRecipes = recipes;
-        //     errorMessage = "";
-        //     MealGeneratorLoading = false;
-        //     StateHasChanged();
-        // }
-        // catch (Exception e)
-        // {
-        //     Console.WriteLine("im in catch!");
-        //     Console.WriteLine(e.Message);
-        // }
+            MealPlannedRecipes = recipes;
+            errorMessage = "";
+            MealGeneratorLoading = false;
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("im in catch!");
+            Console.WriteLine(e.Message);
+        }
     }
 
 

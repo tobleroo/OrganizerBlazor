@@ -96,8 +96,8 @@
     public async void UpdateBackendCookBook()
     {
         UpdatingCookbook = true;
-        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
-        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        // string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        // Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await Http.PostAsJsonAsync<UserCookBook>("cookbook/update-cookbook", userCookBook);
 

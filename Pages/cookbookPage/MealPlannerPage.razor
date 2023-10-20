@@ -1,6 +1,9 @@
 ﻿@page "/mealGen"
+@using System.Net.Http.Headers;
+@using OrganizerBlazor.Models.CookBookDTO;
 
 @inject HttpClient Http
+@inject ILocalStorageService LocalStorageService
 @attribute [Authorize]
 
 
@@ -10,26 +13,70 @@
 
     <h2>@errorMessage</h2>
 
-    <div class="howManyRecipesBox">
-        <div class="mealplanner-info-box">
-            <h2>Meal plan generator</h2>
-            <i> Select how many Recipies you want to generate from your own cookbook:</i>
-        </div>
-        <div class="mealplan-add-remove-box">
-            <button @onclick="addRecipeToList">Add</button>
-            <button @onclick="removeRecipeFromList">Remove</button>
-        </div>
+    <div class="selectRanOrSpecBox">
+        <button class="selectionButton @(RandomOrSpecificBox ? "active" : "")" @onclick="() => RandomOrSpecificBox = true">Random</button>
+        <button class="selectionButton @(RandomOrSpecificBox ? "" : "active")"
+                @onclick="() => { RandomOrSpecificBox = false; getCookbookRecipeNamesFromBackend(); }">
+            Specific
+        </button>
     </div>
 
-    <form @onsubmit="SubmitMealPlanner">
-        <div class="AllRecipeInBox">
-            @for(int i =0; i < recipeRequests.Count; i++){
-                <RecipeRequestBoxComp RecipeRequest="recipeRequests[i]" />
-            }
-        </div>
-        <button type="submit">Generate</button>
-    </form>
+    @if (RandomOrSpecificBox)
+    {
+        <div class="randomMealInputBox">
+            <div class="howManyRecipesBox">
+                <div class="mealplanner-info-box">
+                    <h2>Meal plan generator</h2>
+                    <i> Select how many Recipies you want to generate from your own cookbook:</i>
+                </div>
+                <div class="mealplan-add-remove-box">
+                    <button @onclick="addRecipeToList">Add</button>
+                    <button @onclick="removeRecipeFromList">Remove</button>
+                </div>
+            </div>
 
+            <form @onsubmit="SubmitMealPlanner">
+                <div class="AllRecipeInBox">
+                    @for (int i = 0; i < recipeRequests.Count; i++)
+                    {
+                        <RecipeRequestBoxComp RecipeRequest="recipeRequests[i]" />
+                    }
+                </div>
+                <button type="submit">Generate</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        @* <button @onclick="getCookbookRecipeNamesFromBackend">click demo</button> *@
+        <div class="specificMealInputBox">
+            <div class="add-remove-specific-mealplan-box">
+                <button @onclick="addSpecificRecipeReq">add</button>
+                <button @onclick="removeSpecificRecipeReq">remove</button>
+            </div>
+            <form @onsubmit="SubmitSpecificPlan">
+
+                <div class="specificRequestMEalGenBox">
+                    @if(cookbookRecipeNames != null)
+                    {
+                        foreach(var recipeReq in specificRecipeRequests)
+                        {
+                            <RecipeSpecificRequestGenerator MealTypes="cookbookRecipeNames" RecipeRequest="recipeReq" />
+                        }
+                        
+                    }else{
+                        <div class="loading-box">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h3>Generating...</h3>
+                        </div>
+                    }
+                </div>
+                <button type="submit">Generate</button>
+            </form>
+        </div>
+    }
 
     <div class="mealplan-box">
         <div class="all-gen-recipies">
@@ -145,10 +192,16 @@
     private string errorMessage = "";
     private List<Recipe>? MealPlannedRecipes;
     private List<ShoppingListRecipeDetails>? SavedShoppingList;
+    Dictionary<string, List<SpecificRecipeGen>>? cookbookRecipeNames;
 
     private bool MealGeneratorLoading = false;
     private bool ShoppingListLoading = false;
+    private bool RandomOrSpecificBox = true;
 
+    private List<SpecificRecipeRequest> specificRecipeRequests = new List<SpecificRecipeRequest>()
+    {
+        new SpecificRecipeRequest()
+    };
 
     private List<RecipeRequestEasyDTO> recipeRequests = new List<RecipeRequestEasyDTO>()
     {
@@ -163,9 +216,13 @@
 
         try
         {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
             var response = await Http.PostAsJsonAsync("meal/easy", recipeRequests);
+
             if (!response.IsSuccessStatusCode)
             {
+                MealGeneratorLoading = false;
                 //show error message
                 errorMessage = "check console log for error message!";
                 Console.WriteLine(response);
@@ -188,6 +245,7 @@
 
         }catch(Exception e)
         {
+            Console.WriteLine("im in catch!");
             Console.WriteLine(e.Message);
         }
 
@@ -257,6 +315,87 @@
         {
             Console.WriteLine(e.Message);
         }
+    }
+
+    private async void SubmitSpecificPlan()
+    {
+        // run create specific
+        if (SavedShoppingList != null) SavedShoppingList = null;
+        if (MealPlannedRecipes != null) MealPlannedRecipes = null;
+        MealGeneratorLoading = true;
+
+        Console.WriteLine(specificRecipeRequests[0].Name);
+
+        // try
+        // {
+        //     string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        //     Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+
+        //     var response = await Http.PostAsJsonAsync("meal/specific", specificRecipeRequests);
+
+        //     if (!response.IsSuccessStatusCode)
+        //     {
+        //         MealGeneratorLoading = false;
+        //         //show error message
+        //         errorMessage = "check console log for error message!";
+        //         Console.WriteLine(response);
+        //         return;
+        //     }
+
+        //     var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
+
+        //     if (recipes.Count == 0)
+        //     {
+        //         errorMessage = "no recipies fit requirements!";
+        //         StateHasChanged();
+        //         return;
+        //     }
+
+        //     MealPlannedRecipes = recipes;
+        //     errorMessage = "";
+        //     MealGeneratorLoading = false;
+        //     StateHasChanged();
+        // }
+        // catch (Exception e)
+        // {
+        //     Console.WriteLine("im in catch!");
+        //     Console.WriteLine(e.Message);
+        // }
+    }
+
+
+
+    private async void getCookbookRecipeNamesFromBackend()
+    {
+        try
+        {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+            cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, List<SpecificRecipeGen>>>("meal/specific-Meal-Gen-Recipe-Details");
+            StateHasChanged();
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    private void addSpecificRecipeReq()
+    {
+        specificRecipeRequests.Add(new SpecificRecipeRequest());
+    }
+
+    private void removeSpecificRecipeReq()
+    {   
+        if (specificRecipeRequests.Count > 0)
+        {
+            specificRecipeRequests.RemoveAt(specificRecipeRequests.Count - 1);
+        }
+    }
+
+    private void ToggleSelection()
+    {
+        RandomOrSpecificBox = !RandomOrSpecificBox;
     }
 
 }

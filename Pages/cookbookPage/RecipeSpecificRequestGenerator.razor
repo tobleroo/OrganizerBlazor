@@ -4,7 +4,7 @@
 <div class="one-recipe-spec-box">
     <div class="portionSelectorDiv">
         <label for="portions">Portions:</label>
-        <input type="number" id="portions" name="portions" min="1" max="100" @bind="selectedPortions" @bind:event="oninput">
+        <input type="number" id="portions" name="portions" min="1" max="100" @bind="RecipeRequest.Portions" @bind:event="oninput">
     </div>
     <div class="mealTypeSelectorDiv">
         <select @onchange="HandleMealTypeChange">

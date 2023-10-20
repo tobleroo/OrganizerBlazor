@@ -321,42 +321,46 @@
     {
         // run create specific
         if (SavedShoppingList != null) SavedShoppingList = null;
+        if (MealPlannedRecipes != null) MealPlannedRecipes = null;
         MealGeneratorLoading = true;
 
-        try
-        {
-            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+        Console.WriteLine(specificRecipeRequests[0].Name);
 
-            var response = await Http.PostAsJsonAsync("meal/specific", specificRecipeRequests);
+        // try
+        // {
+        //     string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        //     Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                MealGeneratorLoading = false;
-                //show error message
-                errorMessage = "check console log for error message!";
-                Console.WriteLine(response);
-                return;
-            }
+        //     var response = await Http.PostAsJsonAsync("meal/specific", specificRecipeRequests);
 
-            var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
+        //     if (!response.IsSuccessStatusCode)
+        //     {
+        //         MealGeneratorLoading = false;
+        //         //show error message
+        //         errorMessage = "check console log for error message!";
+        //         Console.WriteLine(response);
+        //         return;
+        //     }
 
-            if (recipes.Count == 0)
-            {
-                errorMessage = "no recipies fit requirements!";
-                return;
-            }
+        //     var recipes = await response.Content.ReadFromJsonAsync<List<Recipe>>();
 
-            MealPlannedRecipes = recipes;
-            errorMessage = "";
-            MealGeneratorLoading = false;
-            StateHasChanged();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("im in catch!");
-            Console.WriteLine(e.Message);
-        }
+        //     if (recipes.Count == 0)
+        //     {
+        //         errorMessage = "no recipies fit requirements!";
+        //         StateHasChanged();
+        //         return;
+        //     }
+
+        //     MealPlannedRecipes = recipes;
+        //     errorMessage = "";
+        //     MealGeneratorLoading = false;
+        //     StateHasChanged();
+        // }
+        // catch (Exception e)
+        // {
+        //     Console.WriteLine("im in catch!");
+        //     Console.WriteLine(e.Message);
+        // }
     }
 
 
@@ -365,7 +369,8 @@
     {
         try
         {
-
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
             cookbookRecipeNames = await Http.GetFromJsonAsync<Dictionary<string, List<SpecificRecipeGen>>>("meal/specific-Meal-Gen-Recipe-Details");
             StateHasChanged();
         }

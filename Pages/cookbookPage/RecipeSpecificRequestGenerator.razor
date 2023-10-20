@@ -1,13 +1,13 @@
 ﻿@using OrganizerBlazor.Models.CookBookDTO;
 
 
-<div>
+<div class="one-recipe-spec-box">
     <div class="portionSelectorDiv">
         <label for="portions">Portions:</label>
         <input type="number" id="portions" name="portions" min="1" max="100" @bind="selectedPortions" @bind:event="oninput">
     </div>
     <div class="mealTypeSelectorDiv">
-        <select @bind="selectedMealType" @bind:event="onchange">
+        <select @onchange="HandleMealTypeChange">
             @foreach (var mealType in MealTypes.Keys)
             {
                 <option value="@mealType">@mealType</option>
@@ -16,8 +16,8 @@
     </div>
 
     <div class="recipeSelectorDiv">
-        <select @bind="RecipeRequest.Name" @bind:event="onchange" ValueChanged="OnRecipeChanged" required>
-            <option value="" selected>Select Dish</option>
+        <select @bind="RecipeRequest.Name" required>
+            <option value="" >Select Dish</option>
             @if (MealTypes.TryGetValue(selectedMealType, out var recipes))
             {
                 foreach (var recipe in recipes)
@@ -34,15 +34,17 @@
     public Dictionary<string, List<SpecificRecipeGen>> MealTypes { get; set; } = new();
 
     [Parameter]
-    public EventCallback<string> OnMealTypeChanged { get; set; }
-
-    [Parameter]
     public SpecificRecipeRequest RecipeRequest { get; set; }
 
-    private string selectedMealType;
-    private string selectedRecipe;
     private int selectedPortions = 1;
+    private string selectedMealType;
 
+    private void HandleMealTypeChange(ChangeEventArgs e)
+    {
+        selectedMealType = e.Value.ToString();
+        // Do your additional logic here
+        RecipeRequest.Name = "";
+    }
 
     protected override void OnInitialized()
     {
@@ -51,12 +53,4 @@
             selectedMealType = MealTypes.Keys.First();
         }
     }
-
-    private void OnRecipeChanged(string newRecipe)
-    {
-        selectedRecipe = newRecipe;
-        RecipeRequest.Name = newRecipe;
-    }
-
-
 }

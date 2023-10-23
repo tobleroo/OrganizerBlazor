@@ -4,6 +4,7 @@
 
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 
 
@@ -170,6 +171,7 @@
                     </ul>
                 </div>
             }
+            <button @onclick="SaveShoppingListBackend">save to shoppinglist</button>
         }
 
         @if (ShoppingListLoading)
@@ -181,6 +183,8 @@
                 <h3>Generating...</h3>
             </div>
         }
+
+        
 
     </div>
 
@@ -414,6 +418,47 @@
     private void ToggleSelection()
     {
         RandomOrSpecificBox = !RandomOrSpecificBox;
+    }
+
+    private async void SaveShoppingListBackend()
+    {
+
+        ShoppingList newList = new ShoppingList()
+            {
+                ListName = "Shoppinglist"
+            };
+
+        //loop all ingredients and add to the list. 
+        foreach(var recipe in SavedShoppingList)
+        {
+            foreach(var ingredient in recipe.Ingredients)
+            {
+                newList.Ingredients.Add(ingredient);
+            }
+        }
+
+        try
+        {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+
+            var response = await Http.PostAsJsonAsync("cookbook/update-shoppinglist", newList);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MealGeneratorLoading = false;
+                //show error message
+                errorMessage = "check console log for error message!";
+                Console.WriteLine(response);
+                return;
+            }
+            else NavigationManager.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("im in catch!");
+            Console.WriteLine(e.Message);
+        }
     }
 
 }

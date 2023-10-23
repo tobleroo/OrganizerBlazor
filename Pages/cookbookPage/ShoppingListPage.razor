@@ -1,0 +1,53 @@
+﻿@page "/shoppinglistpage";
+
+@inject HttpClient Http
+
+<div class="shoppinglist-page-box">
+    <button @onclick="getShoppingListFromBackend" class="btn btn-primary mb-3">Load Shopping List</button>
+
+    @if (shoppingList != null)
+    {
+        <div class="list-group">
+            @foreach (var ingredient in shoppingList.Ingredients)
+            {
+                var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
+                <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="list-group-item @((isStriked) ? "striked" : "")">
+                    <div>@ingredient.Name - @ingredient.Quantity @ingredient.Unit</div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .striked {
+        text-decoration: line-through;
+        background-color: #FFCCCC; /* light red */
+    }
+</style>
+
+@code {
+    private ShoppingList? shoppingList;
+    private Dictionary<string, bool> strikedIngredients = new Dictionary<string, bool>();
+
+    private async void getShoppingListFromBackend()
+    {
+        var response = await Http.GetFromJsonAsync<ShoppingList>("cookbook/get-shoppinglist");
+        shoppingList = response;
+        Console.WriteLine(shoppingList.Ingredients.Count);
+        StateHasChanged();
+
+    }
+
+    private void ToggleStriked(string ingredientGuid)
+    {
+        if (strikedIngredients.ContainsKey(ingredientGuid))
+        {
+            strikedIngredients[ingredientGuid] = !strikedIngredients[ingredientGuid];
+        }
+        else
+        {
+            strikedIngredients[ingredientGuid] = true;
+        }
+    }
+}

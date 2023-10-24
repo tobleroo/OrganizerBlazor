@@ -7,5 +7,6 @@ namespace OrganizerBlazor.Models{
         public List<Recipe> Recipes { get; set; } = new List<Recipe>();
 
         public List<ShoppingList> ShoppingList { get; set; } = new List<ShoppingList>();
+        public List<string> PreviouslyAddedAdditonalItems { get; set; } = new();
     }
 }

@@ -1,6 +1,10 @@
 ﻿@page "/shoppinglistpage";
+@using OrganizerBlazor.Models.CookBookDTO;
+@using System.Net.Http.Headers;
 
 @inject HttpClient Http
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
 
 <div class="shoppinglist-page-box">
     <button @onclick="getShoppingListFromBackend" class="btn btn-primary mb-3">Load Shopping List</button>
@@ -12,11 +16,54 @@
             {
                 var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
                 <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="list-group-item @((isStriked) ? "striked" : "")">
-                    <div>@ingredient.Name - @ingredient.Quantity @ingredient.Unit</div>
+                    <div>
+                        @ingredient.Name - @ingredient.Quantity @ingredient.Unit
+                        <span @onclick="() => RemoveIngredient(ingredient.Guid.ToString())" class="remove-icon">🗑️</span>
+                    </div>
                 </div>
             }
         </div>
     }
+
+    @if (additionalItems != null && additionalItems.Count > 0)
+    {
+        <div class="list-group">
+            @foreach (var item in additionalItems)
+            {
+                var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
+                <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="list-group-item @((isStriked) ? "striked" : "")">
+                    <div>
+                        @item
+                        <span @onclick="() => RemoveAdditionalItem(item)" class="remove-icon">🗑️</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="add-additional-items-box">
+        <label>item name:</label>
+        <input type="text" @bind="currentItemName"/>
+        <button @onclick="AddItemToList">add</button>
+
+    </div>
+
+    @if (earlierAddedITems != null && earlierAddedITems.Count > 0)
+    {
+        <h4>Earlier Added Items</h4>
+        <div class="list-group">
+            @foreach (var item in earlierAddedITems)
+            {
+                <div @onclick="() => AddEarlierItemToShoppingList(item)" class="list-group-item">
+                    <div>
+                        @item
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <button @onclick="SaveShoppingListToBackend">save shopping list</button>
 </div>
 
 <style>
@@ -29,12 +76,17 @@
 @code {
     private ShoppingList? shoppingList;
     private Dictionary<string, bool> strikedIngredients = new Dictionary<string, bool>();
+    private Dictionary<string, bool> strikedAdditionalItems = new Dictionary<string, bool>();
+    private List<string>? additionalItems = new();
+    private List<string>? earlierAddedITems = new();
+    private string currentItemName;
 
     private async void getShoppingListFromBackend()
     {
-        var response = await Http.GetFromJsonAsync<ShoppingList>("cookbook/get-shoppinglist");
-        shoppingList = response;
-        Console.WriteLine(shoppingList.Ingredients.Count);
+        var response = await Http.GetFromJsonAsync<ShoppingListALLItems>("cookbook/get-shoppinglist");
+        shoppingList = response.ShoppingList;
+        additionalItems = response.ShoppingList.AdditionalItems;
+        earlierAddedITems = response.EarlierAddedAdditionalItems;
         StateHasChanged();
 
     }
@@ -49,5 +101,91 @@
         {
             strikedIngredients[ingredientGuid] = true;
         }
+    }
+
+    private void AddItemToList()
+    {
+        additionalItems.Add(currentItemName);
+        currentItemName = "";
+    }
+
+    private void ToggleStrikedAdditionalItem(string item)
+    {
+        if (strikedAdditionalItems.ContainsKey(item))
+        {
+            strikedAdditionalItems[item] = !strikedAdditionalItems[item];
+        }
+        else
+        {
+            strikedAdditionalItems[item] = true;
+        }
+    }
+
+    private void RemoveIngredient(string ingredientGuid)
+    {
+        var ingredientToRemove = shoppingList.Ingredients.FirstOrDefault(i => i.Guid.ToString() == ingredientGuid);
+        if (ingredientToRemove != null)
+        {
+            shoppingList.Ingredients.Remove(ingredientToRemove);
+        }
+
+        // Optional: Remove from striked list
+        if (strikedIngredients.ContainsKey(ingredientGuid))
+        {
+            strikedIngredients.Remove(ingredientGuid);
+        }
+    }
+
+    private void RemoveAdditionalItem(string item)
+    {
+        additionalItems.Remove(item);
+
+        // Optional: Remove from striked list
+        if (strikedAdditionalItems.ContainsKey(item))
+        {
+            strikedAdditionalItems.Remove(item);
+        }
+    }
+
+    private async void SaveShoppingListToBackend()
+    {
+        
+
+        //make post request
+        try
+        {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
+
+            var response = await Http.PostAsJsonAsync("cookbook/update-shoppinglist", shoppingList);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                //show error message
+                return;
+            }
+            else NavigationManager.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("im in catch!");
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private void AddEarlierItemToShoppingList(string item)
+    {
+        // Add the item to the shoppingList
+        if (shoppingList != null)
+        {
+            if (shoppingList.Ingredients == null)
+            {
+                shoppingList.Ingredients = new List<Ingredient>();
+            }
+
+            additionalItems.Add(item); // Add your default values for Quantity and Unit
+        }
+
+        
     }
 }

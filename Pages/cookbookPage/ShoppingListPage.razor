@@ -177,6 +177,7 @@
     private async void SaveShoppingListToBackend()
     {
         LoadingData = true;
+        StateHasChanged();
 
 
         //make post request
@@ -192,7 +193,11 @@
                 //show error message
                 return;
             }
-            else LoadingData = false; StateHasChanged();
+            else{
+                getShoppingListFromBackend();
+                LoadingData = false;
+                StateHasChanged();
+            }
         }
         catch (Exception e)
         {

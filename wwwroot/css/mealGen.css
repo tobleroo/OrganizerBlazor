@@ -1,227 +1,127 @@
 ﻿
-/* -------------------- */
 
-body {
+.mealplanner-box-one {
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: #2C3144;
+    border-radius: 10px;
+    padding: 20px;
+    color: #E1E5EB;
     font-family: 'Arial', sans-serif;
-    background-color: #f7f9fc;
-    margin: 0;
-    padding: 0;
-}
-
-.mealplanner-box {
-    max-width: 1100px;
-    margin: 2rem auto;
-    background-color: #fff;
-    padding: 1rem;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    font-size: 1.5em;
-    margin-bottom: 1rem;
-}
-
-i {
-    display: block;
-    font-style: italic;
-    margin: 0.5rem 0;
-}
-
-button {
-    padding: 10px 15px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-    button:hover {
-        background-color: #0056b3;
-    }
-
-    button[type="submit"] {
-        display: block;
-        margin-top: 1rem;
-    }
-
-/* Error Message */
-@errorMessage {
-    color: red;
-    font-weight: bold;
-}
-
-.all-gen-recipies {
-    display: flex;
-    flex-flow: row wrap;
-}
-
-/* Meal Plan Generator Styles */
-.howManyRecipesBox {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e7e7e7;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .mealplanner-info-box h2 {
-    font-size: 1.3em;
+    font-size: 24px;
+    margin-bottom: 10px;
 }
 
-.mealplan-add-remove-box button {
-    margin-left: 0.5rem;
-}
-
-/* Recipe Card Styles */
-.recipe-card {
-    padding: 1rem;
-    border: 1px solid #e7e7e7;
+.selectionButton {
+    background-color: #2C3144;
+    color: #E1E5EB;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
     border-radius: 5px;
-    margin-top: 1rem;
+    margin-right: 10px;
 }
 
-.desc-box,
-.ingredients,
-.instructions,
-.recipe-details {
-    margin-top: 1rem;
-}
-
-    .recipe-details p {
-        margin: 0.3rem 0;
+    .selectionButton.active {
+        background-color: rgba(250, 190, 44, 0.6);
     }
 
-ul, ol {
-    margin-left: 1.5rem;
+.randomMealInputBox, .specificMealInputBox {
+    padding: 20px;
+    background-color: #2C3144;
+    border-radius: 10px;
+    margin-top: 20px;
 }
 
-/* Loading Box */
+button[type="submit"] {
+    background-color: rgba(250, 190, 44, 0.6);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.recipe-card-box {
+    background-color: #606058ff;
+    padding: 1rem;
+    color: black;
+    border-radius: 10px;
+    margin: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px); /* Apply blur for frosted glass effect */
+}
+
+.desc-box, .ingredients, .instructions, .recipe-details {
+    margin-top: 20px;
+}
+
+    .desc-box i, .ingredients h2, .instructions h2 {
+        font-size: 18px;
+    }
+
+.oneRecipeInBox, .one-recipe-spec-box {
+    display:flex;
+    flex-flow: column wrap;
+    margin: 1rem;
+    padding : 1rem;
+    background-color: grey;
+    border-radius: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    background-color: #2C3144;
+    border: 1px solid rgba(250, 190, 44, 0.6);
+    color: #E1E5EB;
+    border-radius: 5px;
+}
+
+    input:focus, select:focus {
+        box-shadow: 0 0 0 2px rgba(250, 190, 44, 0.6);
+        outline: none;
+    }
+
 .loading-box {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    background-color: #e7e7e7;
-    border-radius: 5px;
-    margin-top: 1rem;
+    height: 100px;
+    background-color: #2C3144;
+    border-radius: 10px;
 }
 
 .spinner-border {
-    margin-right: 1rem;
+    margin-right: 10px;
 }
 
-/* Shopping List Info */
-.shopping-List-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: #e7e7e7;
-    border-radius: 5px;
-    margin-top: 1rem;
-}
-
-/* Shopping List Box */
-.shoppinglist-box h3 {
-    margin-top: 0;
-}
-
-.recipe {
-    border-top: 1px solid #e7e7e7;
-    padding-top: 1rem;
-}
-
-.ingredient-list {
-    margin-left: 1.5rem;
-}
-
-.selectRanOrSpecBox {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 200px; /* adjust this width as needed */
-    margin: 0 auto;
-}
-
-.selectionButton {
-    flex: 1;
-    padding: 10px 15px;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-
-    .selectionButton.active {
-        background-color: green; /* or another dark color of your choice */
-    }
-
-    .selectionButton:not(.active) {
-        background-color: lightgray; /* or another light color of your choice */
-    }
-
-/* Styles for the selectors and inputs */
-.portionSelectorDiv,
-.mealTypeSelectorDiv,
-.recipeSelectorDiv {
-    margin-bottom: 15px;
-}
-
-.one-recipe-spec-box {
-    padding: 2rem;
-    margin: 1rem;
-    border: solid black 1px;
-    background-color: rgba(0, 0, 0, 0.3); /* Black background with 30% opacity */
-    padding: 15px;
+.shoppinglist-box {
+    background-color: #2C3144;
+    padding: 20px;
     border-radius: 10px;
-    backdrop-filter: blur(5px); /* Apply blur effect */
-    -webkit-backdrop-filter: blur(5px); /* For Safari */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-input[type="number"],
-select {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
+.add-remove-specific-mealplan-box button,
+.shopping-List-info button ,
+.mealplan-add-remove-box button, 
+.shoppinglist-box button{
+    background-color: rgba(250, 190, 44, 0.6);
+    color: #E1E5EB;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+    margin-right: 10px;
 }
 
-    input[type="number"]:focus,
-    select:focus {
-        border-color: #007bff;
-        outline: none;
-    }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-/* Responsive media queries */
-@media screen and (max-width: 768px) {
-    .portionSelectorDiv,
-    .mealTypeSelectorDiv,
-    .recipeSelectorDiv {
-        margin-bottom: 10px;
-    }
-
-    input[type="number"],
-    select {
-        padding: 8px;
-        font-size: 14px;
-    }
-
-    label {
-        font-size: 14px;
-        margin-bottom: 5px;
-    }
-}

@@ -25,7 +25,6 @@ namespace OrganizerBlazor.Auth
 
         private async Task LoginAsync(string Username, string Password)
         {
-            Console.WriteLine("im in login" + Username + Password);
             var loginModel = new
             {
                 username = Username,
@@ -40,7 +39,6 @@ namespace OrganizerBlazor.Auth
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonContent = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine("Response JSON: " + jsonContent);
 
                     // Deserialize the response to get the JWT token
                     //var result = await response.Content.ReadFromJsonAsync<LoginResult>();

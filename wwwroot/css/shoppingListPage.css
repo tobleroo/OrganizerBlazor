@@ -1,100 +1,104 @@
 ﻿
+:root {
+    --dark-bg-color: #1E2531;
+    --medium-bg-color: #2C3445;
+    --light-bg-color: #3A4256;
+    --accent-color: #FFD369;
+    --text-color: #EFEFEF;
+}
 
 .shoppinglist-page-box {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 1200px;
-    background-color: #fff;
+    background-color: var(--dark-bg-color);
+    color: var(--text-color);
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .loading-box {
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
-    height: 200px;
+    align-items: center;
+    background-color: var(--medium-bg-color);
+    padding: 20px;
+    border-radius: 8px;
 }
 
 .spinner-border {
-    margin-bottom: 10px;
+    color: var(--accent-color);
 }
 
-.list-group {
-    border: 1px solid #ddd;
-    border-radius: 5px;
+.list-group, .additional-list-group {
+    margin-top: 15px;
+    background-color: var(--medium-bg-color);
+    border-radius: 8px;
+}
+
+.ingredient-box, .additional-stuff-box {
+    margin: .5rem;
+    background-color: var(--light-bg-color);
+    padding: 15px;
+    border-radius: 8px;
+}
+.ingredient-box h4{
+    text-align: center;
 }
 
 .list-group-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
+    background-color: var(--dark-bg-color);
+    border: none;
+    color: var(--text-color);
     transition: background-color 0.3s;
 }
 
-    .list-group-item:last-child {
-        border-bottom: none;
+    .list-group-item:hover {
+        background-color: var(--medium-bg-color);
     }
 
-    .list-group-item:not(.striked):hover {
-        background-color: #f5f5f5;
+    .list-group-item.striked {
+        text-decoration: line-through;
+        opacity: 0.7;
     }
-
-.striked {
-    text-decoration: line-through;
-    background-color: #FFCCCC !important; /* light red */
-}
 
 .remove-icon {
+    color: #FF5A5A; /* Red accent for the delete icon */
     margin-left: 10px;
     cursor: pointer;
 }
 
-.additional-stuff-box,
-.currently-added-additional-box,
-.additional-history-box {
-    display: flex;
-    flex-flow: row wrap;
-    margin-top: 20px;
-    padding: 20px;
-}
-
 button {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 10px 15px;
+    background-color: var(--accent-color);
     border: none;
+    color: var(--dark-bg-color);
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
     button:hover {
-        background-color: #0056b3;
+        background-color: #ffb11f;
     }
 
 input[type="text"] {
-    padding: 10px;
-    width: 100%;
-    margin-bottom: 10px;
+    background-color: var(--medium-bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--light-bg-color);
     border-radius: 5px;
-    border: 1px solid #ddd;
+    padding: 8px 12px;
 }
 
-@media (max-width: 768px) {
-    .additional-stuff-box {
-        flex-direction: column;
-    }
-}
-
-.ingredient-box, .list-group {
-    max-height: 25rem;
+.addittional-items-box{
     overflow-y: auto;
+    max-height: 250px;
+}
+
+.recipe-name-box {
+    margin: 0 auto;
+    display: flex;
+    flex-flow: row wrap;
+    text-align: center; /* This centers the text within the div */
+    display: flex; /* This turns the div into a flex container */
+    justify-content: center; /* This centers the flex items horizontally in the container */
+    align-items: center; /* This centers the flex items vertically in the container */
 }

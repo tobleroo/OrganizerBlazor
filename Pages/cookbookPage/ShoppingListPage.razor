@@ -1,10 +1,12 @@
 ﻿@page "/shoppinglistpage";
+@using OrganizerBlazor.Auth.Service;
 @using OrganizerBlazor.Models.CookBookDTO;
 @using System.Net.Http.Headers;
 
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
 @inject NavigationManager NavigationManager
+@inject IAuthUtils authUtils
 @attribute [Authorize]
 
 <link rel="stylesheet" href="../css/shoppingListPage.css">
@@ -26,21 +28,29 @@
         <div class="list-group">
             <h3>Shopping list</h3>
             <div class="ingredient-box">
-                @foreach (var ingredient in shoppingList.Ingredients)
+                @foreach (var recipeShoppingData in shoppingList.SingleShopListRecipes)
                 {
-                    var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
-                    <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="list-group-item @((isStriked) ? "striked" : "")">
-                        <div>
-                            @ingredient.Name - @ingredient.Quantity @ingredient.Unit
-                            <span @onclick="() => RemoveIngredient(ingredient.Guid.ToString())" class="remove-icon">🗑️</span>
-                        </div>
+                    <div class="recipe-name-box">
+                        <h4>@recipeShoppingData.RecipeName</h4>
+                        <span @onclick="() => {RemoveWholeRecipeFromShoppingList(recipeShoppingData.RecipeName);}" class="remove-icon">🗑️</span>
                     </div>
+                    @foreach (var ingredient in recipeShoppingData.Ingredients)
+                    {
+                        var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
+                        <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="ingr-item list-group-item @((isStriked) ? "striked" : "")">
+                            <div>
+                                @ingredient.Name - @ingredient.Quantity @ingredient.Unit
+                                <span @onclick:stopPropagation="true" @onclick="() => RemoveIngredient(ingredient.Guid.ToString())" class="remove-icon">🗑️</span>
+                            </div>
+                        </div>
+                    }
                 }
-                @if (additionalItems != null && additionalItems.Count > 0)
+
+                @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
                 {
                     <div class="additional-list-group">
                         <h5>Additional items</h5>
-                        @foreach (var item in additionalItems)
+                        @foreach (var item in shoppingList.AdditionalItems)
                         {
                             var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
                             <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="list-group-item @((isStriked) ? "striked" : "")">
@@ -68,12 +78,13 @@
                 @if (earlierAddedITems != null && earlierAddedITems.Count > 0)
                 {
                     <h4>Earlier Added Items</h4>
-                    <div class="list-group">
+                    <div class="list-group addittional-items-box">
                         @foreach (var item in earlierAddedITems)
                         {
                             <div @onclick="() => AddEarlierItemToShoppingList(item)" class="list-group-item">
                                 <div>
                                     @item
+                                    <span @onclick:stopPropagation="true" @onclick="() => RemoveItemFromAdditionalList(item)" class="remove-icon">🗑️</span>
                                 </div>
                             </div>
                         }
@@ -90,12 +101,11 @@
 
 @code {
     private bool LoadingData = true;
-    private ShoppingList? shoppingList;
     private Dictionary<string, bool> strikedIngredients = new Dictionary<string, bool>();
     private Dictionary<string, bool> strikedAdditionalItems = new Dictionary<string, bool>();
-    private List<string>? additionalItems = new();
     private List<string>? earlierAddedITems = new();
     private string currentItemName;
+    private SingleShopList? shoppingList;
 
     protected override void OnInitialized()
     {
@@ -107,15 +117,43 @@
 
     private async void getShoppingListFromBackend()
     {
-        string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
-        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
-        var response = await Http.GetFromJsonAsync<ShoppingListALLItems>("cookbook/get-shoppinglist");
-        shoppingList = response.ShoppingList;
-        additionalItems = response.ShoppingList.AdditionalItems;
-        earlierAddedITems = response.EarlierAddedAdditionalItems;
-        LoadingData = false;
-        StateHasChanged();
+        try
+        {
+            string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
+            var response = await Http.GetAsync("cookbook/get-shoppinglist");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    // If the status code is 401, clear the credentials and redirect.
+                    await authUtils.RemoveCredentialsAsync();
+                    return;
+                }
+                // Handle other non-success status codes appropriately
+                Console.WriteLine($"Error fetching shopping list: {response.ReasonPhrase}");
+                return;
+            }
+
+            var shoppingListData = await response.Content.ReadFromJsonAsync<ShoppingListPageDTO>();
+            if (shoppingListData != null)
+            {
+                shoppingList = shoppingListData.SingleShopList;
+                earlierAddedITems = shoppingListData.AdditionalItems;
+            }
+        }
+        catch (Exception e)
+        {
+            // Handle any exceptions here
+            Console.WriteLine($"Exception in getShoppingListFromBackend: {e.Message}");
+        }
+        finally
+        {
+            LoadingData = false;
+            StateHasChanged();
+        }
     }
 
     private void ToggleStriked(string ingredientGuid)
@@ -132,7 +170,8 @@
 
     private void AddItemToList()
     {
-        additionalItems.Add(currentItemName);
+        shoppingList.AdditionalItems.Add(currentItemName);
+        earlierAddedITems.Add(currentItemName);
         currentItemName = "";
     }
 
@@ -150,22 +189,35 @@
 
     private void RemoveIngredient(string ingredientGuid)
     {
-        var ingredientToRemove = shoppingList.Ingredients.FirstOrDefault(i => i.Guid.ToString() == ingredientGuid);
-        if (ingredientToRemove != null)
+
+        SingleShopListRecipe recipeToRemove = null;
+        // i can search directly on ingredient id since theres slim to no chance of duplicates
+        foreach (var recipe in shoppingList.SingleShopListRecipes)
         {
-            shoppingList.Ingredients.Remove(ingredientToRemove);
+            var ingredientToRemove = recipe.Ingredients.FirstOrDefault(ingr => ingr.Guid.ToString() == ingredientGuid);
+            if (ingredientToRemove != null)
+            {
+                recipe.Ingredients.Remove(ingredientToRemove);
+                if (recipe.Ingredients.Count == 0)
+                {
+                    recipeToRemove = recipe;
+                }
+                break; // If you only expect one ingredient with this Guid, you can break the loop once found.
+            }
         }
 
-        // Optional: Remove from striked list
-        if (strikedIngredients.ContainsKey(ingredientGuid))
+        if (recipeToRemove != null)
         {
-            strikedIngredients.Remove(ingredientGuid);
+            shoppingList.SingleShopListRecipes.Remove(recipeToRemove);
         }
+
+        // Optionally remove the ingredient from the strikedIngredients as well
+        strikedIngredients.Remove(ingredientGuid);
     }
 
     private void RemoveAdditionalItem(string item)
     {
-        additionalItems.Remove(item);
+        shoppingList.AdditionalItems.Remove(item);
 
         // Optional: Remove from striked list
         if (strikedAdditionalItems.ContainsKey(item))
@@ -178,15 +230,19 @@
     {
         LoadingData = true;
         StateHasChanged();
-
-
         //make post request
         try
         {
             string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
-            var response = await Http.PostAsJsonAsync("cookbook/update-shoppinglist", shoppingList);
+            ShoppingListPageDTO updatedShopList = new ShoppingListPageDTO()
+                {
+                    SingleShopList = shoppingList,
+                    AdditionalItems = earlierAddedITems
+                };
+
+            var response = await Http.PostAsJsonAsync("cookbook/update-shoppinglist", updatedShopList);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -209,16 +265,16 @@
     private void AddEarlierItemToShoppingList(string item)
     {
         // Add the item to the shoppingList
-        if (shoppingList != null)
-        {
-            if (shoppingList.Ingredients == null)
-            {
-                shoppingList.Ingredients = new List<Ingredient>();
-            }
+        shoppingList?.AdditionalItems.Add(item);
+    }
 
-            additionalItems.Add(item); // Add your default values for Quantity and Unit
-        }
+    private void RemoveItemFromAdditionalList(string itemName)
+    {
+        earlierAddedITems?.RemoveAll(item => item == itemName);
+    }
 
-        
+    private void RemoveWholeRecipeFromShoppingList(string recipeName)
+    {
+        shoppingList?.SingleShopListRecipes.RemoveAll(d => d.RecipeName == recipeName);
     }
 }

@@ -1,10 +1,12 @@
 @page "/cookbook"
 @using System.Net.Http.Headers;
 @using System.Net;
+@using OrganizerBlazor.Auth.Service;
 @attribute [Authorize]
 
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
+@inject IAuthUtils AuthUtils
 
 <PageTitle>Cookbook</PageTitle>
 <link rel="stylesheet" href="./css/demo.css">
@@ -145,9 +147,20 @@
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Replace the URL with the actual endpoint URL
-            var response = await Http.GetFromJsonAsync<UserCookBook>("cookbook/get-cookbook");
-            userCookBook = response;
-            FilteredRecipes = userCookBook.Recipes;
+            var response = await Http.GetAsync("cookbook/get-cookbook");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                // Token is not valid, clear local storage and navigate to login
+                await AuthUtils.RemoveCredentialsAsync();
+                return;
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                userCookBook = await response.Content.ReadFromJsonAsync<UserCookBook>();
+                FilteredRecipes = userCookBook.Recipes;
+            }
 
         }
         catch (Exception ex)

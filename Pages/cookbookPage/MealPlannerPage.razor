@@ -1,35 +1,37 @@
 ﻿@page "/mealGen"
 @using System.Net.Http.Headers;
+@using OrganizerBlazor.Auth.Service;
 @using OrganizerBlazor.Models.CookBookDTO;
 
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
 @inject NavigationManager NavigationManager
+@inject IAuthUtils authUtils
 @attribute [Authorize]
-
 
 <link rel="stylesheet" href="../css/mealGen.css">
 
-<div class="mealplanner-box">
+<div class="mealplanner-box-one">
 
     <h2>@errorMessage</h2>
 
+    <div class="mealplanner-info-box">
+        <h2>Meal plan generator</h2>
+        <i> Select how many Recipies you want to generate from your own cookbook:</i>
+    </div>
+
     <div class="selectRanOrSpecBox">
-        <button class="selectionButton @(RandomOrSpecificBox ? "active" : "")" @onclick="() => RandomOrSpecificBox = true">Random</button>
-        <button class="selectionButton @(RandomOrSpecificBox ? "" : "active")"
-                @onclick="() => { RandomOrSpecificBox = false; getCookbookRecipeNamesFromBackend(); }">
+        <button class="selectionButton @(RandomBoxDisplaying ? "active" : "")" @onclick="() => RandomBoxDisplaying = true">Random</button>
+        <button class="selectionButton @(RandomBoxDisplaying ? "" : "active")"
+                @onclick="() => { RandomBoxDisplaying = false; getCookbookRecipeNamesFromBackend(); }">
             Specific
         </button>
     </div>
 
-    @if (RandomOrSpecificBox)
+    @if (RandomBoxDisplaying)
     {
         <div class="randomMealInputBox">
             <div class="howManyRecipesBox">
-                <div class="mealplanner-info-box">
-                    <h2>Meal plan generator</h2>
-                    <i> Select how many Recipies you want to generate from your own cookbook:</i>
-                </div>
                 <div class="mealplan-add-remove-box">
                     <button @onclick="addRecipeToList">Add</button>
                     <button @onclick="removeRecipeFromList">Remove</button>
@@ -49,7 +51,6 @@
     }
     else
     {
-        @* <button @onclick="getCookbookRecipeNamesFromBackend">click demo</button> *@
         <div class="specificMealInputBox">
             <div class="add-remove-specific-mealplan-box">
                 <button @onclick="addSpecificRecipeReq">add</button>
@@ -86,7 +87,7 @@
             {
                 foreach (var recipe in MealPlannedRecipes)
                 {
-                    <div class="recipe-card">
+                    <div class="recipe-card-box">
                         <h1>@recipe.RecipeName</h1>
 
                         <div class="desc-box">
@@ -171,7 +172,7 @@
                     </ul>
                 </div>
             }
-            <button @onclick="SaveShoppingListBackend">save to shoppinglist</button>
+            <button @onclick="SaveShoppingListBackend">Add to shoppinglist</button>
         }
 
         @if (ShoppingListLoading)
@@ -200,7 +201,7 @@
 
     private bool MealGeneratorLoading = false;
     private bool ShoppingListLoading = false;
-    private bool RandomOrSpecificBox = true;
+    private bool RandomBoxDisplaying = true;
     private bool randomMealsWanted = true;
 
     private List<SpecificRecipeRequest> specificRecipeRequests = new List<SpecificRecipeRequest>()
@@ -228,6 +229,13 @@
 
             if (!response.IsSuccessStatusCode)
             {
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    // If the status code is 401, clear the credentials and redirect.
+                    await authUtils.RemoveCredentialsAsync();
+                    return;
+                }
                 MealGeneratorLoading = false;
                 //show error message
                 errorMessage = "check console log for error message!";
@@ -266,8 +274,10 @@
 
     private void removeRecipeFromList()
     {
-        recipeRequests.RemoveAt(recipeRequests.Count - 1);
-        if (errorMessage == "Max amount of requests added!") errorMessage = "";
+        if (recipeRequests.Count > 1) {
+            recipeRequests.RemoveAt(recipeRequests.Count - 1); 
+            if (errorMessage == "Max amount of requests added!") errorMessage = "";
+        }
     }
 
     private List<ShoppingListDetailsDTO> CreateShoppingList()
@@ -345,8 +355,8 @@
         // run create specific
         if (SavedShoppingList != null) SavedShoppingList = null;
         if (MealPlannedRecipes != null) MealPlannedRecipes = null;
-        MealGeneratorLoading = true;
         randomMealsWanted = false;
+        ShoppingListLoading = true;
 
         try
         {
@@ -374,8 +384,9 @@
             }
 
             MealPlannedRecipes = recipes;
+            SubmitToShoppingList();
+            MealPlannedRecipes = null;
             errorMessage = "";
-            MealGeneratorLoading = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -384,8 +395,6 @@
             Console.WriteLine(e.Message);
         }
     }
-
-
 
     private async void getCookbookRecipeNamesFromBackend()
     {
@@ -409,7 +418,7 @@
 
     private void removeSpecificRecipeReq()
     {   
-        if (specificRecipeRequests.Count > 0)
+        if (specificRecipeRequests.Count > 1)
         {
             specificRecipeRequests.RemoveAt(specificRecipeRequests.Count - 1);
         }
@@ -417,24 +426,26 @@
 
     private void ToggleSelection()
     {
-        RandomOrSpecificBox = !RandomOrSpecificBox;
+        RandomBoxDisplaying = !RandomBoxDisplaying;
     }
 
     private async void SaveShoppingListBackend()
     {
 
-        ShoppingList newList = new ShoppingList()
-            {
-                ListName = "Shoppinglist"
-            };
+        ShoppingListLoading = true;
 
-        //loop all ingredients and add to the list. 
+        SingleShopList shopList = new SingleShopList()
+        {
+            ListName = "Shopping list",
+        };
+
+        //run through and create recipe objects to add to the list
         foreach(var recipe in SavedShoppingList)
         {
-            foreach(var ingredient in recipe.Ingredients)
-            {
-                newList.Ingredients.Add(ingredient);
-            }
+            SingleShopListRecipe addingRecipe = new SingleShopListRecipe();
+            addingRecipe.RecipeName = recipe.RecipeName;
+            addingRecipe.Ingredients = recipe.Ingredients;
+            shopList.SingleShopListRecipes.Add(addingRecipe);
         }
 
         try
@@ -442,7 +453,7 @@
             string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
-            var response = await Http.PostAsJsonAsync("cookbook/update-shoppinglist", newList);
+            var response = await Http.PostAsJsonAsync("/cookbook/add-to-shoppinglist", shopList);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -452,7 +463,7 @@
                 Console.WriteLine(response);
                 return;
             }
-            else NavigationManager.NavigateTo("/");
+            else NavigationManager.NavigateTo("/shoppinglistpage");
         }
         catch (Exception e)
         {

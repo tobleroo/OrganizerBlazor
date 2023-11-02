@@ -56,6 +56,7 @@
             //show error message
             errorMessage = "wrong username or password";
             waitingOnSignIn = false;
+            StateHasChanged();
             return;
         }
         var token = await response.Content.ReadAsStringAsync();

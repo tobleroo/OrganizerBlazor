@@ -1,4 +1,5 @@
-namespace OrganizerBlazor.Models{
+namespace OrganizerBlazor.Models
+{
 
     public class UserCookBook
     {
@@ -6,7 +7,7 @@ namespace OrganizerBlazor.Models{
         public string OwnerUsername { get; set; }
         public List<Recipe> Recipes { get; set; } = new List<Recipe>();
 
-        public List<ShoppingList> ShoppingList { get; set; } = new List<ShoppingList>();
+        public List<SingleShopList> GroceriesShoppingLists { get; set; } = new List<SingleShopList>();
         public List<string> PreviouslyAddedAdditonalItems { get; set; } = new();
     }
 }

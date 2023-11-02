@@ -2,6 +2,10 @@
 
 /* whole page settings*/
 
+.cookbook-main-box {
+    color: #FFD369;
+}
+
 .cookbookItems{
     margin-bottom: 2rem;
 }
@@ -18,14 +22,13 @@
 /* ----------------- */
 
 
-
 /* -- search bar -- */
 .search-bar {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
-    color: black;
+    color: #FFD369;
 }
 
     .search-bar input[type="text"] {
@@ -35,7 +38,7 @@
         border-radius: 5px;
         font-size: 20px;
         background-color: transparent; /* Set background to transparent */
-        color: black; /* Set text color to white */
+        color: #FFD369; /* Set text color to white */
     }
 
 .search-details-box {
@@ -57,7 +60,7 @@
         border-radius: 5px;
         font-size: 20px;
         background-color: transparent; /* Set background to transparent */
-        color: black; /* Set text color to white */
+        color: #FFD369; /* Set text color to white */
     }
 
 .search-bar label {
@@ -66,7 +69,7 @@
 
 .search-bar button {
     background-color: transparent; /* Set background to transparent */
-    color: black; /* Set text color to white */
+    color: #FFD369; /* Set text color to white */
     cursor: pointer;
     padding: 10px;
     border: solid 2px #25B608;
@@ -102,14 +105,14 @@
     flex-direction: column;
     width: 100%;
     padding: 1rem;
-    color: black;
+    color: #FFD369;
 }
 
 .recipe-item {
     border: 2px solid #25B608;
     border-radius: 10px;
     margin-bottom: 1rem;
-    background-color: rgba(128, 128, 128, 0.3);
+    background-color: #3A4256;
 }
 
 .recipe-header {
@@ -140,13 +143,13 @@
     border: 2px solid #25B608;
     padding: 0.5rem;
     cursor: pointer;
-    color: black;
+    color: #FFD369;
     border-radius: 15px;
 }
 
     .recipe-expand-btn:hover {
         background-color: #92F97D;
-        color: black;
+        color: #FFD369;
     }
 
 .recipe-details {
@@ -170,7 +173,7 @@
     display: flex;
     flex-flow: row wrap;
     justify-content: space-evenly;
-    color: black;
+    color: #FFD369;
     border: solid #25B608 2px;
     border-radius: 15px;
     max-height: 150px;
@@ -226,12 +229,12 @@
 
 .removeBtn {
     background-color: transparent;
-    color: black;
+    color: #FFD369;
 }
 
 .updateBtn {
     background-color: transparent;
-    color: black;
+    color: #FFD369;
 }
 
 @media (max-width: 576px) {
@@ -269,9 +272,9 @@
     }
 }
 
-.newRecipeBtn{
-    margin:0 auto;
-    color:black;
+.newRecipeBtn {
+    margin: 0 auto;
+    color: #FFD369;
     background-color: transparent;
     border-radius: 15px;
     padding: 10px;
@@ -307,18 +310,20 @@
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
+    color: #FFD369;
 }
 
     .all-input-box input, select, textarea {
         background-color: transparent;
         border: solid #25B608 2px;
         border-radius: 15px;
+        color: #FFD369;
     }
 
 .see-ingr-box, .see-steps-box {
     background-color: transparent;
-    border: solid #25B608 2px; 
-    color: black;
+    border: solid #25B608 2px;
+    color: #FFD369;
 }
 
 .simple-input-box {
@@ -435,7 +440,7 @@ select {
 button {
     cursor: pointer;
     background-color: transparent;
-    color: black;
+    color: #FFD369;
     border: 1px solid #25B608;
     padding: 0.5rem 1rem;
     margin-top: 1rem;

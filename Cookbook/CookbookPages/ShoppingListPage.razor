@@ -145,7 +145,6 @@
             var shoppingListData = await response.Content.ReadFromJsonAsync<ShoppingListPageDTO>();
             if (shoppingListData.SingleShopList != null && shoppingListData.AdditionalItems != null)
             {
-                Console.WriteLine("am i here?");
                 shoppingList = shoppingListData.SingleShopList;
                 earlierAddedITems = shoppingListData.AdditionalItems;
             }

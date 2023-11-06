@@ -1,4 +1,4 @@
-﻿namespace OrganizerBlazor.Models
+﻿namespace OrganizerBlazor.Cookbook.Models
 {
     public class SingleShopList
     {

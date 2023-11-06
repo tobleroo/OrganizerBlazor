@@ -2,6 +2,9 @@
 @using System.Net.Http.Headers;
 @using System.Net;
 @using OrganizerBlazor.Auth.Service;
+@using OrganizerBlazor.Cookbook.Models;
+@using OrganizerBlazor.Cookbook.CookbookPages.CookBookComponents
+
 @attribute [Authorize]
 
 @inject HttpClient Http
@@ -9,7 +12,7 @@
 @inject IAuthUtils AuthUtils
 
 <PageTitle>Cookbook</PageTitle>
-<link rel="stylesheet" href="./css/demo.css">
+<link rel="stylesheet" href="./css/cookbook/cookbook.css">
 
 <div class="cookbook-main-box">
 
@@ -63,7 +66,7 @@
     private UserCookBook? userCookBook;
     private List<Recipe>? FilteredRecipes;
     private bool showAddRecipe = false;
-    private Recipe RecipeToUpdate = null;
+    private Recipe? RecipeToUpdate = null;
     private bool UpdatingCookbook = false;
 
     public void AddNewRecipe(Recipe newRecipe)

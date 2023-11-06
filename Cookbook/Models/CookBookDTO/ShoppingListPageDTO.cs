@@ -1,4 +1,6 @@
-﻿namespace OrganizerBlazor.Models.CookBookDTO
+﻿using OrganizerBlazor.Cookbook.Models;
+
+namespace OrganizerBlazor.Cookbook.Models.CookBookDTO
 {
     public class ShoppingListPageDTO
     {

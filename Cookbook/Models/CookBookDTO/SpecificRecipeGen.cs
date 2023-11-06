@@ -1,4 +1,4 @@
-﻿namespace OrganizerBlazor.Models.CookBookDTO
+﻿namespace OrganizerBlazor.Cookbook.Models.CookBookDTO
 {
     public class SpecificRecipeGen
     {

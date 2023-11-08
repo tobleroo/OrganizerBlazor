@@ -6,5 +6,7 @@ namespace OrganizerBlazor.Cookbook.Models.CookBookDTO
     {
         public SingleShopList? SingleShopList { get; set; }
         public List<string>? AdditionalItems { get; set; }
+
+        public List<string>? RecommendedAdditionalItems { get; set; } = new();
     }
 }

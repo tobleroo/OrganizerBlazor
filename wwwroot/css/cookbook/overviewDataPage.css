@@ -1,0 +1,102 @@
+﻿.cookbook-page {
+    background-color: beige;
+}
+
+/* navbar design*/
+
+.search-bar {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    padding: 1rem;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+    margin-bottom: 2rem; /* Space below the search bar */
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem; /* Spacing around input boxes */
+    flex-basis: 100%; /* Full width on mobile */
+}
+
+    .input-box label {
+        font-size: 0.9rem;
+        color: #495057; /* Dark grey color for text */
+        margin-bottom: 0.5rem;
+    }
+
+    .input-box input,
+    .input-box select {
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+        .input-box input[type="number"] {
+            -moz-appearance: textfield; /* Removes increment arrows from number inputs in Firefox */
+        }
+
+            .input-box input[type="number"]::-webkit-inner-spin-button,
+            .input-box input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none; /* Removes increment arrows from number inputs in WebKit browsers like Safari and Chrome */
+            }
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s; /* Smooth background color transition for button */
+}
+
+    button:hover {
+        background-color: #0056b3; /* Darker shade when hovered */
+    }
+
+@media (min-width: 576px) {
+    .input-box {
+        flex-basis: calc(33.333% - 1rem); /* Three columns layout on small devices and up */
+    }
+}
+
+@media (min-width: 768px) {
+    .input-box {
+        flex-basis: calc(25% - 1rem); /* Four columns layout on medium devices and up */
+    }
+}
+
+/* ------------- */
+
+
+.recipe-overview-box {
+    display: flex;
+    flex-flow: column wrap;
+    align-content: center;
+    margin: .5rem;
+    padding: .5rem;
+    border: solid black 1px;
+}
+
+    .recipe-overview-box:hover {
+        cursor: pointer;
+        background-color: antiquewhite;
+    }
+
+.recipe-details-box {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.data-box {
+    margin: .5rem;
+}
+
+.recipe-name-box {
+    text-align: center;
+}

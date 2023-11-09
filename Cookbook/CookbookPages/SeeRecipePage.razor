@@ -1,0 +1,91 @@
+﻿@page "/see-recipe/{RecipeId}"
+@using System.Net.Http.Headers;
+@inject ILocalStorageService LocalStorageService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div class="see-recipe-page">
+
+    @if (recipe == null)
+    {
+        <div class="loading-box">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3>Loading recipe...</h3>
+        </div>
+    }
+    else
+    {
+        <button @onclick="TurnOnEditMode">edit</button>
+        <div class="see-recipe-box">
+            <input type="text" value="@recipe.RecipeName" readonly="@isEditMode"/>
+
+            <input type="number" value="@recipe.CookTime" readonly="@isEditMode"/>
+        </div>
+
+
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public string RecipeId { get; set; }
+
+    private Recipe? recipe { get; set; }
+    private string errorMessage = "";
+    private bool isEditMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetRecipeFromBackend();
+    }
+
+    private void TurnOnEditMode()
+    {
+        Console.WriteLine(isEditMode);
+        isEditMode = !isEditMode;
+    }
+
+    private async Task GetRecipeFromBackend()
+    {
+        try
+        {
+            // Get the JWT token
+            string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            // Set the Authorization header with the JWT token
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            string url = $"cookbook/get-one-recipe/{RecipeId}";
+
+            recipe = await Http.GetFromJsonAsync<Recipe>(url);
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = httpEx.Message;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+
+        StateHasChanged();
+    }
+
+    private void ToggleEditMode()
+    {
+        isEditMode = !isEditMode;
+    }
+
+    private async Task SaveRecipe()
+    {
+        
+    }
+}

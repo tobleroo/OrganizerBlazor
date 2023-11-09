@@ -1,72 +1,62 @@
-﻿@using System.Linq;
-@using OrganizerBlazor.Cookbook.Models;
+﻿@using OrganizerBlazor.Cookbook.Models.CookBookDTO;
 
 <div class="search-bar">
-
-    <input type="text" placeholder="Search name..." @bind="SearchTerm" />
-    <div class="search-details-box">
-        <div class="mealtype-box">
-            <label for="type">Type of meal:</label>
-            <select @bind="TypeTerm">
-                   <option value="all" selected="selected">All</option>
-                   <option value="breakfast">Breakfast</option>
-                   <option value="lunch">Lunch</option>
-                   <option value="dinner">Dinner</option>
-                   <option value="dessert">Dessert</option>
-                   <option value="snack">Snack</option>
-            </select>
-        </div>
-        <div class="cooktime-box">
-            <label for="cookTime">Cook time (minutes):</label>
-            <input type="number" @bind="MaxTimeCook"/>
-        </div>
-        <button type="button" @onclick="Search">Search</button>
+    <div class="input-box">
+        <label for="name">Recipe name:</label>
+        <input type="text" placeholder="Search name..." @bind="SearchTerm" />
     </div>
+    <div class="mealtype-box input-box">
+        <label for="type">Type of meal:</label>
+        <select @bind="TypeTerm">
+            <option value="all" selected="selected">All</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="dessert">Dessert</option>
+            <option value="snack">Snack</option>
+        </select>
+    </div>
+    <div class="cooktime-box input-box">
+        <label for="cookTime">Cook time (minutes):</label>
+        <input type="number" @bind="MaxTimeCook" />
+    </div>
+    <button type="button" @onclick="Search">Search</button>
 </div>
 
 @code {
 
     [Parameter]
-    public List<Recipe>? OriginalList { get; set; }
+    public List<RecipeOverviewData> RecipeData { get; set; }
 
     [Parameter]
-    public Action<List<Recipe>>? onChangeRecipeListOnSearch { get; set; }
+    public EventCallback<List<RecipeOverviewData>> OnRecipesFiltered { get; set; }
 
-    private string? SearchTerm { get; set; }
-    private string? TypeTerm { get; set; }
+    private string SearchTerm { get; set; }
+    private string TypeTerm { get; set; } = "all";
     private int MaxTimeCook { get; set; } = 120;
 
-    private void Search()
+    private async Task Search()
     {
-        List<Recipe>? FilteredRecipes;
+        var filteredRecipes = RecipeData;
 
-        //use linq to filter list of recipes
-        if (SearchTerm == "" || SearchTerm == null) FilteredRecipes = OriginalList;
-        else FilteredRecipes = OriginalList?.Where(recipe => recipe.RecipeName.ToLower().Contains(SearchTerm.ToLower())).ToList();
-
-        if (MaxTimeCook != 0)
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
         {
-            FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.CookTime < MaxTimeCook).ToList();
+            filteredRecipes = filteredRecipes.Where(recipe =>
+                recipe.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
         }
 
-        switch (TypeTerm)
+        if (MaxTimeCook > 0)
         {
-            case "breakfast":
-                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Breakfast).ToList();
-                break;
-            case "lunch":
-                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Lunch).ToList();
-                break;
-            case "dinner":
-                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Dinner).ToList();
-                break;
-            case "dessert":
-                FilteredRecipes = FilteredRecipes?.Where(recipe => recipe.RecipeType == RecipeTypes.Dessert).ToList();
-                break;
-            case "all":
-                break;
+            filteredRecipes = filteredRecipes.Where(recipe =>
+                recipe.TimeToCook <= MaxTimeCook).ToList();
         }
 
-        onChangeRecipeListOnSearch?.Invoke(FilteredRecipes);
+        if (TypeTerm != "all")
+        {
+            filteredRecipes = filteredRecipes.Where(recipe =>
+                recipe.RecipeType.Equals(TypeTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        await OnRecipesFiltered.InvokeAsync(filteredRecipes);
     }
 }

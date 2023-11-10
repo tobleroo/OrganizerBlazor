@@ -17,14 +17,134 @@
     }
     else
     {
-        <button @onclick="TurnOnEditMode">edit</button>
         <div class="see-recipe-box">
-            <input type="text" value="@recipe.RecipeName" readonly="@isEditMode"/>
 
-            <input type="number" value="@recipe.CookTime" readonly="@isEditMode"/>
+            <div class="recipe-name-box">
+                <div class="centered-content  @(isEditModeOn ? "" : "edit-mode-recipe-name")">
+                    <input type="text" @bind="recipe.RecipeName" readonly="@isEditModeOn" class="recipe-name-input"/>
+                </div>
+                <button class="btn btn-secondary" @onclick="TurnOnEditMode">
+                    <i class="bi bi-pencil"></i> <!-- Bootstrap pencil icon for edit -->
+                </button>
+            </div>
+
+            <div class="top-data-box">
+
+                <div class="recipe-details-box @(isEditModeOn ? "" : "edit-mode")">
+                    <div class="">
+                        <label>cooktime:</label>
+                        <input type="number" @bind="recipe.CookTime" readonly="@isEditModeOn" />
+                    </div>
+                    <div class="">
+                        <label>Portions:</label>
+                        <input type="number" @bind="recipe.Portions" readonly="@isEditModeOn" min="1" max="99"/>
+                    </div>
+                    <div class="">
+                        <label for="recipeType">type:</label>
+                        <select id="recipeType" name="recipeType" @bind="recipe.RecipeType" disabled="@(!isEditModeOn)">
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Snacks">Snacks</option>
+                        </select>
+                    </div>
+                    <div class="">
+                        <label for="spicyness">spiciness:</label>
+                        <input type="number" id="spicyness" name="spicyness" @bind="recipe.Spicyness" readonly="@isEditModeOn" min="1" max="5">
+                    </div>
+                    <div class="">
+                        <label>Vegan: </label>
+                        <input type="checkbox" id="isVegan" name="isVegan" value="true" @bind="recipe.IsVegan" disabled="@isEditModeOn" />
+                    </div>
+                    <div class="">
+                        <label for="difficulty">Difficulty: </label>
+                        <select id="difficulty" name="difficulty" @bind="recipe.Difficulty" disabled="@(!isEditModeOn)">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+            
+                <div class="description-box">
+                    <label>Description:</label>
+                    <textarea readonly="@isEditModeOn" @bind="recipe.Description"></textarea>
+                </div>
+
+            </div>
+            <div class="bottom-data-box">
+
+                <div class="ingredients-box">
+                    <h2>Ingredients</h2>
+                    @if(recipe.Ingredients.Count == 0)
+                    {
+                        <bold>No ingredients!</bold>
+                    }
+                    else
+                    {
+                        @foreach(var ingredient in recipe.Ingredients)
+                        {
+                            <div class="one-ingr-box">
+                                <p>@ingredient.Name @ingredient.Quantity @ingredient.Unit</p>
+                                @if (!isEditModeOn)
+                                { 
+                                    <button class="btn btn-danger" @onclick="() => RemoveIngredientFromRecipe(ingredient)">
+                                        <i class="bi bi-trash"></i> <!-- Bootstrap trash icon for remove/delete -->
+                                    </button>
+                                }
+                            </div>
+                        }
+
+                    }
+                    @if (!isEditModeOn)
+                    {
+                        <div class="add-new-ingr-box">
+                            <input type="text" placeholder="Name" @bind="ingrName"/>
+                            <input type="number" @bind="ingrAmount" placeholder="amount" min="1" max="10000"/>
+                            <input type="text" @bind="unitName" placeholder="unit type"/>
+                            <button class="btn btn-primary" @onclick="AddNewIngredientToList">
+                                <i class="bi bi-plus-lg"></i> <!-- Bootstrap plus icon -->
+                            </button>
+                        </div>
+                    }
+                </div
+
+                <div class="steps-box">
+                    <h2>steps:</h2>
+                    @if (recipe.Steps.Count == 0)
+                    {
+                        <div class="step-item">
+                            <span>No steps added!</span>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var step in recipe.Steps)
+                        {
+                            <div class="step-item">
+                                <p>@step</p>
+                                @if (!isEditModeOn)
+                                {
+                                    <p @onclick="() => RemoveStepFromList(step)">
+                                        <i class="bi bi-trash"></i> <!-- Bootstrap icon for trash -->
+                                    </p>
+                                }
+                            </div>
+                        }
+                    }
+                    @if (!isEditModeOn)
+                    {
+                        <div class="add-step-box">
+                            <input type="text" @bind="addStepTextInput" />
+                            <button @onclick="AddStepToList">Add</button>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
-
-
+        <button @onclick="SaveOrUpdateRecipeToBackend">save recipe</button>
+        
     }
 
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -42,7 +162,13 @@
 
     private Recipe? recipe { get; set; }
     private string errorMessage = "";
-    private bool isEditMode = false;
+    private bool isEditModeOn = false;
+    private string addStepTextInput = "";
+
+    //new ingredient add variables
+    private string ingrName = "";
+    private int ingrAmount = 1;
+    private string unitName = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,8 +177,7 @@
 
     private void TurnOnEditMode()
     {
-        Console.WriteLine(isEditMode);
-        isEditMode = !isEditMode;
+        isEditModeOn = !isEditModeOn;
     }
 
     private async Task GetRecipeFromBackend()
@@ -79,13 +204,43 @@
         StateHasChanged();
     }
 
-    private void ToggleEditMode()
+    private async Task SaveOrUpdateRecipeToBackend()
     {
-        isEditMode = !isEditMode;
+        Console.WriteLine($"recipe name: {recipe.RecipeName}");
     }
 
-    private async Task SaveRecipe()
+    private void AddStepToList()
     {
-        
+        if(addStepTextInput.Length > 1)
+        {
+            recipe.Steps.Add(addStepTextInput);
+            addStepTextInput = "";
+        }
+    }
+
+    private void RemoveStepFromList(string stepName)
+    {
+        recipe.Steps.Remove(stepName);
+    }
+
+    private void AddNewIngredientToList()
+    {
+        Ingredient freshIngredient = new Ingredient()
+            {
+                Name = ingrName,
+                Quantity = ingrAmount,
+                Unit = unitName
+            };
+
+        recipe.Ingredients.Add(freshIngredient);
+
+        ingrName = "";
+        ingrAmount = 1;
+        unitName = "";
+    }
+
+    private void RemoveIngredientFromRecipe(Ingredient ingredient)
+    {
+        recipe.Ingredients.Remove(ingredient);
     }
 }

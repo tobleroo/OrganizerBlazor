@@ -18,6 +18,17 @@
                 }
             }
         }
-        public string Difficulty { get; set; }
+        private int _difficulty;
+        public string Difficulty
+        {
+            get => ((RecipeDifficulty)_difficulty).ToString();
+            set
+            {
+                if (Enum.TryParse<RecipeDifficulty>(value, out var difficulty))
+                {
+                    _difficulty = (int)difficulty;
+                }
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@
                 <div class="recipe-details-box @(isEditModeOn ? "edit-mode" : "")">
                     <div class="">
                         <label>cooktime:</label>
-                        <input type="number" @bind="recipe.CookTime" readonly="@(!isEditModeOn)" />
+                        <input type="number" @bind="recipe.CookTime" readonly="@(!isEditModeOn)" min="1" max="299"/>
                     </div>
                     <div class="">
                         <label>Portions:</label>
@@ -50,8 +50,14 @@
                         </select>
                     </div>
                     <div class="">
-                        <label for="spicyness">spiciness:</label>
-                        <input type="number" id="spicyness" name="spicyness" @bind="recipe.Spicyness" readonly="@(!isEditModeOn)" min="1" max="5">
+                        <label for="spicyness">Spiciness:</label>
+                        <select id="spicyness" name="spicyness" @bind="recipe.Spicyness" disabled="@(!isEditModeOn)">
+                            <option value=1>🌶️</option>
+                            <option value=2>🌶️🌶️</option>
+                            <option value=3>🌶️🌶️🌶️</option>
+                            <option value=4>🌶️🌶️🌶️🌶️</option>
+                            <option value=5>🌶️🌶️🌶️🌶️🌶️</option>
+                        </select>
                     </div>
                     <div class="">
                         <label>Vegan: </label>

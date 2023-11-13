@@ -98,7 +98,8 @@
 
             @if(recommendedItems.Count != 0)
             {
-              <div class="recommended-items-box">
+                <div class="recommended-items-box list-group addittional-items-box">
+                  <h4>Recommended items to buy</h4>
                     @foreach(var recItem in recommendedItems)
                     {
                         <p @onclick="() => AddEarlierItemToShoppingList(recItem)">@recItem</p>

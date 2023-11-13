@@ -52,7 +52,6 @@
 }
 
 .recipe-details-box input[type="number"],
-.recipe-details-box input[type="checkbox"],
 .recipe-details-box select {
     background-color: transparent; /* Removes the background */
     border: none; /* Removes the border */
@@ -64,12 +63,65 @@
     cursor: default; /* Changes the cursor to default */
 }
 
-.recipe-details-box input[type="checkbox"] {
-    appearance: none; /* Removes the default checkbox appearance */
-    -webkit-appearance: none; /* Removes the default checkbox appearance for WebKit browsers */
-    -moz-appearance: none; /* Removes the default checkbox appearance for Mozilla browsers */
-    display: inline-block; /* Ensures the checkbox aligns correctly */
+/* Custom Checkbox Styling */
+.custom-checkbox {
+    position: relative;
+    padding-left: 26px; /* Space for the checkbox */
+    cursor: pointer;
+    display: inline-block;
+    line-height: 20px; /* Adjusts the line height */
 }
+
+    .custom-checkbox input[type="checkbox"] {
+        visibility: hidden; /* Hide the default checkbox */
+    }
+
+    /* Box for the custom checkbox */
+    .custom-checkbox .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee; /* Checkbox background */
+        border-radius: 3px; /* Rounded corners */
+        border: 1px solid #d1d1d1; /* Border color */
+    }
+
+    /* When the checkbox is checked */
+    .custom-checkbox input:checked ~ .checkmark {
+        background-color: #4caf50; /* Checked background color */
+    }
+
+    /* Style for the checkmark/icon */
+    .custom-checkbox .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Display the checkmark when checked */
+    .custom-checkbox input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the checkmark/icon */
+    .custom-checkbox .checkmark:after {
+        left: 7px;
+        top: 3px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    /* Hover effect */
+    .custom-checkbox:hover input ~ .checkmark {
+        background-color: #ccc; /* Hover color for checkbox */
+    }
 
 /* Additional styling for disabled state, if needed */
 .recipe-details-box input:disabled,
@@ -331,13 +383,14 @@
     }
 
     .description-box {
-        width: 80%;
+        width: 90%;
         border: solid black 1px;
         align-self: flex-start; /* Aligns the box to the left in a flex container */
     }
 
-        .description-box textarea{
-            width:100%;
+        .description-box textarea {
+            width: 100%;
+            min-height: 200px;
         }
 
         .centered-content input,
@@ -356,10 +409,21 @@
             border:solid black 1px;
         }
 
-    .buttons-box button {
-        width: 90%; /* Full button width */
-        margin-top: 10px; /* Space between buttons */
+    .buttons-box {
+        display: flex;
+        flex-direction: column; /* Align buttons vertically */
+        align-items: center; /* Center align the buttons */
+        gap: 10px; /* Adds space between buttons */
+        padding: 10px; /* Adds padding inside the buttons box */
+        width: 100%; /* Ensure the box takes full width */
     }
+
+        .buttons-box button {
+            width: 90%; /* Full button width */
+            margin-top: 10px; /* Space between buttons */
+            margin-left: 0; /* Reset any left margin */
+            margin-right: 0; /* Reset any right margin */
+        }
 
     /* Label and select input on the same line */
     .recipe-details-box > div {

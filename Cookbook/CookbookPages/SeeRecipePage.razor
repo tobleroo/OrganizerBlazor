@@ -20,24 +20,24 @@
         <div class="see-recipe-box">
 
             <div class="recipe-name-box">
-                <div class="centered-content  @(isEditModeOn ? "" : "edit-mode-recipe-name")">
-                    <input type="text" @bind="recipe.RecipeName" readonly="@isEditModeOn" class="recipe-name-input"/>
+                <div class="centered-content  @(isEditModeOn ? "edit-mode-recipe-name" : "")">
+                    <input type="text" @bind="recipe.RecipeName" readonly="@(!isEditModeOn)" class="recipe-name-input"/>
                 </div>
                 <button class="btn btn-secondary" @onclick="TurnOnEditMode">
-                    <i class="bi bi-pencil"></i> <!-- Bootstrap pencil icon for edit -->
+                    <i class="bi bi-pencil"></i>
                 </button>
             </div>
 
             <div class="top-data-box">
 
-                <div class="recipe-details-box @(isEditModeOn ? "" : "edit-mode")">
+                <div class="recipe-details-box @(isEditModeOn ? "edit-mode" : "")">
                     <div class="">
                         <label>cooktime:</label>
-                        <input type="number" @bind="recipe.CookTime" readonly="@isEditModeOn" />
+                        <input type="number" @bind="recipe.CookTime" readonly="@(!isEditModeOn)" />
                     </div>
                     <div class="">
                         <label>Portions:</label>
-                        <input type="number" @bind="recipe.Portions" readonly="@isEditModeOn" min="1" max="99"/>
+                        <input type="number" @bind="recipe.Portions" readonly="@(!isEditModeOn)" min="1" max="99"/>
                     </div>
                     <div class="">
                         <label for="recipeType">type:</label>
@@ -51,11 +51,11 @@
                     </div>
                     <div class="">
                         <label for="spicyness">spiciness:</label>
-                        <input type="number" id="spicyness" name="spicyness" @bind="recipe.Spicyness" readonly="@isEditModeOn" min="1" max="5">
+                        <input type="number" id="spicyness" name="spicyness" @bind="recipe.Spicyness" readonly="@(!isEditModeOn)" min="1" max="5">
                     </div>
                     <div class="">
                         <label>Vegan: </label>
-                        <input type="checkbox" id="isVegan" name="isVegan" value="true" @bind="recipe.IsVegan" disabled="@isEditModeOn" />
+                        <input type="checkbox" id="isVegan" name="isVegan" value="true" @bind="recipe.IsVegan" disabled="@(!isEditModeOn)" />
                     </div>
                     <div class="">
                         <label for="difficulty">Difficulty: </label>
@@ -69,7 +69,7 @@
             
                 <div class="description-box">
                     <label>Description:</label>
-                    <textarea readonly="@isEditModeOn" @bind="recipe.Description"></textarea>
+                    <textarea readonly="@(!isEditModeOn)" @bind="recipe.Description"></textarea>
                 </div>
 
             </div>
@@ -87,7 +87,7 @@
                         {
                             <div class="one-ingr-box">
                                 <p>@ingredient.Name @ingredient.Quantity @ingredient.Unit</p>
-                                @if (!isEditModeOn)
+                                @if (isEditModeOn)
                                 { 
                                     <button class="btn btn-danger" @onclick="() => RemoveIngredientFromRecipe(ingredient)">
                                         <i class="bi bi-trash"></i> <!-- Bootstrap trash icon for remove/delete -->
@@ -97,7 +97,7 @@
                         }
 
                     }
-                    @if (!isEditModeOn)
+                    @if (isEditModeOn)
                     {
                         <div class="add-new-ingr-box">
                             <input type="text" placeholder="Name" @bind="ingrName"/>
@@ -124,7 +124,7 @@
                         {
                             <div class="step-item">
                                 <p>@step</p>
-                                @if (!isEditModeOn)
+                                @if (isEditModeOn)
                                 {
                                     <p @onclick="() => RemoveStepFromList(step)">
                                         <i class="bi bi-trash"></i> <!-- Bootstrap icon for trash -->
@@ -133,17 +133,26 @@
                             </div>
                         }
                     }
-                    @if (!isEditModeOn)
+                    @if (isEditModeOn)
                     {
                         <div class="add-step-box">
                             <input type="text" @bind="addStepTextInput" />
-                            <button @onclick="AddStepToList">Add</button>
+                            <button class="btn btn-primary"  @onclick="AddStepToList">
+                                <i class="bi bi-plus-lg"></i> <!-- Bootstrap plus icon -->
+                            </button>
                         </div>
                     }
                 </div>
             </div>
         </div>
-        <button @onclick="SaveOrUpdateRecipeToBackend">save recipe</button>
+        <div class="buttons-box">
+            <button @onclick="SaveOrUpdateRecipeToBackend">save recipe</button>
+            @if (RecipeCanBeDeleted)
+            {
+                <button @onclick="DeleteRecipeFromBackend">Delete</button>
+            }
+            <button @onclick="CancelRecipe">Cancel</button>
+        </div>
         
     }
 
@@ -164,6 +173,7 @@
     private string errorMessage = "";
     private bool isEditModeOn = false;
     private string addStepTextInput = "";
+    private bool RecipeCanBeDeleted = false;
 
     //new ingredient add variables
     private string ingrName = "";
@@ -172,12 +182,61 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetRecipeFromBackend();
+        if (RecipeId == "new")
+        {
+            // Handle new recipe creation
+            recipe = new Recipe
+            {
+                RecipeName = "New recipe"
+                // Initialize other properties as needed
+            };
+        }
+        else
+        {
+            await GetRecipeFromBackend();
+        }
+    }
+
+    private void CancelRecipe()
+    {
+        NavigationManager.NavigateTo("/cookbook-overview");
     }
 
     private void TurnOnEditMode()
     {
         isEditModeOn = !isEditModeOn;
+        StateHasChanged();
+    }
+
+    private async Task DeleteRecipeFromBackend()
+    {
+        // Get the JWT token
+        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        // Set the Authorization header with the JWT token
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("cookbook/remove-one-recipe", recipe.Guid.ToString());
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle success - perhaps navigate back to the cookbook page
+                NavigationManager.NavigateTo("/cookbook-overview");
+            }
+            else
+            {
+                // Handle errors
+                errorMessage = $"Failed to save recipe: {response.ReasonPhrase}";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            errorMessage = $"Error occurred: {ex.Message}";
+            StateHasChanged();
+        }
     }
 
     private async Task GetRecipeFromBackend()
@@ -191,6 +250,7 @@
             string url = $"cookbook/get-one-recipe/{RecipeId}";
 
             recipe = await Http.GetFromJsonAsync<Recipe>(url);
+            RecipeCanBeDeleted = true;
         }
         catch (HttpRequestException httpEx)
         {
@@ -206,7 +266,34 @@
 
     private async Task SaveOrUpdateRecipeToBackend()
     {
-        Console.WriteLine($"recipe name: {recipe.RecipeName}");
+        // Get the JWT token
+        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        // Set the Authorization header with the JWT token
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("cookbook/add-one-recipe", recipe);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle success - perhaps navigate back to the cookbook page
+                NavigationManager.NavigateTo("/cookbook-overview");
+            }
+            else
+            {
+                // Handle errors
+                errorMessage = $"Failed to save recipe: {response.ReasonPhrase}";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            errorMessage = $"Error occurred: {ex.Message}";
+            StateHasChanged();
+        }
+
     }
 
     private void AddStepToList()

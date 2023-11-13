@@ -2,6 +2,7 @@
     background-color: beige;
     display: flex;
     flex-flow: column wrap;
+    width: 100%;
 }
 
 /*-- recipe name and edit button box styling --*/
@@ -10,7 +11,7 @@
     display: flex;
     justify-content: space-between; /* Positions elements at start and end */
     align-items: center; /* Vertically centers the elements */
-    width: 100%; /* Ensures the div takes full width
+    width: 90%; /* Ensures the div takes full width
     */
     margin: 2rem 0;
 }
@@ -20,6 +21,7 @@
     display: flex;
     justify-content: center; /* Centers the content inside this div */
     font-size:50px;
+    max-width: 100%;
 }
 
 .centered-content input{
@@ -239,6 +241,11 @@
             /* Add any additional styles needed for add step input */
         }
 
+    .ingredients-box, .steps-box{
+        border-bottom:solid black 1px;
+        margin-bottom: 1rem;
+    }
+
 /* ------------------------------ */
 
 /* Style for inputs in edit mode */
@@ -265,3 +272,119 @@
     max-width: 800px; /* Adjust as needed */
 }
 
+.buttons-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center; /* Center align the buttons */
+    gap: 10px; /* Adds space between buttons */
+    padding: 10px; /* Adds padding inside the buttons box */
+}
+
+    .buttons-box button {
+        margin-top: 3rem;
+        padding: 10px 20px; /* Vertical and Horizontal Padding */
+        border: none; /* Removes default border */
+        border-radius: 5px; /* Rounded corners */
+        color: white; /* Text color */
+        font-size: 1em; /* Adjust font size as needed */
+        cursor: pointer; /* Changes cursor to pointer on hover */
+        transition: background-color 0.3s; /* Smooth transition for background color */
+    }
+
+        /* Styling for the save button */
+        .buttons-box button:nth-child(1) {
+            background-color: #4CAF50; /* Green background */
+        }
+
+        /* Styling for the delete button */
+        .buttons-box button:nth-child(2) {
+            background-color: #f44336; /* Red background */
+        }
+
+        /* Styling for the cancel button */
+        .buttons-box button:nth-child(3) {
+            background-color: #008CBA; /* Blue background */
+        }
+
+        /* Hover effect for all buttons */
+        .buttons-box button:hover {
+            opacity: 0.8; /* Slightly transparent on hover */
+        }
+
+
+/* Responsive design for mobile devices */
+@media screen and (max-width: 768px) {
+    .recipe-name-box,
+    .top-data-box,
+    .bottom-data-box,
+    .buttons-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .centered-content,
+    .recipe-details-box,
+    .ingredients-box,
+    .steps-box,
+    .one-ingr-box {
+        width: 100%; /* Full width on small screens */
+    }
+
+    .description-box {
+        width: 80%;
+        border: solid black 1px;
+        align-self: flex-start; /* Aligns the box to the left in a flex container */
+    }
+
+        .description-box textarea{
+            width:100%;
+        }
+
+        .centered-content input,
+        .recipe-details-box input,
+        .recipe-details-box select,
+        .ingredients-box input,
+        .steps-box input {
+            width: 90%; /* Slightly less than full width for padding */
+            max-width: none; /* Override any max-width set */
+        }
+
+        .ingredients-box .add-new-ingr-box,
+        .steps-box .add-step-box {
+            flex-direction: row;
+            margin: .5rem .3rem;
+            border:solid black 1px;
+        }
+
+    .buttons-box button {
+        width: 90%; /* Full button width */
+        margin-top: 10px; /* Space between buttons */
+    }
+
+    /* Label and select input on the same line */
+    .recipe-details-box > div {
+        display: flex;
+        align-items: center;
+        /*justify-content:center*/
+    }
+
+    .recipe-details-box label {
+        margin-right: 10px; /* Space between label and select */
+    }
+
+    .recipe-details-box select {
+        width: auto; /* Auto width for select */
+        max-width: 60%; /* Maximum width for select */
+    }
+
+    /* Smaller font size and input box for recipe name */
+    .centered-content {
+        font-size: 30px; /* Smaller font size for mobile */
+    }
+
+    .recipe-name-input {
+        font-size: 28px; /* Smaller text size for input */
+        padding: 5px; /* Adjust padding as needed */
+        max-width: 80%; /* Adjust input box width as needed */
+    }
+}

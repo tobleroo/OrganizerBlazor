@@ -96,6 +96,17 @@
                 }
              </div>
 
+            @if(recommendedItems.Count != 0)
+            {
+              <div class="recommended-items-box">
+                    @foreach(var recItem in recommendedItems)
+                    {
+                        <p @onclick="() => AddEarlierItemToShoppingList(recItem)">@recItem</p>
+                    }
+                </div>  
+            }
+            
+
         </div>
 
         <button @onclick="SaveShoppingListToBackend">save shopping list</button>
@@ -110,6 +121,7 @@
     private List<string>? earlierAddedITems = new();
     private string currentItemName;
     private SingleShopList? shoppingList = new();
+    private List<string> recommendedItems = new();
 
     protected override void OnInitialized()
     {
@@ -146,6 +158,7 @@
             {
                 shoppingList = shoppingListData.SingleShopList;
                 earlierAddedITems = shoppingListData.AdditionalItems;
+                recommendedItems = shoppingListData.RecommendedAdditionalItems;
             }
         }
         catch (Exception e)

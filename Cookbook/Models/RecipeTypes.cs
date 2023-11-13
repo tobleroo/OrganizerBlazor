@@ -1,5 +1,4 @@
-﻿
-namespace OrganizerBlazor.Models
+﻿namespace OrganizerBlazor.Cookbook.Models
 {
     public enum RecipeTypes
     {

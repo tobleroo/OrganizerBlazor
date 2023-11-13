@@ -1,0 +1,62 @@
+﻿@using OrganizerBlazor.Cookbook.Models.CookBookDTO;
+
+<div class="search-bar">
+    <div class="input-box">
+        <label for="name">Recipe name:</label>
+        <input type="text" placeholder="Search name..." @bind="SearchTerm" />
+    </div>
+    <div class="mealtype-box input-box">
+        <label for="type">Type of meal:</label>
+        <select @bind="TypeTerm">
+            <option value="all" selected="selected">All</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="dessert">Dessert</option>
+            <option value="snack">Snack</option>
+        </select>
+    </div>
+    <div class="cooktime-box input-box">
+        <label for="cookTime">Cook time (minutes):</label>
+        <input type="number" @bind="MaxTimeCook" />
+    </div>
+    <button type="button" @onclick="Search">Search</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public List<RecipeOverviewData> RecipeData { get; set; }
+
+    [Parameter]
+    public EventCallback<List<RecipeOverviewData>> OnRecipesFiltered { get; set; }
+
+    private string SearchTerm { get; set; }
+    private string TypeTerm { get; set; } = "all";
+    private int MaxTimeCook { get; set; } = 120;
+
+    private async Task Search()
+    {
+        var filteredRecipes = RecipeData;
+
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            filteredRecipes = filteredRecipes.Where(recipe =>
+                recipe.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        }
+
+        if (MaxTimeCook > 0)
+        {
+            filteredRecipes = filteredRecipes.Where(recipe =>
+                recipe.TimeToCook <= MaxTimeCook).ToList();
+        }
+
+        if (TypeTerm != "all")
+        {
+            filteredRecipes = filteredRecipes.Where(recipe =>
+                recipe.RecipeType.Equals(TypeTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        await OnRecipesFiltered.InvokeAsync(filteredRecipes);
+    }
+}

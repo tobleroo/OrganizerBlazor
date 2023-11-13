@@ -1,7 +1,9 @@
 ﻿@page "/mealGen"
 @using System.Net.Http.Headers;
 @using OrganizerBlazor.Auth.Service;
-@using OrganizerBlazor.Models.CookBookDTO;
+@using OrganizerBlazor.Cookbook.Models.CookBookDTO;
+@using OrganizerBlazor.Cookbook.Models;
+@using OrganizerBlazor.Cookbook.CookbookPages.CookBookComponents
 
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
@@ -9,7 +11,7 @@
 @inject IAuthUtils authUtils
 @attribute [Authorize]
 
-<link rel="stylesheet" href="../css/mealGen.css">
+<link rel="stylesheet" href="../css/cookbook/mealGen.css">
 
 <div class="mealplanner-box-one">
 
@@ -329,7 +331,7 @@
         //do the api call
         try
         {
-            var response = await Http.PostAsJsonAsync("meal/shoppinglist", shoppingListInfo);
+            var response = await Http.PostAsJsonAsync("shoppinglist/create-shoppinglist", shoppingListInfo);
             if (!response.IsSuccessStatusCode)
             {
                 //show error message
@@ -453,7 +455,7 @@
             string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
-            var response = await Http.PostAsJsonAsync("/cookbook/add-to-shoppinglist", shopList);
+            var response = await Http.PostAsJsonAsync("shoppinglist/add-to-shoppinglist", shopList);
 
             if (!response.IsSuccessStatusCode)
             {

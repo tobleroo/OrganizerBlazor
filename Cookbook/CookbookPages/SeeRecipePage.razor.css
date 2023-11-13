@@ -1,0 +1,454 @@
+﻿.see-recipe-page {
+    background-color: beige;
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+}
+
+/*-- recipe name and edit button box styling --*/
+
+.recipe-name-box {
+    display: flex;
+    justify-content: space-between; /* Positions elements at start and end */
+    align-items: center; /* Vertically centers the elements */
+    width: 90%; /* Ensures the div takes full width
+    */
+    margin: 2rem 0;
+}
+
+.centered-content {
+    flex-grow: 1; /* Allows this div to take up the remaining space */
+    display: flex;
+    justify-content: center; /* Centers the content inside this div */
+    font-size:50px;
+    max-width: 100%;
+}
+
+.centered-content input{
+    background-color: transparent;
+    border: none;
+}
+
+.recipe-name-input {
+    text-align: center; /* Centers the text inside the input */
+}
+
+.edit-button {
+    /* Optional styles for the button */
+}
+
+/* ------------------- */
+
+/* --- recipe details box ---*/
+
+.top-data-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+}
+
+.recipe-details-box {
+    font-size: 22px; /* Sets a larger font size for everything in the box */
+}
+
+.recipe-details-box input[type="number"],
+.recipe-details-box select {
+    background-color: transparent; /* Removes the background */
+    border: none; /* Removes the border */
+    outline: none; /* Removes the outline */
+    color: inherit; /* Inherits the text color from parent */
+    font-family: inherit; /* Inherits the font style from parent */
+    font-size: inherit; /* Inherits the font size from parent */
+    width: auto; /* Adjusts the width to the content */
+    cursor: default; /* Changes the cursor to default */
+}
+
+/* Custom Checkbox Styling */
+.custom-checkbox {
+    position: relative;
+    padding-left: 26px; /* Space for the checkbox */
+    cursor: pointer;
+    display: inline-block;
+    line-height: 20px; /* Adjusts the line height */
+}
+
+    .custom-checkbox input[type="checkbox"] {
+        visibility: hidden; /* Hide the default checkbox */
+    }
+
+    /* Box for the custom checkbox */
+    .custom-checkbox .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee; /* Checkbox background */
+        border-radius: 3px; /* Rounded corners */
+        border: 1px solid #d1d1d1; /* Border color */
+    }
+
+    /* When the checkbox is checked */
+    .custom-checkbox input:checked ~ .checkmark {
+        background-color: #4caf50; /* Checked background color */
+    }
+
+    /* Style for the checkmark/icon */
+    .custom-checkbox .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Display the checkmark when checked */
+    .custom-checkbox input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the checkmark/icon */
+    .custom-checkbox .checkmark:after {
+        left: 7px;
+        top: 3px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    /* Hover effect */
+    .custom-checkbox:hover input ~ .checkmark {
+        background-color: #ccc; /* Hover color for checkbox */
+    }
+
+/* Additional styling for disabled state, if needed */
+.recipe-details-box input:disabled,
+.recipe-details-box select:disabled {
+    color: gray; /* Changes the text color for disabled inputs */
+    cursor: not-allowed; /* Changes the cursor for disabled inputs */
+}
+
+/* -------------------------------------- */
+
+
+/* -----textarea description box ----*/
+
+.description-box {
+    font-size: 20px; /* Sets a larger font size for everything in the box */
+}
+
+    .description-box label {
+        display: block; /* Makes the label display on its own line */
+        margin-bottom: 5px; /* Adds some space below the label */
+    }
+
+    .description-box textarea {
+        background-color: #cfcf84; /* Sets a slightly darker background color */
+        border: none;
+        outline: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit; /* Inherits the larger font size from .description-box */
+        width: 500px; /* Makes the textarea take full width of its container */
+        height: 100%; /* Adjusts the height based on the content */
+        resize: none; /* Disables resizing of the textarea */
+        cursor: default;
+        overflow: hidden; /* Hides the scrollbar */
+        border-radius: 15px;
+    }
+
+        .description-box textarea:disabled {
+            color: gray;
+            cursor: not-allowed;
+        }
+
+/* --------------------------- */
+
+
+/* bottom box of recipe details */
+
+.bottom-data-box{
+    border-top: solid black 1px;
+    margin-top: 3rem;
+    padding-top: 3rem;
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    font-size: 22px;
+}
+
+.bottom-data-box p{
+    margin:0;
+    padding0;
+}
+
+/* -- new ingr box --*/
+
+.ingredients-box {
+    font-size: 22px; /* Consistent font size with .bottom-data-box */
+    /* Add any additional styling needed for this box */
+}
+
+    .ingredients-box h2 {
+        /* Style for the Ingredients header, if needed */
+    }
+
+    .ingredients-box .add-new-ingr-box {
+        display: flex; /* Aligns the inputs horizontally */
+        gap: 10px; /* Adds space between the inputs */
+    }
+
+        .ingredients-box .add-new-ingr-box input {
+            flex: 1; /* Distributes the space evenly among inputs */
+            padding: 2px; /* Adds internal padding for better text visibility */
+            font-size: 16px; /* Smaller font size for the inputs */
+            /* You can adjust the border, background, etc., as needed */
+            max-width: 100px;
+        }
+
+            .ingredients-box .add-new-ingr-box input[type="text"] {
+                /* Additional specific styling for text inputs, if needed */
+            }
+
+            .ingredients-box .add-new-ingr-box input[type="number"] {
+                /* Additional specific styling for number inputs, if needed */
+            }
+
+    /* Style for <p> tags displaying ingredients */
+    .ingredients-box p {
+        margin: 0;
+        padding: 0;
+        /* Any additional styling for ingredient list */
+    }
+
+    /* Style for <bold> tag, if needed */
+    .ingredients-box bold {
+        /* Styling for the 'No ingredients!' text */
+    }
+
+.one-ingr-box{
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin: .5rem 0;
+}
+
+/* New styles for ingredients box */
+.ingredients-box {
+    font-size: 22px;
+    /* Additional styling */
+}
+
+    .ingredients-box h2, .steps-box h2 {
+        /* Styles for headers, if needed */
+    }
+
+    .ingredients-box input, .steps-box input {
+        background-color: #cfcf84;
+        border: solid black 1px;
+        outline: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 2px;
+        max-width: 100px;
+    }
+
+        /* Additional styles for different types of inputs, if needed */
+        .ingredients-box input[type="text"], .steps-box input[type="text"] {
+            /* Specific styles for text inputs */
+        }
+
+        .ingredients-box input[type="number"], .steps-box input[type="number"] {
+            /* Specific styles for number inputs */
+        }
+
+.one-ingr-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+}
+
+/* New styles for steps box */
+.steps-box {
+    /* Additional styling for steps box */
+}
+
+    .steps-box .step-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .steps-box .add-step-box {
+        display: flex;
+        gap: 10px;
+    }
+
+        .steps-box .add-step-box input {
+            flex: 1;
+            /* Add any additional styles needed for add step input */
+        }
+
+    .ingredients-box, .steps-box{
+        border-bottom:solid black 1px;
+        margin-bottom: 1rem;
+    }
+
+/* ------------------------------ */
+
+/* Style for inputs in edit mode */
+.edit-mode input[type="number"],
+.edit-mode input[type="text"],
+.edit-mode select {
+    background-color: #cfcf84; /* Example color */
+    border: solid black 1px;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 2px;
+    max-width: 100px; /* Adjust as needed */
+}
+
+
+.edit-mode-recipe-name input[type="text"]{
+    background-color: #cfcf84; /* Example color */
+    border: solid black 1px;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 2px;
+    max-width: 800px; /* Adjust as needed */
+}
+
+.buttons-box {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center; /* Center align the buttons */
+    gap: 10px; /* Adds space between buttons */
+    padding: 10px; /* Adds padding inside the buttons box */
+}
+
+    .buttons-box button {
+        margin-top: 3rem;
+        padding: 10px 20px; /* Vertical and Horizontal Padding */
+        border: none; /* Removes default border */
+        border-radius: 5px; /* Rounded corners */
+        color: white; /* Text color */
+        font-size: 1em; /* Adjust font size as needed */
+        cursor: pointer; /* Changes cursor to pointer on hover */
+        transition: background-color 0.3s; /* Smooth transition for background color */
+    }
+
+        /* Styling for the save button */
+        .buttons-box button:nth-child(1) {
+            background-color: #4CAF50; /* Green background */
+        }
+
+        /* Styling for the delete button */
+        .buttons-box button:nth-child(2) {
+            background-color: #f44336; /* Red background */
+        }
+
+        /* Styling for the cancel button */
+        .buttons-box button:nth-child(3) {
+            background-color: #008CBA; /* Blue background */
+        }
+
+        /* Hover effect for all buttons */
+        .buttons-box button:hover {
+            opacity: 0.8; /* Slightly transparent on hover */
+        }
+
+
+/* Responsive design for mobile devices */
+@media screen and (max-width: 768px) {
+    .recipe-name-box,
+    .top-data-box,
+    .bottom-data-box,
+    .buttons-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .centered-content,
+    .recipe-details-box,
+    .ingredients-box,
+    .steps-box,
+    .one-ingr-box {
+        width: 100%; /* Full width on small screens */
+    }
+
+    .description-box {
+        width: 90%;
+        border: solid black 1px;
+        align-self: flex-start; /* Aligns the box to the left in a flex container */
+    }
+
+        .description-box textarea {
+            width: 100%;
+            min-height: 200px;
+        }
+
+        .centered-content input,
+        .recipe-details-box input,
+        .recipe-details-box select,
+        .ingredients-box input,
+        .steps-box input {
+            width: 90%; /* Slightly less than full width for padding */
+            max-width: none; /* Override any max-width set */
+        }
+
+        .ingredients-box .add-new-ingr-box,
+        .steps-box .add-step-box {
+            flex-direction: row;
+            margin: .5rem .3rem;
+            border:solid black 1px;
+        }
+
+    .buttons-box {
+        display: flex;
+        flex-direction: column; /* Align buttons vertically */
+        align-items: center; /* Center align the buttons */
+        gap: 10px; /* Adds space between buttons */
+        padding: 10px; /* Adds padding inside the buttons box */
+        width: 100%; /* Ensure the box takes full width */
+    }
+
+        .buttons-box button {
+            width: 90%; /* Full button width */
+            margin-top: 10px; /* Space between buttons */
+            margin-left: 0; /* Reset any left margin */
+            margin-right: 0; /* Reset any right margin */
+        }
+
+    /* Label and select input on the same line */
+    .recipe-details-box > div {
+        display: flex;
+        align-items: center;
+        /*justify-content:center*/
+    }
+
+    .recipe-details-box label {
+        margin-right: 10px; /* Space between label and select */
+    }
+
+    .recipe-details-box select {
+        width: auto; /* Auto width for select */
+        max-width: 60%; /* Maximum width for select */
+    }
+
+    /* Smaller font size and input box for recipe name */
+    .centered-content {
+        font-size: 30px; /* Smaller font size for mobile */
+    }
+
+    .recipe-name-input {
+        font-size: 28px; /* Smaller text size for input */
+        padding: 5px; /* Adjust padding as needed */
+        max-width: 80%; /* Adjust input box width as needed */
+    }
+}

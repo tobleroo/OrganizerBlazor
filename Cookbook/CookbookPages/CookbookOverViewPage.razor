@@ -1,0 +1,93 @@
+﻿@page "/cookbook-overview"
+@using OrganizerBlazor.Cookbook.Models.CookBookDTO;
+@using System.Net.Http.Headers;
+@using System.Net;
+@using OrganizerBlazor.Auth.Service;
+@using OrganizerBlazor.Cookbook.CookbookPages.CookBookComponents
+
+@attribute [Authorize]
+
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<link rel="stylesheet" href="../css/cookbook/overviewDataPage.css">
+
+
+<div class="cookbook-page">
+
+    <SearchBarCookBook RecipeData="@OriginalList" OnRecipesFiltered="HandleRecipesFiltered" />
+
+    <div class="recipe-box">
+        @foreach(var recipe in recipeData)
+        {
+            <div class="recipe-overview-box" @onclick="() => goToRecipePage(recipe.Id)">
+                <div class="recipe-name-box">
+                    <h3>@recipe.Name</h3>
+                </div>
+                <div class="recipe-details-box">
+                    <div class="time-box data-box">
+                        <span class="oi oi-clock" style="font-size: 20px;" aria-hidden="true"></span>
+                        <span class="recipe-cook-time">@recipe.TimeToCook minutes</span>
+                    </div>
+                    <div class="difficulty-box data-box">
+                        <span class="oi oi-star" style="font-size: 20px;" aria-hidden="true"></span>
+                        <span class="recipe-difficulty">@recipe.Difficulty</span>
+                    </div>
+                    <div class="type-box data-box">
+                        <span>&#x1F374;</span>
+                        <span> @recipe.RecipeType</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="add-new-recipe-box">
+        <button @onclick="() => goToRecipePage()">
+            <i class="bi bi-plus"></i> Add New Item
+        </button>
+    </div>
+    
+</div>
+
+@code {
+    private List<RecipeOverviewData> OriginalList = new();
+    private List<RecipeOverviewData> recipeData = new List<RecipeOverviewData>();
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Get the JWT token
+            string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            // Set the Authorization header with the JWT token
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            recipeData = await Http.GetFromJsonAsync<List<RecipeOverviewData>>("cookbook/recipe-overview-data");
+            //make a copy
+            OriginalList = recipeData;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = httpEx.Message;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            StateHasChanged();
+            // Handle other types of exceptions here if necessary
+        }
+    }
+
+    private void goToRecipePage(string recipeId = "new")
+    {
+        NavigationManager.NavigateTo($"see-recipe/{recipeId}");
+    }
+
+    private void HandleRecipesFiltered(List<RecipeOverviewData> filteredRecipes)
+    {
+        recipeData = filteredRecipes;
+        StateHasChanged();
+    }
+}

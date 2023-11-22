@@ -389,5 +389,10 @@
             .Where(name => !name.Equals(nameToRemove))
             .ToList();
 
+        //remove whole recipies where they have no ingredients in specified view
+        shoppingList.SingleShopListRecipes = shoppingList.SingleShopListRecipes
+            .Where(recipe => recipe.Ingredients.Count > 0)
+            .ToList();
+
     }
 }

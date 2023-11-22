@@ -46,7 +46,7 @@
                             <option value="Lunch">Lunch</option>
                             <option value="Dinner">Dinner</option>
                             <option value="Dessert">Dessert</option>
-                            <option value="Snacks">Snacks</option>
+                            <option value="Snack">Snacks</option>
                         </select>
                     </div>
                     <div class="">
@@ -194,7 +194,6 @@
             recipe = new Recipe
             {
                 RecipeName = "New recipe"
-                // Initialize other properties as needed
             };
         }
         else
@@ -277,6 +276,7 @@
         // Set the Authorization header with the JWT token
         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+        Console.WriteLine($"meal type: {recipe.RecipeType.ToString()}");
         try
         {
             var response = await Http.PostAsJsonAsync("cookbook/add-one-recipe", recipe);

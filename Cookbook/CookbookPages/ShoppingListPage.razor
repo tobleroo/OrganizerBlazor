@@ -150,7 +150,6 @@
                     return;
                 }
                 // Handle other non-success status codes appropriately
-                Console.WriteLine($"Error fetching shopping list: {response.ReasonPhrase}");
                 return;
             }
 
@@ -162,7 +161,6 @@
                 recommendedItems = shoppingListData.RecommendedAdditionalItems;
             }
 
-            Console.WriteLine($"size: {earlierAddedITems.Count}");
         }
         catch (Exception e)
         {

@@ -10,11 +10,93 @@
 .shoppinglist-page-box{
     color: black;
     background-color: beige;
+}
+
+.shopping-all-data {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
+    justify-content:center;
 }
 
-.list-group{
-    max-width: 400px;
-
+.shopping-box{
+    width: 400px;
+    display:flex;
+    flex-flow: column nowrap;
+    text-align: center;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 1rem;
 }
+
+.recipe-name-box, .ingr-item, .extra-ingr-item{
+    display:flex;
+    flex-flow: row wrap;
+    justify-content:space-between;
+}
+
+.add-additional-items-box{
+    margin: 1rem 0;
+}
+
+/* additonal stuff box */
+
+.additional-stuff-box{
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+}
+
+.additional-history-box, .additional-recommended-box{
+    max-height: 300px;
+    width: 200px;
+    overflow-y:auto;
+    margin: 1rem;
+    border: solid black 1px;
+    text-align: center;
+    width: 250px;
+}
+
+.history-add-item {
+    padding: 0 1.5rem;
+    background-color: white;
+    border-bottom: solid black .2px;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+    flex-wrap: nowrap; /* Ensure children stay on the same line */
+}
+
+.history-item-p {
+    margin: 0; /* Remove any default margin */
+    /*line-height: [Your desired line height here];*/
+    align-self: center; 
+}
+
+.rec-item-p, .history-item-p {
+    font-size: 25px;
+    background-color: white;
+}
+
+.striked {
+    text-decoration: line-through; /* Strike-through effect */
+    background-color: #ddd; /* Slightly darker background */
+}
+
+/* This will apply to each item in the additional items list */
+.extra-ingr-item {
+    cursor: pointer; /* Changes the cursor to a hand icon on hover */
+    transition: background-color 0.3s; /* Smooth transition for background color change */
+}
+
+    /* Changes the background color when hovering over an item */
+    .extra-ingr-item:hover {
+        background-color: #e0e0e0; /* Slightly darker background on hover */
+    }
+
+/* You might want to exclude the remove icon from changing the cursor to pointer */
+.remove-icon {
+    cursor: default;
+}
+
+
+

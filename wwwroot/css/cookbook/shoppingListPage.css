@@ -7,98 +7,14 @@
     --text-color: #EFEFEF;
 }
 
-.shoppinglist-page-box {
-    background-color: var(--dark-bg-color);
-    color: var(--text-color);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
-}
-
-.loading-box {
+.shoppinglist-page-box{
+    color: black;
+    background-color: beige;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--medium-bg-color);
-    padding: 20px;
-    border-radius: 8px;
+    flex-flow: row nowrap;
 }
 
-.spinner-border {
-    color: var(--accent-color);
-}
+.list-group{
+    max-width: 400px;
 
-.list-group, .additional-list-group {
-    margin-top: 15px;
-    background-color: var(--medium-bg-color);
-    border-radius: 8px;
-}
-
-.ingredient-box, .additional-stuff-box {
-    margin: .5rem;
-    background-color: var(--light-bg-color);
-    padding: 15px;
-    border-radius: 8px;
-}
-.ingredient-box h4{
-    text-align: center;
-}
-
-.list-group-item {
-    background-color: var(--dark-bg-color);
-    border: none;
-    color: var(--text-color);
-    transition: background-color 0.3s;
-}
-
-    .list-group-item:hover {
-        background-color: var(--medium-bg-color);
-    }
-
-    .list-group-item.striked {
-        text-decoration: line-through;
-        opacity: 0.7;
-    }
-
-.remove-icon {
-    color: #FF5A5A; /* Red accent for the delete icon */
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-button {
-    background-color: var(--accent-color);
-    border: none;
-    color: var(--dark-bg-color);
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-    button:hover {
-        background-color: #ffb11f;
-    }
-
-input[type="text"] {
-    background-color: var(--medium-bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--light-bg-color);
-    border-radius: 5px;
-    padding: 8px 12px;
-}
-
-.addittional-items-box{
-    overflow-y: auto;
-    max-height: 250px;
-}
-
-.recipe-name-box {
-    margin: 0 auto;
-    display: flex;
-    flex-flow: row wrap;
-    text-align: center; /* This centers the text within the div */
-    display: flex; /* This turns the div into a flex container */
-    justify-content: center; /* This centers the flex items horizontally in the container */
-    align-items: center; /* This centers the flex items vertically in the container */
 }

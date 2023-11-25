@@ -10,7 +10,6 @@
     <None Include="Pages\Index.razor" />
     <None Include="Shared\MainLayout.razor" />
     <None Include="Shared\NavMenu.razor" />
-    <None Include="Shared\SurveyPrompt.razor" />
   </ItemGroup>
 
   <ItemGroup>

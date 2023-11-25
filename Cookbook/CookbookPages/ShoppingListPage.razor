@@ -25,89 +25,115 @@
     }
     else
     {
-        <div class="list-group">
-            <h3>Shopping list</h3>
-            <div class="ingredient-box">
-                @if (shoppingList != null || shoppingList.SingleShopListRecipes.Count > 0)
+        <div class="shopping-all-data">
+            <div class="shopping-box">
+                <h3>Shopping list</h3>
+                @if (shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
                 {
-                    @foreach (var recipeShoppingData in shoppingList.SingleShopListRecipes)
-                    {
-                        <div class="recipe-name-box">
-                            <h4>@recipeShoppingData.RecipeName</h4>
-                            <span @onclick="() => {RemoveWholeRecipeFromShoppingList(recipeShoppingData.RecipeName);}" class="remove-icon">🗑️</span>
-                        </div>
-                        @foreach (var ingredient in recipeShoppingData.Ingredients)
-                        {
-                            var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
-                            <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="ingr-item list-group-item @((isStriked) ? "striked" : "")">
-                                <div>
-                                    @ingredient.Name - @ingredient.Quantity @ingredient.Unit
-                                    <span @onclick:stopPropagation="true" @onclick="() => RemoveIngredient(ingredient.Guid.ToString())" class="remove-icon">🗑️</span>
-                                </div>
-                            </div>
-                        }
-                    }
-                }
-                
 
-                @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
-                {
-                    <div class="additional-list-group">
-                        <h5>Additional items</h5>
-                        @foreach (var item in shoppingList.AdditionalItems)
-                        {
-                            var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
-                            <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="list-group-item @((isStriked) ? "striked" : "")">
-                                <div>
-                                    @item
-                                    <span @onclick="() => RemoveAdditionalItem(item)" class="remove-icon">🗑️</span>
-                                </div>
-                            </div>
-                        }
+                    <div class="merge-box">
+                        <button @onclick="ShowSeparatedList">Separated</button>
+                        <button @onclick="ShowMergedShoppingList">Merged</button>
                     </div>
                 }
-            </div>
-        </div>
+                @if (!ShowMergedList)
+                {
+                    @if(shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
+                    {
+                        <div class="one-recipe-shopping-box">
+                            @if (shoppingList != null || shoppingList.SingleShopListRecipes.Count > 0)
+                            {
+                                @foreach (var recipeShoppingData in shoppingList.SingleShopListRecipes)
+                                {
+                                    <div class="recipe-name-box">
+                                        <h4>@recipeShoppingData.RecipeName</h4>
+                                        <span @onclick="() => {RemoveWholeRecipeFromShoppingList(recipeShoppingData.RecipeName);}" class="remove-icon">🗑️</span>
+                                    </div>
+                                    @foreach (var ingredient in recipeShoppingData.Ingredients)
+                                    {
+                                        var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
+                                        <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="ingr-item list-group-item @((isStriked) ? "striked" : "")">
+                                            @ingredient.Name - @ingredient.Quantity @ingredient.Unit
+                                            <span @onclick:stopPropagation="true" @onclick="() => RemoveIngredient(ingredient.Guid.ToString())" class="remove-icon">🗑️</span>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
 
-        <div class="additional-stuff-box">
-            <div class="currently-added-additional-box">
+                        @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
+                        {
+                            <div class="extra-items-shooping-box">
+                                <div class="additional-list-group">
+                                    <i>Extra</i>
+                                    @foreach (var item in shoppingList.AdditionalItems)
+                                    {
+                                        var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
+                                        <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="extra-ingr-item list-group-item @((isStriked) ? "striked" : "")">
+                                            @item
+                                            <span @onclick="() => RemoveAdditionalItem(item)" @onclick:stopPropagation="true" class="remove-icon">🗑️</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
+                            
+                    }
+                    else
+                    {
+                        <p>Shoppinglist is empty!</p>
+                    }
+                }
+                else
+                {
+                    //display merged list same way
+                    @foreach(var item in mergedList)
+                    {
+                        var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
+                        <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="extra-ingr-item list-group-item @((isStriked) ? "striked" : "")">
+                            @item
+                            <span @onclick="() => RemoveItemFromMerged(item)" @onclick:stopPropagation="true" class="remove-icon">🗑️</span>
+                        </div>
+                    }
+                }
                 <div class="add-additional-items-box">
-                    <label>Add additional item:</label>
-                    <input type="text" @bind="currentItemName" placeholder="item name"/>
+                    @* <label>Add additional item:</label> *@
+                    <input type="text" @bind="currentItemName" placeholder="item name" />
                     <button @onclick="AddItemToList">add</button>
                 </div>
             </div>
+            
+            <div class="additional-stuff-box">
 
-            <div class="additional-history-box">
-                @if (earlierAddedITems != null && earlierAddedITems.Count > 0)
-                {
-                    <h4>Earlier Added Items</h4>
-                    <div class="list-group addittional-items-box">
-                        @foreach (var item in earlierAddedITems)
-                        {
-                            <div @onclick="() => AddEarlierItemToShoppingList(item)" class="list-group-item">
-                                <div>
-                                    @item
+                <div class="additional-history-box">
+                    @if (earlierAddedITems != null && earlierAddedITems.Count > 0)
+                    {
+                        <h4>History</h4>
+                        <div class="list-group addittional-items-box">
+                            @foreach (var item in earlierAddedITems)
+                            {
+                                <div @onclick="() => AddEarlierItemToShoppingList(item)" class="history-add-item">
+                                    <p class="history-item-p">@item</p>
                                     <span @onclick:stopPropagation="true" @onclick="() => RemoveItemFromAdditionalList(item)" class="remove-icon">🗑️</span>
                                 </div>
-                            </div>
-                        }
-                    </div>
-                }
-             </div>
-
-            @if(recommendedItems.Count != 0)
-            {
-                <div class="recommended-items-box list-group addittional-items-box">
-                  <h4>Recommended items to buy</h4>
-                    @foreach(var recItem in recommendedItems)
-                    {
-                        <p @onclick="() => AddEarlierItemToShoppingList(recItem)">@recItem</p>
+                            }
+                        </div>
                     }
-                </div>  
-            }
-            
+                </div>
 
+                @if(recommendedItems.Count > 0)
+                {
+                    <div class="additional-recommended-box">
+                        <h4>Recommended</h4>
+                            @foreach(var recItem in recommendedItems)
+                            {
+                                <p class="rec-item-p" @onclick="() => AddEarlierItemToShoppingList(recItem)">@recItem</p>
+                            }
+                    </div>  
+                }
+            
+            </div>
         </div>
 
         <button @onclick="SaveShoppingListToBackend">save shopping list</button>
@@ -123,6 +149,8 @@
     private string currentItemName;
     private SingleShopList? shoppingList = new();
     private List<string> recommendedItems = new();
+    private List<string> mergedList = new();
+    private bool ShowMergedList = false;
 
     protected override void OnInitialized()
     {
@@ -150,7 +178,6 @@
                     return;
                 }
                 // Handle other non-success status codes appropriately
-                Console.WriteLine($"Error fetching shopping list: {response.ReasonPhrase}");
                 return;
             }
 
@@ -161,6 +188,7 @@
                 earlierAddedITems = shoppingListData.AdditionalItems;
                 recommendedItems = shoppingListData.RecommendedAdditionalItems;
             }
+
         }
         catch (Exception e)
         {
@@ -284,15 +312,97 @@
     {
         // Add the item to the shoppingList
         shoppingList?.AdditionalItems.Add(item);
+        mergedList.Add(item);
     }
 
     private void RemoveItemFromAdditionalList(string itemName)
     {
         earlierAddedITems?.RemoveAll(item => item == itemName);
+        mergedList.Remove(itemName);
     }
 
     private void RemoveWholeRecipeFromShoppingList(string recipeName)
     {
         shoppingList?.SingleShopListRecipes.RemoveAll(d => d.RecipeName == recipeName);
+    }
+
+    private void ShowMergedShoppingList()
+    {
+        mergedList.Clear();
+
+        //only do merge if it is empty
+        if(mergedList.Count == 0)
+        {
+            //take all items from all shopping recipies and add to temporary list with all ingredients
+            List<Ingredient> tempIngr = shoppingList.SingleShopListRecipes
+                                         .SelectMany(recipe => recipe.Ingredients)
+                                         .ToList();
+
+
+
+            for (int i = tempIngr.Count - 1; i >= 0; i--)
+            {
+                string tempName = "";
+                tempName += $"{tempIngr[i].Name} : {tempIngr[i].Quantity}{tempIngr[i].Unit}";
+
+                // a second for loop to check ahead in list and find duplicate names
+                for (int j = i - 1; j >= 0; j--)
+                {
+                    if (tempIngr[i].Name == tempIngr[j].Name)
+                    {
+                        tempName += $" {tempIngr[j].Quantity}{tempIngr[j].Unit} ";
+                        tempIngr.RemoveAt(j);
+                        i--; // Decrement i as the list size has changed
+                    }
+                }
+
+                mergedList.Add(tempName);
+                tempName = " ";
+            }
+
+            //add the extra items aswell
+            mergedList.AddRange(shoppingList.AdditionalItems);
+        }
+
+        ShowMergedList = true;
+        StateHasChanged();
+    }
+
+    private void ShowSeparatedList()
+    {
+        ShowMergedList = false;
+        StateHasChanged();
+    }
+
+    private void RemoveItemFromMerged(string nameToRemove)
+    {
+
+        //separate name from wuant and unit by blank space
+        var nameSeparated = nameToRemove.Split(" :")[0];
+
+        //go trough normal list and addiotnal item list and remove wehre name is same
+        foreach (var recipe in shoppingList.SingleShopListRecipes)
+        {
+            recipe.Ingredients = recipe.Ingredients
+                .Where(ingredient => !ingredient.Name.Equals(nameSeparated))
+                .ToList();
+        }
+
+        shoppingList.AdditionalItems = shoppingList.AdditionalItems
+            .Where(item => !item.Equals(nameSeparated))
+            .ToList();
+
+        //since nameToRemove comes from mergedList i dont need to manipulate the string for that one
+        mergedList = mergedList
+            .Where(name => !name.StartsWith(nameSeparated))
+            .ToList();
+
+        //remove whole recipies where they have no ingredients in specified view
+        shoppingList.SingleShopListRecipes = shoppingList.SingleShopListRecipes
+            .Where(recipe => recipe.Ingredients.Count > 0)
+            .ToList();
+
+        StateHasChanged();
+
     }
 }

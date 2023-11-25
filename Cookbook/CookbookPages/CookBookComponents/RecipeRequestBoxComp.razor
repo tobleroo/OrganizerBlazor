@@ -5,7 +5,7 @@
             <label for="howManyIn">Portions</label>
             <input type="number" class="inputPortions" name="howManyIn" min="1" max="10" @bind="RecipeRequest.portions">
         </div>
-        <div class="meal-input-box">
+        @* <div class="meal-input-box">
             <label for="difficultyIn">Difficulty</label>
             <select name="difficultyIn" @bind="RecipeRequest.difficulty">
                 <option value="Any">Any</option>
@@ -13,7 +13,7 @@
                 <option value="Medium">Medium</option>
                 <option value="Hard">Hard</option>
             </select>
-        </div>
+        </div> *@
         <div>
             <label for="recipeType">Recipe type</label>
             <select name="recipeType" @bind="RecipeRequest.category">

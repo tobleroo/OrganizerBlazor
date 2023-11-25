@@ -28,15 +28,18 @@
         <div class="shopping-all-data">
             <div class="shopping-box">
                 <h3>Shopping list</h3>
+                @if (shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
+                {
 
+                    <div class="merge-box">
+                        <button @onclick="ShowSeparatedList">Separated</button>
+                        <button @onclick="ShowMergedShoppingList">Merged</button>
+                    </div>
+                }
                 @if (!ShowMergedList)
                 {
                     @if(shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
                     {
-                        <div class="merge-box">
-                            <button @onclick="ShowSeparatedList">Separated</button>
-                            <button @onclick="ShowMergedShoppingList">Merged</button>
-                        </div>
                         <div class="one-recipe-shopping-box">
                             @if (shoppingList != null || shoppingList.SingleShopListRecipes.Count > 0)
                             {
@@ -57,9 +60,10 @@
                                 }
                             }
                         </div>
-                        <div class="extra-items-shooping-box">
-                            @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
-                            {
+
+                        @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
+                        {
+                            <div class="extra-items-shooping-box">
                                 <div class="additional-list-group">
                                     <i>Extra</i>
                                     @foreach (var item in shoppingList.AdditionalItems)
@@ -71,8 +75,10 @@
                                         </div>
                                     }
                                 </div>
-                            }
-                        </div>
+                            </div>
+                        }
+                        
+                            
                     }
                     else
                     {
@@ -98,8 +104,6 @@
                 </div>
             </div>
             
-             
-
             <div class="additional-stuff-box">
 
                 <div class="additional-history-box">
@@ -118,16 +122,16 @@
                     }
                 </div>
 
-                <div class="additional-recommended-box"> 
-                    @if(recommendedItems.Count > 0)
-                    {
-                            <h4>Recommended</h4>
+                @if(recommendedItems.Count > 0)
+                {
+                    <div class="additional-recommended-box">
+                        <h4>Recommended</h4>
                             @foreach(var recItem in recommendedItems)
                             {
                                 <p class="rec-item-p" @onclick="() => AddEarlierItemToShoppingList(recItem)">@recItem</p>
                             }
-                    }
-                </div>
+                    </div>  
+                }
             
             </div>
         </div>
@@ -184,9 +188,6 @@
                 earlierAddedITems = shoppingListData.AdditionalItems;
                 recommendedItems = shoppingListData.RecommendedAdditionalItems;
             }
-
-            // ---- fake recommended items for design ----
-            recommendedItems = new() { "item1", "item2", "item3", "item4" };
 
         }
         catch (Exception e)
@@ -311,11 +312,13 @@
     {
         // Add the item to the shoppingList
         shoppingList?.AdditionalItems.Add(item);
+        mergedList.Add(item);
     }
 
     private void RemoveItemFromAdditionalList(string itemName)
     {
         earlierAddedITems?.RemoveAll(item => item == itemName);
+        mergedList.Remove(itemName);
     }
 
     private void RemoveWholeRecipeFromShoppingList(string recipeName)
@@ -325,7 +328,6 @@
 
     private void ShowMergedShoppingList()
     {
-
         mergedList.Clear();
 
         //only do merge if it is empty
@@ -338,19 +340,19 @@
 
 
 
-            for(int i = 0; i< tempIngr.Count-1; i++)
+            for (int i = tempIngr.Count - 1; i >= 0; i--)
             {
                 string tempName = "";
                 tempName += $"{tempIngr[i].Name} : {tempIngr[i].Quantity}{tempIngr[i].Unit}";
 
                 // a second for loop to check ahead in list and find duplicate names
-                for(int j = i + 1 ;j < tempIngr.Count; j++)
+                for (int j = i - 1; j >= 0; j--)
                 {
-                    if(tempIngr[i].Name == tempIngr[j].Name)
+                    if (tempIngr[i].Name == tempIngr[j].Name)
                     {
                         tempName += $" {tempIngr[j].Quantity}{tempIngr[j].Unit} ";
                         tempIngr.RemoveAt(j);
-                        j--;
+                        i--; // Decrement i as the list size has changed
                     }
                 }
 

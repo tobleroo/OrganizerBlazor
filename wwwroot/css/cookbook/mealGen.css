@@ -3,10 +3,10 @@
 .mealplanner-box-one {
     max-width: 1200px;
     margin: 30px auto;
-    background-color: #2C3144;
+    background-color: #e0cfb1;
     border-radius: 10px;
     padding: 20px;
-    color: #E1E5EB;
+    color: black;
     font-family: 'Arial', sans-serif;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -17,8 +17,8 @@
 }
 
 .selectionButton {
-    background-color: #2C3144;
-    color: #E1E5EB;
+    background-color: #f0e6d6;
+    color: #333;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -33,13 +33,11 @@
 
 .randomMealInputBox, .specificMealInputBox {
     padding: 20px;
-    background-color: #2C3144;
     border-radius: 10px;
     margin-top: 20px;
 }
 
 button[type="submit"] {
-    background-color: rgba(250, 190, 44, 0.6);
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -49,7 +47,6 @@ button[type="submit"] {
 }
 
 .recipe-card-box {
-    background-color: #606058ff;
     padding: 1rem;
     color: black;
     border-radius: 10px;
@@ -71,16 +68,13 @@ button[type="submit"] {
     flex-flow: column wrap;
     margin: 1rem;
     padding : 1rem;
-    background-color: grey;
     border-radius: 15px;
 }
 
 input, select {
     width: 100%;
     padding: 10px;
-    background-color: #2C3144;
     border: 1px solid rgba(250, 190, 44, 0.6);
-    color: #E1E5EB;
     border-radius: 5px;
 }
 
@@ -94,7 +88,6 @@ input, select {
     align-items: center;
     justify-content: center;
     height: 100px;
-    background-color: #2C3144;
     border-radius: 10px;
 }
 
@@ -103,25 +96,29 @@ input, select {
 }
 
 .shoppinglist-box {
-    background-color: #2C3144;
     padding: 20px;
     border-radius: 10px;
     margin-top: 20px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.add-remove-specific-mealplan-box button,
-.shopping-List-info button ,
-.mealplan-add-remove-box button, 
-.shoppinglist-box button{
-    background-color: rgba(250, 190, 44, 0.6);
-    color: #E1E5EB;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border-radius: 5px;
-    margin-right: 10px;
-}
+    .add-remove-specific-mealplan-box button,
+    .shopping-List-info button,
+    .mealplan-add-remove-box button,
+    .shoppinglist-box button {
+        background-color: rgba(250, 190, 44, 0.6);
+        color: black;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
 
+.one-recipe-spec-box, .recipe-card{
+    background-color: #d3ba77;
+    margin: .5rem;
+    border-radius: 15px;
+}
 

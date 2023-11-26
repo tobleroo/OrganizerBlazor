@@ -23,27 +23,36 @@
         <AuthorizeView>
 
             <Authorized>
+                <!-- Cookbook Button -->
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="cookbook-overview">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Recipe list
-                    </NavLink>
+                    <button class="nav-link" @onclick="ToggleNavLinks">
+                        <span class="oi oi-book" aria-hidden="true"></span> Cookbook
+                    </button>
                 </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="mealGen">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Meal Generator
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="shoppinglistpage">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Shoppinglist
-                    </NavLink>
+
+                <!-- Conditionally rendered nav links -->
+                <div class="@GetNavLinksClass()">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="cookbook-overview">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Recipe list
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="mealGen">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Meal Generator
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="shoppinglistpage">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Shoppinglist
+                        </NavLink>
+                    </div>
                 </div>
                 <div class="nav-item px-3" @onclick="logout">
                     <NavLink class="nav-link" href="login">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Sign out
                     </NavLink>
                 </div>
-                
             </Authorized>
 
             
@@ -69,6 +78,18 @@
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private bool showNavLinks = false; // Property to track visibility
+
+    private void ToggleNavLinks()
+    {
+        showNavLinks = !showNavLinks; // Toggle the visibility
+    }
+
+    private string GetNavLinksClass()
+    {
+        return showNavLinks ? "d-block" : "d-none"; // Class names for showing or hiding
+    }
 
     private void ToggleNavMenu()
     {

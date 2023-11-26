@@ -5,6 +5,13 @@
     width: 100%;
 }
 
+.step-item-data-box {
+    margin: 1rem;
+    background-color: #d7d7af;
+    border-radius: 15px;
+    padding: .5rem;
+}
+
 /*-- recipe name and edit button box styling --*/
 
 .recipe-name-box {
@@ -363,7 +370,6 @@
             opacity: 0.8; /* Slightly transparent on hover */
         }
 
-
 /* Responsive design for mobile devices */
 @media screen and (max-width: 768px) {
     .recipe-name-box,
@@ -452,3 +458,4 @@
         max-width: 80%; /* Adjust input box width as needed */
     }
 }
+

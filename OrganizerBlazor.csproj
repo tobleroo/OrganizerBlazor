@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Cookbook\CookbookServices\" />
+    <Folder Include="wwwroot\css\cookbook\" />
   </ItemGroup>
 
 </Project>

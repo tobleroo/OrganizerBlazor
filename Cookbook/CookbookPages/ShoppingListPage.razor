@@ -10,135 +10,136 @@
 @inject IAuthUtils authUtils
 @attribute [Authorize]
 
-<link rel="stylesheet" href="../css/cookbook/shoppingListPage.css">
-
-<div class="shoppinglist-page-box">
-
-    @if(LoadingData)
+<div class="container mt-4">
+    @if (LoadingData)
     {
-        <div class="loading-box">
+        <div class="text-center">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <h3>Loading shoppinglist...</h3>
+            <h3>Loading shopping list...</h3>
         </div>
     }
     else
     {
-        <div class="shopping-all-data">
-            <div class="shopping-box">
-                <h3>Shopping list</h3>
-                @if (shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
-                {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Shopping List</h3>
+                        @if (shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
+                        {
+                            <div class="btn-group mb-3" role="group" aria-label="List options">
+                                <button class="btn btn-secondary" @onclick="ShowSeparatedList">Separated</button>
+                                <button class="btn btn-secondary" @onclick="ShowMergedShoppingList">Merged</button>
+                            </div>
+                        }
 
-                    <div class="merge-box">
-                        <button @onclick="ShowSeparatedList">Separated</button>
-                        <button @onclick="ShowMergedShoppingList">Merged</button>
-                    </div>
-                }
-                @if (!ShowMergedList)
-                {
-                    @if(shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
-                    {
-                        <div class="one-recipe-shopping-box">
-                            @if (shoppingList != null || shoppingList.SingleShopListRecipes.Count > 0)
+                        @if (!ShowMergedList)
+                        {
+                            @if (shoppingList.SingleShopListRecipes.Count > 0 || shoppingList.AdditionalItems.Count > 0)
                             {
                                 @foreach (var recipeShoppingData in shoppingList.SingleShopListRecipes)
                                 {
-                                    <div class="recipe-name-box">
+                                    <div class="mb-2">
                                         <h4>@recipeShoppingData.RecipeName</h4>
-                                        <span @onclick="() => {RemoveWholeRecipeFromShoppingList(recipeShoppingData.RecipeName);}" class="remove-icon">🗑️</span>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => {RemoveWholeRecipeFromShoppingList(recipeShoppingData.RecipeName);}">
+                                            <i class="bi bi-x"></i> Remove
+                                        </button>
+                                        <ul class="list-group">
+                                            @foreach (var ingredient in recipeShoppingData.Ingredients)
+                                            {
+                                                var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
+                                                <li class="list-group-item @((isStriked) ? "text-decoration-line-through" : "")" @onclick="() => ToggleStriked(ingredient.Guid.ToString())">
+                                                    @ingredient.Name - @ingredient.Quantity @ingredient.Unit
+                                                    <button class="btn btn-danger btn-sm float-end" @onclick:stopPropagation="true" @onclick="() => RemoveIngredient(ingredient.Guid.ToString())">🗑️</button>
+                                                </li>
+                                            }
+                                        </ul>
                                     </div>
-                                    @foreach (var ingredient in recipeShoppingData.Ingredients)
-                                    {
-                                        var isStriked = strikedIngredients.ContainsKey(ingredient.Guid.ToString()) && strikedIngredients[ingredient.Guid.ToString()];
-                                        <div @onclick="() => ToggleStriked(ingredient.Guid.ToString())" class="ingr-item list-group-item @((isStriked) ? "striked" : "")">
-                                            @ingredient.Name - @ingredient.Quantity @ingredient.Unit
-                                            <span @onclick:stopPropagation="true" @onclick="() => RemoveIngredient(ingredient.Guid.ToString())" class="remove-icon">🗑️</span>
-                                        </div>
-                                    }
                                 }
                             }
-                        </div>
-
-                        @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
-                        {
-                            <div class="extra-items-shooping-box">
-                                <div class="additional-list-group">
-                                    <i>Extra</i>
-                                    @foreach (var item in shoppingList.AdditionalItems)
-                                    {
-                                        var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
-                                        <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="extra-ingr-item list-group-item @((isStriked) ? "striked" : "")">
-                                            @item
-                                            <span @onclick="() => RemoveAdditionalItem(item)" @onclick:stopPropagation="true" class="remove-icon">🗑️</span>
-                                        </div>
-                                    }
+                            @if (shoppingList.AdditionalItems != null && shoppingList.AdditionalItems.Count > 0)
+                            {
+                                <div class="mb-3">
+                                    <h5>Extra</h5>
+                                    <ul class="list-group">
+                                        @foreach (var item in shoppingList.AdditionalItems)
+                                        {
+                                            var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
+                                            <li class="list-group-item @((isStriked) ? "text-decoration-line-through" : "")" @onclick="() => ToggleStrikedAdditionalItem(item)">
+                                                @item
+                                                <button class="btn btn-danger btn-sm float-end" @onclick="() => RemoveAdditionalItem(item)" @onclick:stopPropagation="true">🗑️</button>
+                                            </li>
+                                        }
+                                    </ul>
                                 </div>
-                            </div>
+                            }
                         }
-                        
-                            
-                    }
-                    else
-                    {
-                        <p>Shoppinglist is empty!</p>
-                    }
-                }
-                else
-                {
-                    //display merged list same way
-                    @foreach(var item in mergedList)
-                    {
-                        var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
-                        <div @onclick="() => ToggleStrikedAdditionalItem(item)" class="extra-ingr-item list-group-item @((isStriked) ? "striked" : "")">
-                            @item
-                            <span @onclick="() => RemoveItemFromMerged(item)" @onclick:stopPropagation="true" class="remove-icon">🗑️</span>
+                        else
+                        {
+                            <ul class="list-group">
+                                @foreach (var item in mergedList)
+                                {
+                                    var isStriked = strikedAdditionalItems.ContainsKey(item) && strikedAdditionalItems[item];
+                                    <li class="list-group-item @((isStriked) ? "text-decoration-line-through" : "")" @onclick="() => ToggleStrikedAdditionalItem(item)">
+                                        @item
+                                        <button class="btn btn-danger btn-sm float-end" @onclick="() => RemoveItemFromMerged(item)" @onclick:stopPropagation="true">🗑️</button>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        <div class="input-group mt-3">
+                            <input type="text" class="form-control" placeholder="Item name" @bind="currentItemName">
+                            <button class="btn btn-outline-secondary" @onclick="AddItemToList">Add</button>
                         </div>
-                    }
-                }
-                <div class="add-additional-items-box">
-                    @* <label>Add additional item:</label> *@
-                    <input type="text" @bind="currentItemName" placeholder="item name" />
-                    <button @onclick="AddItemToList">add</button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="additional-stuff-box">
 
-                <div class="additional-history-box">
-                    @if (earlierAddedITems != null && earlierAddedITems.Count > 0)
-                    {
-                        <h4>History</h4>
-                        <div class="list-group addittional-items-box">
-                            @foreach (var item in earlierAddedITems)
-                            {
-                                <div @onclick="() => AddEarlierItemToShoppingList(item)" class="history-add-item">
-                                    <p class="history-item-p">@item</p>
-                                    <span @onclick:stopPropagation="true" @onclick="() => RemoveItemFromAdditionalList(item)" class="remove-icon">🗑️</span>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-
-                @if(recommendedItems.Count > 0)
+            <div class="col-lg-4">
+                @if (earlierAddedITems != null && earlierAddedITems.Count > 0)
                 {
-                    <div class="additional-recommended-box">
-                        <h4>Recommended</h4>
-                            @foreach(var recItem in recommendedItems)
-                            {
-                                <p class="rec-item-p" @onclick="() => AddEarlierItemToShoppingList(recItem)">@recItem</p>
-                            }
-                    </div>  
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">History</h4>
+                            <ul class="list-group">
+                                @foreach (var item in earlierAddedITems)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @item
+                                        <span>
+                                            <button class="btn btn-primary btn-sm" @onclick="() => AddEarlierItemToShoppingList(item)">Add</button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => RemoveItemFromAdditionalList(item)">🗑️</button>
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
                 }
-            
+
+                @if (recommendedItems.Count > 0)
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Recommended</h4>
+                            <ul class="list-group">
+                                @foreach (var recItem in recommendedItems)
+                                {
+                                    <li class="list-group-item" @onclick="() => AddEarlierItemToShoppingList(recItem)">
+                                        @recItem
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-
-        <button @onclick="SaveShoppingListToBackend">save shopping list</button>
     }
-
+    <button class="btn btn-success mt-3" @onclick="SaveShoppingListToBackend">Save Shopping List</button>
 </div>
 
 @code {

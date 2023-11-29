@@ -11,43 +11,34 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
-<link rel="stylesheet" href="../css/cookbook/overviewDataPage.css">
 
-
-<div class="cookbook-page">
-
+<div class="container mt-4">
     <SearchBarCookBook RecipeData="@OriginalList" OnRecipesFiltered="HandleRecipesFiltered" />
 
-    <div class="recipe-box">
-        @foreach(var recipe in recipeData)
+    <ul class="list-group">
+        @foreach (var recipe in recipeData)
         {
-            <div class="recipe-overview-box" @onclick="() => goToRecipePage(recipe.Id)">
-                <div class="recipe-name-box">
-                    <h3>@recipe.Name</h3>
+            <li class="list-group-item d-flex justify-content-between align-items-center" @onclick="() => goToRecipePage(recipe.Id)">
+                <div>
+                    <h5 class="mb-1">@recipe.Name</h5>
+                    <small class="text-muted">
+                        <span class="oi oi-clock me-2" aria-hidden="true"></span>
+                        @recipe.TimeToCook minutes
+                    </small>
+                    <small class="ms-2">
+                        <span style="font-size: 20px;">&#x1F374;</span>
+                        @recipe.RecipeType
+                    </small>
                 </div>
-                <div class="recipe-details-box">
-                    <div class="time-box data-box">
-                        <span class="oi oi-clock" style="font-size: 20px;" aria-hidden="true"></span>
-                        <span class="recipe-cook-time">@recipe.TimeToCook minutes</span>
-                    </div>
-                    @* <div class="difficulty-box data-box">
-                        <span class="oi oi-star" style="font-size: 20px;" aria-hidden="true"></span>
-                        <span class="recipe-difficulty">@recipe.Difficulty</span>
-                    </div> *@
-                    <div class="type-box data-box">
-                        <span>&#x1F374;</span>
-                        <span> @recipe.RecipeType</span>
-                    </div>
-                </div>
-            </div>
+            </li>
         }
-    </div>
-    <div class="add-new-recipe-box">
-        <button @onclick="() => goToRecipePage()">
+    </ul>
+
+    <div class="mt-4">
+        <button class="btn btn-primary" @onclick="() => goToRecipePage()">
             <i class="bi bi-plus"></i> Add New Item
         </button>
     </div>
-    
 </div>
 
 @code {

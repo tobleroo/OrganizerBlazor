@@ -4,11 +4,10 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<div class="see-recipe-page">
-
+<div class="container mt-4">
     @if (recipe == null)
     {
-        <div class="loading-box">
+        <div class="text-center">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -17,133 +16,122 @@
     }
     else
     {
-        <div class="see-recipe-box">
-
-            <div class="recipe-name-box">
-                <div class="centered-content  @(isEditModeOn ? "edit-mode-recipe-name" : "")">
-                    <input type="text" @bind="recipe.RecipeName" readonly="@(!isEditModeOn)" class="recipe-name-input"/>
-                </div>
-                <button class="btn btn-secondary" @onclick="TurnOnEditMode">
-                    <i class="bi bi-pencil"></i>
-                </button>
-            </div>
-
-            <div class="top-data-box">
-
-                <div class="recipe-details-box @(isEditModeOn ? "edit-mode" : "")">
-                    <div class="">
-                        <label>cooktime:</label>
-                        <input type="number" @bind="recipe.CookTime" readonly="@(!isEditModeOn)" min="1" max="299"/>
-                    </div>
-                    <div class="">
-                        <label>Portions:</label>
-                        <input type="number" @bind="recipe.Portions" readonly="@(!isEditModeOn)" min="1" max="99"/>
-                    </div>
-                    <div class="">
-                        <label for="recipeType">type:</label>
-                        <select id="recipeType" name="recipeType" @bind="recipe.RecipeType" disabled="@(!isEditModeOn)">
-                            <option value="Breakfast">Breakfast</option>
-                            <option value="Lunch">Lunch</option>
-                            <option value="Dinner">Dinner</option>
-                            <option value="Dessert">Dessert</option>
-                            <option value="Snack">Snacks</option>
-                        </select>
-                    </div>
-                    @* <div class="">
-                        <label for="spicyness">Spiciness:</label>
-                        <select id="spicyness" name="spicyness" @bind="recipe.Spicyness" disabled="@(!isEditModeOn)">
-                            <option value=1>🌶️</option>
-                            <option value=2>🌶️🌶️</option>
-                            <option value=3>🌶️🌶️🌶️</option>
-                            <option value=4>🌶️🌶️🌶️🌶️</option>
-                            <option value=5>🌶️🌶️🌶️🌶️🌶️</option>
-                        </select>
-                    </div>
-                    <div class="">
-                        <label>Vegan: </label>
-                        <input type="checkbox" id="isVegan" name="isVegan" value="true" @bind="recipe.IsVegan" disabled="@(!isEditModeOn)" />
-                    </div>
-                    <div class="">
-                        <label for="difficulty">Difficulty: </label>
-                        <select id="difficulty" name="difficulty" @bind="recipe.Difficulty" disabled="@(!isEditModeOn)">
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
-                        </select>
-                    </div> *@
-                </div>
-            
-                <div class="description-box">
-                    <label>Description:</label>
-                    <textarea readonly="@(!isEditModeOn)" @bind="recipe.Description"></textarea>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <input type="text" class="form-control" @bind="recipe.RecipeName" readonly="@(!isEditModeOn)">
+                    <button class="btn btn-secondary ms-2" @onclick="TurnOnEditMode">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                 </div>
 
-            </div>
-            <div class="bottom-data-box">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Cooktime:</label>
+                            <input type="number" class="form-control" @bind="recipe.CookTime" readonly="@(!isEditModeOn)" min="1" max="299">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Portions:</label>
+                            <input type="number" class="form-control" @bind="recipe.Portions" readonly="@(!isEditModeOn)" min="1" max="99">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Type:</label>
+                            <select class="form-select" @bind="recipe.RecipeType" disabled="@(!isEditModeOn)">
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Dessert">Dessert</option>
+                                <option value="Snack">Snacks</option>
+                            </select>
+                        </div>
+                        <!-- Other fields... -->
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label">Description:</label>
+                            <textarea class="form-control" readonly="@(!isEditModeOn)" @bind="recipe.Description"></textarea>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="ingredients-box">
+                <div class="mb-3">
                     <h2>Ingredients</h2>
-                    @if(recipe.Ingredients.Count == 0)
+                    @if (recipe.Ingredients.Count == 0)
                     {
-                        <bold>No ingredients!</bold>
+                        <strong>No ingredients!</strong>
                     }
                     else
                     {
-                        @foreach(var ingredient in recipe.Ingredients)
+                        @foreach (var ingredient in recipe.Ingredients)
                         {
-                            <div class="one-ingr-box">
-                                <p>@ingredient.Name @ingredient.Quantity @ingredient.Unit</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <p class="mb-0">@ingredient.Name @ingredient.Quantity @ingredient.Unit</p>
                                 @if (isEditModeOn)
-                                { 
+                                {
                                     <button class="btn btn-danger" @onclick="() => RemoveIngredientFromRecipe(ingredient)">
                                         <i class="bi bi-trash"></i> <!-- Bootstrap trash icon for remove/delete -->
                                     </button>
                                 }
                             </div>
                         }
-
                     }
                     @if (isEditModeOn)
                     {
-                        <div class="add-new-ingr-box">
-                            <input type="text" placeholder="Name" @bind="ingrName"/>
-                            <input type="number" @bind="ingrAmount" placeholder="amount" min="1" max="10000"/>
-                            <input type="text" @bind="unitName" placeholder="unit type"/>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Name</span>
+                            <input type="text" class="form-control" placeholder="Ingredient name" @bind="ingrName" />
+                        </div>
+
+                        <!-- Amount Input -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Amount</span>
+                            <input type="number" class="form-control" placeholder="Amount" @bind="ingrAmount" min="1" max="10000" />
+                        </div>
+
+                        <!-- Unit Input -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Unit</span>
+                            <input type="text" class="form-control" placeholder="Unit" @bind="unitName" />
+                        </div>
+
+                        <!-- Add Button -->
+                        <div class="d-grid gap-2">
                             <button class="btn btn-primary" @onclick="AddNewIngredientToList">
                                 <i class="bi bi-plus-lg"></i> <!-- Bootstrap plus icon -->
                             </button>
                         </div>
                     }
-                </div
+                </div>
 
-                <div class="steps-box">
-                    <h2>steps:</h2>
+                <div class="mb-3">
+                    <h2>Steps</h2>
                     @if (recipe.Steps.Count == 0)
                     {
-                        <div class="step-item">
-                            <span>No steps added!</span>
-                        </div>
+                        <div class="alert alert-info">No steps added!</div>
                     }
                     else
                     {
-                        @foreach (var step in recipe.Steps)
-                        {
-                            <div class="step-item">
-                                <p>@step</p>
-                                @if (isEditModeOn)
-                                {
-                                    <p @onclick="() => RemoveStepFromList(step)">
-                                        <i class="bi bi-trash"></i> <!-- Bootstrap icon for trash -->
-                                    </p>
-                                }
-                            </div>
-                        }
+                        <ul class="list-group mb-3">
+                            @foreach (var step in recipe.Steps)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @step
+                                    @if (isEditModeOn)
+                                    {
+                                        <button class="btn btn-danger btn-sm" @onclick="() => RemoveStepFromList(step)">
+                                            <i class="bi bi-trash"></i> <!-- Bootstrap icon for trash -->
+                                        </button>
+                                    }
+                                </li>
+                            }
+                        </ul>
                     }
                     @if (isEditModeOn)
                     {
-                        <div class="add-step-box">
-                            <input type="text" @bind="addStepTextInput" />
-                            <button class="btn btn-primary"  @onclick="AddStepToList">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Add step" @bind="addStepTextInput" />
+                            <button class="btn btn-primary" @onclick="AddStepToList">
                                 <i class="bi bi-plus-lg"></i> <!-- Bootstrap plus icon -->
                             </button>
                         </div>
@@ -151,15 +139,15 @@
                 </div>
             </div>
         </div>
-        <div class="buttons-box">
-            <button @onclick="SaveOrUpdateRecipeToBackend">save recipe</button>
+
+        <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-primary" @onclick="SaveOrUpdateRecipeToBackend">Save Recipe</button>
             @if (RecipeCanBeDeleted)
             {
-                <button @onclick="DeleteRecipeFromBackend">Delete</button>
+                <button class="btn btn-danger" @onclick="DeleteRecipeFromBackend">Delete</button>
             }
-            <button @onclick="CancelRecipe">Cancel</button>
+            <button class="btn btn-secondary" @onclick="CancelRecipe">Cancel</button>
         </div>
-        
     }
 
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -168,7 +156,6 @@
             @errorMessage
         </div>
     }
-
 </div>
 
 @code {

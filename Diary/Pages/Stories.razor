@@ -1,0 +1,55 @@
+﻿@page "/diary"
+@using OrganizerBlazor.Diary.Models
+
+@inject NavigationManager NavigationManager
+
+<div class="container mt-4">
+    <h1>Diary Stories</h1>
+    <hr />
+
+    @if (diaryItems.Any())
+    {
+        @foreach (var item in diaryItems)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">@item.Content</p>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No diary stories available.</p>
+    }
+
+    <button @onclick="GoToNewStory">Add new story</button>
+</div>
+
+@code {
+    List<DiaryItem> diaryItems = new List<DiaryItem>
+    {
+        new DiaryItem
+        {
+            Title = "Day at the Park",
+            Content = "Today, I spent a lovely day at the park with my friends. We played games, had a picnic, and enjoyed the beautiful weather."
+        },
+        new DiaryItem
+        {
+            Title = "Birthday Celebration",
+            Content = "It was my birthday today! My family surprised me with a delicious cake and thoughtful gifts. I felt so loved."
+        },
+        // Add more diary items here
+    };
+
+    private void GoToNewStory()
+    {
+        NavigationManager.NavigateTo("/diary/add");
+    }
+
+    private void CreateTimeStampOnCreate()
+    {
+        // get todays date and save to story object
+    }
+}

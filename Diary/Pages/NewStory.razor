@@ -1,0 +1,38 @@
+﻿@page "/diary/add"
+@using OrganizerBlazor.Diary.Models
+
+<div class="container mt-4">
+    <h1>Add a New Diary Story</h1>
+    <hr />
+
+    <form @onsubmit="AddDiaryItem">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" @bind="newDiaryItem.Title" required />
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" @bind="newDiaryItem.Content" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Story</button>
+    </form>
+</div>
+
+@code {
+    private DiaryItem newDiaryItem = new DiaryItem();
+
+    private void AddDiaryItem()
+    {
+        // You can add the newDiaryItem to your list or database here
+        // For this example, we'll add it to the list
+        // diaryItems.Add(newDiaryItem);
+
+        // Reset the form fields
+        // newDiaryItem = new DiaryItem();
+
+        // Redirect to the diary view page
+        // NavigationManager.NavigateTo("/diary");
+    }
+}

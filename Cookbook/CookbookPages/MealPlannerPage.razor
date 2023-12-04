@@ -90,9 +90,15 @@
         {
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">@recipe.RecipeName</h5>
-                    <p class="card-text">@recipe.Description</p>
-                    <!-- Ingredients and Cooking Instructions Here -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title">@recipe.RecipeName</h5>
+                            <p class="card-text">@recipe.Description</p>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-danger float-right" @onclick="() => RemovePlannedRecipe(recipe.RecipeName)">Delete</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
@@ -222,6 +228,11 @@
         }
 
 
+    }
+
+    private void RemovePlannedRecipe(string recipeToRemove)
+    {
+        MealPlannedRecipes = MealPlannedRecipes.Where(recipe => recipe.RecipeName != recipeToRemove).ToList();
     }
 
     private void addRecipeToList()

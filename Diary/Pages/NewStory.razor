@@ -15,13 +15,41 @@
             <label for="content">Content:</label>
             <textarea class="form-control" id="content" @bind="newDiaryItem.Content" rows="5" required></textarea>
         </div>
+        <div class="form-group">
+            <label for="cityInput">City:</label>
+            <input type="text" class="form-control" id="cityInput" @bind="newDiaryItem.PublishedInTown">
+        </div>
+        <div class="form-group">
+            <label for="countryInput">Country:</label>
+            <input type="text" class="form-control" id="countryInput" @bind="newDiaryItem.PublishedInCountry">
+        </div>
 
         <button type="submit" class="btn btn-primary">Add Story</button>
     </form>
+
+    <div class="form-group">
+        <label>How was your day?</label>
+        <div class="star-rating">
+            @for (int i = 1; i <= 5; i++)
+            {
+                var localI = i; // Capture the current value of i
+                <span class="star" @onclick="() => RateDay(localI)">
+                    @if (dayRating >= localI)
+                    {
+                        <i class="bi bi-star-fill"></i> <!-- Filled star -->
+                    }
+                    else
+                    {
+                        <i class="bi bi-star"></i> <!-- Empty star -->
+                    }
+                </span>
+            }
+        </div>
+    </div>
 </div>
 
 @code {
-    private DiaryItem newDiaryItem = new DiaryItem();
+    private DiaryPost newDiaryItem = new DiaryPost();
 
     private void AddDiaryItem()
     {
@@ -34,5 +62,28 @@
 
         // Redirect to the diary view page
         // NavigationManager.NavigateTo("/diary");
+
+        var timestamp = CreateTimeStampOnCreate();
+        Console.WriteLine(timestamp);
+    }
+
+    private string CreateTimeStampOnCreate()
+    {
+        // Get the current date and time
+        DateTime now = DateTime.Now;
+
+        // Create a timestamp string
+        return now.ToString("yyyy - MM - dd HH: mm:ss");
+    }
+
+
+    // --- poll code ---
+
+    private int dayRating = 0;
+
+    private void RateDay(int rating)
+    {
+        Console.WriteLine("rating : " + rating);
+        dayRating = rating;
     }
 }

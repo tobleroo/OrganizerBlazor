@@ -28,14 +28,14 @@
 </div>
 
 @code {
-    List<DiaryItem> diaryItems = new List<DiaryItem>
+    List<DiaryPost> diaryItems = new List<DiaryPost>
     {
-        new DiaryItem
+        new DiaryPost
         {
             Title = "Day at the Park",
             Content = "Today, I spent a lovely day at the park with my friends. We played games, had a picnic, and enjoyed the beautiful weather."
         },
-        new DiaryItem
+        new DiaryPost
         {
             Title = "Birthday Celebration",
             Content = "It was my birthday today! My family surprised me with a delicious cake and thoughtful gifts. I felt so loved."
@@ -48,8 +48,5 @@
         NavigationManager.NavigateTo("/diary/add");
     }
 
-    private void CreateTimeStampOnCreate()
-    {
-        // get todays date and save to story object
-    }
+    
 }

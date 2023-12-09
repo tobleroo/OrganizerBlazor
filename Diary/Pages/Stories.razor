@@ -1,51 +1,246 @@
 ﻿@page "/diary"
 @using OrganizerBlazor.Diary.Models
+@using System.Net.Http.Headers
+@using System.Net.Http.Json;
+@using OrganizerBlazor.Diary.Models.DiaryDTOs
+@using System.Text.RegularExpressions
+@using OrganizerBlazor.Diary.Pages.DiaryComponents
 
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
+@inject HttpClient Http
 
 <div class="container mt-4">
     <h1>Diary Stories</h1>
     <hr />
 
-    @if (diaryItems.Any())
+    @if (!signedIn)
     {
-        @foreach (var item in diaryItems)
+        @if(CheckAlreadyCreated == null)
         {
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">@item.Title</h5>
-                    <p class="card-text">@item.Content</p>
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
+                <h3>Authenticating</h3>
+            </div>
+        }else if(CheckAlreadyCreated == false)
+        {
+            @if (!WaitingOnCreatingAccount)
+            {
+                @* box for creating password and set city and country as default  *@
+                <div class="container">
+                    <EditForm Model="@createDiaryDataDTO" OnValidSubmit="@CreateDiaryAccount">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <InputText id="password" class="form-control" @bind-Value="createDiaryDataDTO.Password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <InputText id="country" class="form-control" @bind-Value="createDiaryDataDTO.Country" />
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <InputText id="city" class="form-control" @bind-Value="createDiaryDataDTO.City" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create diary</button>
+                    </EditForm>
+                </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h3>Creating account</h3>
+                </div>
+            }
+        }
+        else if(CheckAlreadyCreated == true)
+        {
+            @* show box for signing in to view the diary *@
+            <h1>@CreatedAccountMessage</h1>
+            <div class="container mt-5">
+                <form @onsubmit="SignInDiary">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" @bind="@signInDto.Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
         }
+
     }
     else
     {
-        <p>No diary stories available.</p>
+        @*  show the diary components *@
+        if(AddnewStoryDisplayed == true)
+        {
+            <NewStory defaultCountry="@diaryDTO.OwnerHomeCountry" 
+                      defaultCity="@diaryDTO.OwnerHomeTown"
+                      OnStorySaved="HandleStorySaved"
+                      OnPostCreated="OnDiaryPostCreated" />
+        }
+        else
+        {
+            <h2>@diaryDTO.OwnerName's Diary</h2>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <p class="card-text">Home Country: @diaryDTO.OwnerHomeCountry</p>
+                                <p class="card-text">Home Town: @diaryDTO.OwnerHomeTown</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        @foreach (var post in diaryDTO.Posts)
+                        {
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header">
+                                    <h4>@post.Title</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">@((MarkupString)post.Content)</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Posted on: @post.CreatedDate</small>
+                                        <small class="text-muted">Rating: @RenderStars(post.HappyRating)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <button @onclick="GoToNewStory">Add new story</button>
+        }
     }
 
-    <button @onclick="GoToNewStory">Add new story</button>
+
+
 </div>
 
 @code {
-    List<DiaryPost> diaryItems = new List<DiaryPost>
-    {
-        new DiaryPost
-        {
-            Title = "Day at the Park",
-            Content = "Today, I spent a lovely day at the park with my friends. We played games, had a picnic, and enjoyed the beautiful weather."
-        },
-        new DiaryPost
-        {
-            Title = "Birthday Celebration",
-            Content = "It was my birthday today! My family surprised me with a delicious cake and thoughtful gifts. I felt so loved."
-        },
-        // Add more diary items here
-    };
+    private bool? CheckAlreadyCreated = null;
+    private bool WaitingOnCreatingAccount = false;
+    private string CreatedAccountMessage = "";
+    private bool signedIn = false;
+    private bool AddnewStoryDisplayed = false;
 
+    private SignInDTO signInDto = new SignInDTO();
+
+    private CreateDiaryDataDTO createDiaryDataDTO = new CreateDiaryDataDTO();
+    private DiaryDTO diaryDTO = new DiaryDTO(){ OwnerName = "not set"};
+
+    private void HandleStorySaved(bool storySaved)
+    {
+        AddnewStoryDisplayed = storySaved;
+    }
+    
     private void GoToNewStory()
     {
-        NavigationManager.NavigateTo("/diary/add");
+        AddnewStoryDisplayed = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        // Set the Authorization header with the JWT token
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await Http.GetAsync("/diary/check-if-new");
+        if (response.IsSuccessStatusCode)
+        {
+            CheckAlreadyCreated = await response.Content.ReadFromJsonAsync<bool>();
+            StateHasChanged();
+        }
+        else
+        {
+            // Handle error response
+        }
+        
+    }
+
+    private MarkupString RenderStars(int rating)
+    {
+        var starsHtml = string.Concat(Enumerable.Repeat("<i class=\"bi-star-fill\"></i>", rating));
+        return new MarkupString(starsHtml);
+    }
+
+    private void OnDiaryPostCreated(DiaryPost newPost)
+    {
+        diaryDTO.Posts.Add(newPost);
+    }
+
+    private async Task CreateDiaryAccount()
+    {
+        WaitingOnCreatingAccount = true;
+
+        var response = await Http.PostAsJsonAsync("/diary/create-account", createDiaryDataDTO);
+        if (response.IsSuccessStatusCode)
+        {
+            var processData = await response.Content.ReadFromJsonAsync<ProcessData>();
+            WaitingOnCreatingAccount = false;
+            CreatedAccountMessage = processData.Message;
+            CheckAlreadyCreated = true;
+            StateHasChanged();
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+
+    private async Task SignInDiary()
+    {
+        var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$");
+
+        if (!regex.IsMatch(signInDto.Password))
+        {
+            CreatedAccountMessage = "Password does not meet the required format.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/diary/sign-in", signInDto);
+            if (response.IsSuccessStatusCode)
+            {
+                var processData = await response.Content.ReadFromJsonAsync<ProcessData>();
+                if (processData.IsValid)
+                {
+                    var diaryGet = await Http.GetAsync("/diary/get-diary");
+                    if (diaryGet.IsSuccessStatusCode)
+                    {
+                        diaryDTO = await diaryGet.Content.ReadFromJsonAsync<DiaryDTO>();
+                        signedIn = true;
+                        StateHasChanged();
+                    }
+                }
+                else
+                {
+                    CreatedAccountMessage = "Invalid login attempt.";
+                }
+            }
+            else
+            {
+                // Handle non-success status codes (e.g., 400, 500)
+                CreatedAccountMessage = "Error during sign-in. Please try again.";
+            }
+        }
+        catch (HttpRequestException e)
+        {
+            // Handle network errors
+            CreatedAccountMessage = $"Network error during sign-in: {e.Message}";
+        }
+        catch (Exception e)
+        {
+            // Handle other exceptions
+            CreatedAccountMessage = $"Error during sign-in: {e.Message}";
+        }
     }
 
     

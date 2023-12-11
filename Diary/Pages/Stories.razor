@@ -91,16 +91,25 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
-                            <div class="mb-3">
-                                <label for="homeCountry" class="form-label">Home Country:</label>
+                            <!-- Home Country Field -->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Home Country:</span>
+                                </div>
                                 <input type="text" class="form-control" id="homeCountry"
                                        @bind="@diaryDTO.OwnerHomeCountry" readonly="@(!isAddressEditable)" />
                             </div>
-                            <div class="mb-3">
-                                <label for="homeTown" class="form-label">Home Town:</label>
+
+                            <!-- Home Town Field -->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Home Town:</span>
+                                </div>
                                 <input type="text" class="form-control" id="homeTown"
                                        @bind="@diaryDTO.OwnerHomeTown" readonly="@(!isAddressEditable)" />
                             </div>
+
+                            <!-- Buttons -->
                             <button class="btn btn-primary" @onclick="ToggleEditAddress">
                                 @if (isAddressEditable)
                                 {
@@ -113,7 +122,7 @@
                             </button>
                             @if (isAddressEditable)
                             {
-                                <button @onclick="UpdateAdress">Update</button>
+                                <button class="btn btn-secondary" @onclick="UpdateAdress">Update</button>
                             }
                         </div>
                     </div>

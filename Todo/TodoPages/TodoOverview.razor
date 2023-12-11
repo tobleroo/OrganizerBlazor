@@ -1,0 +1,115 @@
+﻿@page "/todo"
+@using OrganizerBlazor.Todo.Models
+
+<h3>To-Do List</h3>
+
+<div class="container">
+
+    <div class="container">
+        <!-- Display Active To-Do Items -->
+        <div>
+            <h5>Active To-Dos</h5>
+            @foreach (var todo in todoDocument.ActiveTodos)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="@todo">
+                    <label class="form-check-label" for="@todo">@todo</label>
+                </div>
+            }
+        </div>
+
+        <!-- Rest of your code (e.g., Add New Category, Add New To-Do Item) -->
+
+    </div>
+    <!-- Display All Activities from All Categories -->
+    <div>
+        <h2>All Activities</h2>
+        @foreach (var category in todoDocument.TodoCategories)
+        {
+            <div>
+                <h3>@category.CategoryTitle</h3>
+                @foreach (var activity in category.Activities)
+                {
+                    <div class="form-check">
+                        <label class="form-check-label" for="@activity.Id">
+                            @activity.Title every @activity.FrequencyAmount @activity.FrequencyType
+                        </label>
+                        <button @onclick="() => AddToTodo(activity)">Add</button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Add New Category -->
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="New Category (e.g., Cleaning)" @bind="newCategoryTitle">
+        <button class="btn btn-outline-secondary" type="button" @onclick="() => AddNewCategory(newCategoryTitle)">Add Category</button>
+    </div>
+
+    <!-- Add New To-Do Item under a Category -->
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="New To-Do Item" @bind="newTodoTitle">
+        <select class="form-select" @bind="selectedCategoryTitle">
+            <option value="" selected>Choose category...</option>
+            @foreach (var category in todoDocument.TodoCategories)
+            {
+                <option value="@category.CategoryTitle">@category.CategoryTitle</option>
+            }
+        </select>
+        <input type="number" class="form-control" placeholder="Frequency" @bind="frequencyAmount" min="1">
+        <select class="form-select" @bind="selectedFrequencyType">
+            <option value="" selected>Period...</option>
+            @foreach (var frequencyType in Enum.GetValues<FrequencyTypes>())
+            {
+                <option value="@frequencyType">@frequencyType</option>
+            }
+        </select>
+        <button class="btn btn-outline-secondary" type="button" @onclick="AddTodoItem">Add Item</button>
+    </div>
+</div>
+
+@code {
+    private TodoDocument todoDocument = new TodoDocument() { Owner = "Tester" };
+    private string newCategoryTitle;
+    private string newTodoTitle;
+    private string selectedCategoryTitle;
+    private int frequencyAmount;
+    private FrequencyTypes selectedFrequencyType;
+
+    private void AddNewCategory(string categoryName)
+    {
+        todoDocument.TodoCategories.Add(
+            new TodoCategory() { CategoryTitle = categoryName }
+        );
+        newCategoryTitle = "";
+    }
+
+    private void AddTodoItem()
+    {
+        var newActivity = new TodoActivity()
+            {
+                Title = newTodoTitle,
+                FrequencyAmount = frequencyAmount,
+                FrequencyType = selectedFrequencyType
+            };
+
+        AddNewTodoActivity(selectedCategoryTitle, newActivity);
+    }
+
+    private void AddNewTodoActivity(string categoryTitle, TodoActivity newActivity)
+    {
+        var categoryList = todoDocument.TodoCategories
+            .FirstOrDefault(cat => cat.CategoryTitle == categoryTitle);
+
+        categoryList?.Activities.Add(newActivity);
+        newTodoTitle = "";
+        frequencyAmount = 1;
+
+    }
+
+    private void AddToTodo(TodoActivity activity)
+    {
+        todoDocument.ActiveTodos.Add(activity.Title);
+    }
+}

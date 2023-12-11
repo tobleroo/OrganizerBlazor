@@ -48,19 +48,21 @@
                 }
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">
-            @if (isSaving)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                <span>Saving..</span>
-            }
-            else
-            {
-                <span>Add Story</span>
-            }
-        </button>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary">
+                @if (isSaving)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Saving..</span>
+                }
+                else
+                {
+                    <span>Add Story</span>
+                }
+            </button>
 
-        <button class="btn btn-secondary" @onclick="CancelNewStory">Cancel</button>
+            <button class="btn btn-secondary" @onclick="CancelNewStory">Cancel</button>
+        </div>
     </form>
 
 

@@ -5,6 +5,7 @@
 @using OrganizerBlazor.Diary.Models.DiaryDTOs
 @using System.Text.RegularExpressions
 @using OrganizerBlazor.Diary.Pages.DiaryComponents
+@using System.Linq;
 
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorageService
@@ -90,14 +91,35 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
-                            <div class="card-body">
-                                <p class="card-text">Home Country: @diaryDTO.OwnerHomeCountry</p>
-                                <p class="card-text">Home Town: @diaryDTO.OwnerHomeTown</p>
+                            <div class="mb-3">
+                                <label for="homeCountry" class="form-label">Home Country:</label>
+                                <input type="text" class="form-control" id="homeCountry"
+                                       @bind="@diaryDTO.OwnerHomeCountry" readonly="@(!isAddressEditable)" />
                             </div>
+                            <div class="mb-3">
+                                <label for="homeTown" class="form-label">Home Town:</label>
+                                <input type="text" class="form-control" id="homeTown"
+                                       @bind="@diaryDTO.OwnerHomeTown" readonly="@(!isAddressEditable)" />
+                            </div>
+                            <button class="btn btn-primary" @onclick="ToggleEditAddress">
+                                @if (isAddressEditable)
+                                {
+                                    <text>Cancel</text>
+                                }
+                                else
+                                {
+                                    <text>Change</text>
+                                }
+                            </button>
+                            @if (isAddressEditable)
+                            {
+                                <button @onclick="UpdateAdress">Update</button>
+                            }
                         </div>
                     </div>
                     <div class="col-md-8">
-                        @foreach (var post in diaryDTO.Posts)
+                        @* reverse the list to get the latest post first on display *@
+                        @foreach (var post in diaryDTO.Posts.ToArray().Reverse())
                         {
                             <div class="card mb-4 shadow-sm">
                                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -114,11 +136,14 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
-                                    <textarea class="form-control-plaintext"
+                                    <textarea class="form-control-plaintext textHeight"
                                               @bind="@post.Content" readonly="@(!IsEditable(post))"></textarea>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">Posted on: @post.CreatedDate</small>
-                                        <small class="text-muted">Revised: @post.LatestRevisedDate</small>
+                                        @if(post.LatestRevisedDate != string.Empty)
+                                        {
+                                            <small class="text-muted">Revised: @post.LatestRevisedDate</small>
+                                        }
                                         <small class="text-muted">Rating: @RenderStars(post.HappyRating)</small>
                                     </div>
                                 </div>
@@ -324,6 +349,35 @@
             {
                 // Handle error
             }
+        }
+    }
+
+    // change home adress
+
+    private bool isAddressEditable = false; // This variable controls the edit state
+
+    private void ToggleEditAddress()
+    {
+        isAddressEditable = !isAddressEditable; // Toggles the edit state
+    }
+
+    private async Task UpdateAdress()
+    {
+        DiaryDTO sendAdressDTO = new DiaryDTO()
+            {
+                OwnerName = diaryDTO.OwnerName,
+                OwnerHomeCountry = diaryDTO.OwnerHomeCountry,
+                OwnerHomeTown = diaryDTO.OwnerHomeTown
+            };
+        var response = await Http.PostAsJsonAsync("/diary/update-address", sendAdressDTO);
+
+        if (response.IsSuccessStatusCode)
+        {
+            ToggleEditAddress();
+        }
+        else
+        {
+            
         }
     }
 

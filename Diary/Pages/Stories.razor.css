@@ -5,3 +5,7 @@
 .bi-star-fill {
     color: gold;
 }
+
+.textHeight{
+    min-height: 200px;
+}

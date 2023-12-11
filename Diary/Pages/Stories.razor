@@ -117,7 +117,8 @@
                             }
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8 stories-box">
+                        <button @onclick="GoToNewStory">Add new story</button>
                         @* reverse the list to get the latest post first on display *@
                         @foreach (var post in diaryDTO.Posts.ToArray().Reverse())
                         {
@@ -156,7 +157,7 @@
                     </div>
                 </div>
             </div>
-            <button @onclick="GoToNewStory">Add new story</button>
+            
         }
     }
 

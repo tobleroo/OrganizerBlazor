@@ -9,3 +9,8 @@
 .textHeight{
     min-height: 200px;
 }
+
+.stories-box{
+    overflow-y: auto;
+    max-height: 1000px;
+}

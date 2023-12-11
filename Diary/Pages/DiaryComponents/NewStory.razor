@@ -59,6 +59,8 @@
                 <span>Add Story</span>
             }
         </button>
+
+        <button class="btn btn-secondary" @onclick="CancelNewStory">Cancel</button>
     </form>
 
 
@@ -91,7 +93,10 @@
         }
     }
 
-
+    private void CancelNewStory()
+    {
+        NotifyStorySaved();
+    }
 
     private async Task AddDiaryItem()
     {

@@ -2,10 +2,13 @@
 {
     public class DiaryPost
     {
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Title { get; set; }
         public string Content { get; set; }
 
         public string CreatedDate { get; set; } = string.Empty;
+        public string LatestRevisedDate { get; set; } = string.Empty;
 
         public string PublishedInCountry { get; set; } = string.Empty;
 

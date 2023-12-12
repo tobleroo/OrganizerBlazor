@@ -7,6 +7,6 @@
 
         public List<TodoCategory> TodoCategories { get; set; } = new List<TodoCategory>();
 
-        public List<string> ActiveTodos { get; set; } = new List<string>();
+        public List<ActiveTodoTask> ActiveTodos { get; set; } = new List<ActiveTodoTask>();
     }
 }

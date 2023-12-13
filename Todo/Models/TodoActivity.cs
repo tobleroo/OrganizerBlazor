@@ -14,5 +14,7 @@ namespace OrganizerBlazor.Todo.Models
         public FrequencyTypes FrequencyType { get; set; }
 
         public List<string> DatesWhenCompleted { get; set; } = new List<string>();
+
+        public int TimeToPerformMinutes { get; set; } = 0;
     }
 }

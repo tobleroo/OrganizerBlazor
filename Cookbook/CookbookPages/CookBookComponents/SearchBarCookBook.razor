@@ -1,26 +1,43 @@
 ﻿@using OrganizerBlazor.Cookbook.Models.CookBookDTO;
 
-<div class="search-bar">
-    <div class="input-box">
-        <label for="name">Recipe name:</label>
-        <input type="text" placeholder="Search name..." @bind="SearchTerm" />
+<div class="container mt-3">
+    <div class="row">
+        <!-- Recipe Name Field -->
+        <div class="col-12 col-md-5">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Recipe Name</span>
+                <input type="text" class="form-control" aria-label="Recipe name" aria-describedby="inputGroup-sizing-default" @bind="SearchTerm">
+            </div>
+        </div>
+
+        <!-- Type of Meal Dropdown -->
+        <div class="col-12 col-md-5">
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="type">Meal Type</label>
+                <select class="form-select" id="type" @bind="TypeTerm">
+                    <option value="all" selected="selected">All</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="dessert">Dessert</option>
+                    <option value="snack">Snack</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Cook Time Input -->
+        <div class="col-12 col-md-4">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="cookTimeLabel">Cook Time</span>
+                <input type="number" class="form-control" aria-label="Cook time" aria-describedby="cookTimeLabel" @bind="MaxTimeCook">
+            </div>
+        </div>
+
+        <!-- Search Button -->
+        <div class="col-12 col-md-3 d-flex align-items-end">
+            <button type="button" class="btn btn-primary w-100" @onclick="Search">Search</button>
+        </div>
     </div>
-    <div class="mealtype-box input-box">
-        <label for="type">Type of meal:</label>
-        <select @bind="TypeTerm">
-            <option value="all" selected="selected">All</option>
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="dessert">Dessert</option>
-            <option value="snack">Snack</option>
-        </select>
-    </div>
-    <div class="cooktime-box input-box">
-        <label for="cookTime">Cook time (minutes):</label>
-        <input type="number" @bind="MaxTimeCook" />
-    </div>
-    <button type="button" @onclick="Search">Search</button>
 </div>
 
 @code {

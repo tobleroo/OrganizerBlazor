@@ -7,10 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Cookbook\CookbookServices\**" />
+    <Content Remove="Cookbook\CookbookServices\**" />
+    <EmbeddedResource Remove="Cookbook\CookbookServices\**" />
+    <None Remove="Cookbook\CookbookServices\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Pages\Index.razor" />
     <None Include="Shared\MainLayout.razor" />
     <None Include="Shared\NavMenu.razor" />
-    <None Include="Shared\SurveyPrompt.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Cookbook\CookbookServices\" />
+    <Folder Include="wwwroot\css\cookbook\" />
   </ItemGroup>
 
 </Project>

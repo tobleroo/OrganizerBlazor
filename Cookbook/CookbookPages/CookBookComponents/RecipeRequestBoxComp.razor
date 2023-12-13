@@ -1,33 +1,43 @@
 ﻿
-<div class="recipe-card">
-    <div class="oneRecipeInBox">
-        <div class="portions-in-box meal-input-box">
-            <label for="howManyIn">Portions</label>
-            <input type="number" class="inputPortions" name="howManyIn" min="1" max="10" @bind="RecipeRequest.portions">
-        </div>
-        <div class="meal-input-box">
-            <label for="difficultyIn">Difficulty</label>
-            <select name="difficultyIn" @bind="RecipeRequest.difficulty">
-                <option value="Any">Any</option>
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-            </select>
-        </div>
-        <div>
-            <label for="recipeType">Recipe type</label>
-            <select name="recipeType" @bind="RecipeRequest.category">
-                <option value="Any">Any</option>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
-                <option value="Dessert">Dessert</option>
-                <option value="Snack">Snack</option>
-            </select>
-        </div>
-        <div class="cooktimeIn-box meal-input-box">
-            <label for="maxCookTimeIN">Max cook time</label>
-            <input type="number" min="1" max="999" @bind="RecipeRequest.maxCookTime" />
+<div class="container mt-4">
+    <div class="card recipe-card">
+        <div class="card-body p-4">
+            <!-- Increased padding in card body -->
+            <form>
+                <div class="row">
+                    <!-- Portions -->
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group">
+                            <label class="input-group-text" for="howManyIn">Portions</label>
+                            <input type="number" class="form-control" name="howManyIn" id="howManyIn" min="1" max="10" @bind="RecipeRequest.portions">
+                        </div>
+                    </div>
+
+                    <!-- Recipe Type -->
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group">
+                            <label class="input-group-text" for="recipeType">Recipe type</label>
+                            <select class="form-select" name="recipeType" id="recipeType" @bind="RecipeRequest.category">
+                                <option value="Any">Any</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Dessert">Dessert</option>
+                                <option value="Snack">Snack</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Max Cook Time -->
+                    <div class="col-12 mb-3">
+                        <div class="input-group">
+                            <label class="input-group-text" for="maxCookTimeIN">Max cook time</label>
+                            <input type="number" class="form-control" id="maxCookTimeIN" min="1" max="999" @bind="RecipeRequest.maxCookTime">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -1,0 +1,166 @@
+﻿
+@using OrganizerBlazor.Diary.Models
+@using System.Net.Http.Headers
+
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
+@inject HttpClient Http
+
+<div class="container mt-4">
+    <h1>Add a New Diary Story</h1>
+    <hr />
+
+    <form @onsubmit="AddDiaryItem">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" @bind="newDiaryItem.Title" required />
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" @bind="newDiaryItem.Content" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="cityInput">City:</label>
+            <input type="text" class="form-control" id="cityInput" @bind="newDiaryItem.PublishedInTown">
+        </div>
+        <div class="form-group">
+            <label for="countryInput">Country:</label>
+            <input type="text" class="form-control" id="countryInput" @bind="newDiaryItem.PublishedInCountry">
+        </div>
+
+        <div class="form-group">
+            <label>How was your day?</label>
+            <div class="star-rating">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    var localI = i; // Capture the current value of i
+                    <span class="star" @onclick="() => RateDay(localI)">
+                        @if (dayRating >= localI)
+                        {
+                            <i class="bi bi-star-fill"></i> <!-- Filled star -->
+                        }
+                        else
+                        {
+                            <i class="bi bi-star"></i> <!-- Empty star -->
+                        }
+                    </span>
+                }
+            </div>
+        </div>
+        <div class="m-3">
+            <button type="submit" class="btn btn-primary">
+                @if (isSaving)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Saving..</span>
+                }
+                else
+                {
+                    <span>Add Story</span>
+                }
+            </button>
+
+            <button class="btn btn-secondary" @onclick="CancelNewStory">Cancel</button>
+        </div>
+    </form>
+
+
+</div>
+
+@code {
+
+    [Parameter]
+    public string defaultCountry { get; set; }
+
+    [Parameter]
+    public string defaultCity { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnStorySaved { get; set; }
+
+    [Parameter]
+    public EventCallback<DiaryPost> OnPostCreated { get; set; }
+
+    private DiaryPost newDiaryItem = new DiaryPost();
+    private bool isSaving = false;
+
+    protected override void OnInitialized()
+    {
+        if (newDiaryItem != null)
+        {
+            newDiaryItem.PublishedInCountry = defaultCountry;
+            // Assume you have a property for City as well
+            newDiaryItem.PublishedInTown = defaultCity;
+        }
+    }
+
+    private void CancelNewStory()
+    {
+        NotifyStorySaved();
+    }
+
+    private async Task AddDiaryItem()
+    {
+        isSaving = true;
+
+        try
+        {
+            var timestamp = CreateTimeStampOnCreate();
+            newDiaryItem.CreatedDate = timestamp;
+
+            string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await Http.PostAsJsonAsync("/diary/add-story", newDiaryItem);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await NotifyPostCreated(newDiaryItem);
+                await NotifyStorySaved();
+            }
+            else
+            {
+                // Handle failure
+            }
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task NotifyPostCreated(DiaryPost newPost)
+    {
+        if (OnPostCreated.HasDelegate)
+        {
+            await OnPostCreated.InvokeAsync(newPost);
+        }
+    }
+
+    private async Task NotifyStorySaved()
+    {
+        if (OnStorySaved.HasDelegate)
+        {
+            await OnStorySaved.InvokeAsync(false);
+        }
+    }
+
+    private string CreateTimeStampOnCreate()
+    {
+        // Get the current date and time
+        DateTime now = DateTime.Now;
+
+        // Create a timestamp string
+        return now.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    // --- poll code ---
+
+    private int dayRating = 0;
+
+    private void RateDay(int rating)
+    {
+        dayRating = rating;
+        newDiaryItem.HappyRating = rating;
+    }
+}

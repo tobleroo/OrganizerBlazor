@@ -1,0 +1,395 @@
+﻿@page "/diary"
+@using OrganizerBlazor.Diary.Models
+@using System.Net.Http.Headers
+@using System.Net.Http.Json;
+@using OrganizerBlazor.Diary.Models.DiaryDTOs
+@using System.Text.RegularExpressions
+@using OrganizerBlazor.Diary.Pages.DiaryComponents
+@using System.Linq;
+
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
+@inject HttpClient Http
+
+<div class="container mt-4">
+    <h1>Diary Stories</h1>
+    <hr />
+
+    @if (!signedIn)
+    {
+        @if(CheckAlreadyCreated == null)
+        {
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h3>Authenticating</h3>
+            </div>
+        }else if(CheckAlreadyCreated == false)
+        {
+            @if (!WaitingOnCreatingAccount)
+            {
+                @* box for creating password and set city and country as default  *@
+                <div class="container">
+                    <EditForm Model="@createDiaryDataDTO" OnValidSubmit="@CreateDiaryAccount">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <InputText id="password" class="form-control" @bind-Value="createDiaryDataDTO.Password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <InputText id="country" class="form-control" @bind-Value="createDiaryDataDTO.Country" />
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <InputText id="city" class="form-control" @bind-Value="createDiaryDataDTO.City" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create diary</button>
+                    </EditForm>
+                </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h3>Creating account</h3>
+                </div>
+            }
+        }
+        else if(CheckAlreadyCreated == true)
+        {
+            @* show box for signing in to view the diary *@
+            <h1>@CreatedAccountMessage</h1>
+            <div class="container mt-5">
+                <form @onsubmit="SignInDiary">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" @bind="@signInDto.Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        }
+
+    }
+    else
+    {
+        @*  show the diary components *@
+        if(AddnewStoryDisplayed == true)
+        {
+            <NewStory defaultCountry="@diaryDTO.OwnerHomeCountry" 
+                      defaultCity="@diaryDTO.OwnerHomeTown"
+                      OnStorySaved="HandleStorySaved"
+                      OnPostCreated="OnDiaryPostCreated" />
+        }
+        else
+        {
+            <h2>@diaryDTO.OwnerName's Diary</h2>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <!-- Home Country Field -->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Home Country:</span>
+                                </div>
+                                <input type="text" class="form-control" id="homeCountry"
+                                       @bind="@diaryDTO.OwnerHomeCountry" readonly="@(!isAddressEditable)" />
+                            </div>
+
+                            <!-- Home Town Field -->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Home Town:</span>
+                                </div>
+                                <input type="text" class="form-control" id="homeTown"
+                                       @bind="@diaryDTO.OwnerHomeTown" readonly="@(!isAddressEditable)" />
+                            </div>
+
+                            <!-- Buttons -->
+                            <button class="btn btn-primary" @onclick="ToggleEditAddress">
+                                @if (isAddressEditable)
+                                {
+                                    <text>Cancel</text>
+                                }
+                                else
+                                {
+                                    <text>Change</text>
+                                }
+                            </button>
+                            @if (isAddressEditable)
+                            {
+                                <button class="btn btn-secondary" @onclick="UpdateAdress">Update</button>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-8 stories-box">
+                        <button @onclick="GoToNewStory">Add new story</button>
+                        @* reverse the list to get the latest post first on display *@
+                        @foreach (var post in diaryDTO.Posts.ToArray().Reverse())
+                        {
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <input type="text" class="form-control-plaintext"
+                                           @bind="@post.Title" readonly="@(!IsEditable(post))" />
+                                    <p class="location-info">@post.PublishedInCountry, @post.PublishedInTown</p>
+
+                                    @if (IsEditable(post))
+                                    {
+                                        <button class="btn btn-success" @onclick="() => UpdatePost(post)">Update</button>
+                                    }
+                                    <button class="btn btn-outline-secondary" @onclick="() => ToggleEdit(post)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <textarea class="form-control-plaintext textHeight"
+                                              @bind="@post.Content" readonly="@(!IsEditable(post))"></textarea>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Posted on: @post.CreatedDate</small>
+                                        @if(post.LatestRevisedDate != string.Empty)
+                                        {
+                                            <small class="text-muted">Revised: @post.LatestRevisedDate</small>
+                                        }
+                                        <small class="text-muted">Happyness: @RenderStars(post.HappyRating)</small>
+                                    </div>
+                                </div>
+                                @if (IsEditable(post))
+                                {
+                                    <button class="btn btn-danger mt-3" @onclick="() => DeletePost(post.Id)">Delete</button>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+        }
+    }
+
+
+
+</div>
+
+@code {
+    private bool? CheckAlreadyCreated = null;
+    private bool WaitingOnCreatingAccount = false;
+    private string CreatedAccountMessage = "";
+    private bool signedIn = false;
+    private bool AddnewStoryDisplayed = false;
+
+    private SignInDTO signInDto = new SignInDTO();
+
+    private CreateDiaryDataDTO createDiaryDataDTO = new CreateDiaryDataDTO();
+    private DiaryDTO diaryDTO = new DiaryDTO(){ OwnerName = "not set"};
+
+    private void HandleStorySaved(bool storySaved)
+    {
+        AddnewStoryDisplayed = storySaved;
+    }
+
+    private void GoToNewStory()
+    {
+        AddnewStoryDisplayed = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        // Set the Authorization header with the JWT token
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await Http.GetAsync("/diary/check-if-new");
+        if (response.IsSuccessStatusCode)
+        {
+            CheckAlreadyCreated = await response.Content.ReadFromJsonAsync<bool>();
+            StateHasChanged();
+        }
+        else
+        {
+            // Handle error response
+        }
+
+    }
+
+    private MarkupString RenderStars(int rating)
+    {
+        var starsHtml = string.Concat(Enumerable.Repeat("<i class=\"bi-star-fill\"></i>", rating));
+        return new MarkupString(starsHtml);
+    }
+
+    private void OnDiaryPostCreated(DiaryPost newPost)
+    {
+        diaryDTO.Posts.Add(newPost);
+    }
+
+    private async Task CreateDiaryAccount()
+    {
+        WaitingOnCreatingAccount = true;
+
+        var response = await Http.PostAsJsonAsync("/diary/create-account", createDiaryDataDTO);
+        if (response.IsSuccessStatusCode)
+        {
+            var processData = await response.Content.ReadFromJsonAsync<ProcessData>();
+            WaitingOnCreatingAccount = false;
+            CreatedAccountMessage = processData.Message;
+            CheckAlreadyCreated = true;
+            StateHasChanged();
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+
+    private async Task DeletePost(string postId)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/diary/delete-post", postId);
+            if (response.IsSuccessStatusCode)
+            {
+                // delete the post from current diary to avoid making new fetch again
+                diaryDTO.Posts.RemoveAll(item => item.Id == postId);
+            }
+
+        }catch(Exception ex)
+        {
+
+        }
+    }
+
+    private async Task SignInDiary()
+    {
+        var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$");
+
+        if (!regex.IsMatch(signInDto.Password))
+        {
+            CreatedAccountMessage = "Password does not meet the required format.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/diary/sign-in", signInDto);
+            if (response.IsSuccessStatusCode)
+            {
+                var processData = await response.Content.ReadFromJsonAsync<ProcessData>();
+                if (processData.IsValid)
+                {
+                    var diaryGet = await Http.GetAsync("/diary/get-diary");
+                    if (diaryGet.IsSuccessStatusCode)
+                    {
+                        diaryDTO = await diaryGet.Content.ReadFromJsonAsync<DiaryDTO>();
+                        signedIn = true;
+                        StateHasChanged();
+                    }
+                }
+                else
+                {
+                    CreatedAccountMessage = "Invalid login attempt.";
+                }
+            }
+            else
+            {
+                // Handle non-success status codes (e.g., 400, 500)
+                CreatedAccountMessage = "Error during sign-in. Please try again.";
+            }
+        }
+        catch (HttpRequestException e)
+        {
+            // Handle network errors
+            CreatedAccountMessage = $"Network error during sign-in: {e.Message}";
+        }
+        catch (Exception e)
+        {
+            // Handle other exceptions
+            CreatedAccountMessage = $"Error during sign-in: {e.Message}";
+        }
+    }
+
+    // --  make posts editable code --
+
+    private Dictionary<string, bool> editStates = new Dictionary<string, bool>();
+
+    private void ToggleEdit(DiaryPost post)
+    {
+        if (editStates.ContainsKey(post.Id))
+        {
+            editStates[post.Id] = !editStates[post.Id];
+        }
+        else
+        {
+            editStates[post.Id] = true;
+        }
+    }
+
+    private bool IsEditable(DiaryPost post)
+    {
+        return editStates.ContainsKey(post.Id) && editStates[post.Id];
+    }
+
+    private string CreateTimeStampOnCreate()
+    {
+        // Get the current date and time
+        DateTime now = DateTime.Now;
+
+        // Create a timestamp string
+        return now.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    private async Task UpdatePost(DiaryPost post)
+    {
+        if (editStates.ContainsKey(post.Id))
+        {
+
+            post.LatestRevisedDate = CreateTimeStampOnCreate();
+
+            // Send a POST request with the post object
+            var response = await Http.PostAsJsonAsync("/diary/update-post", post);
+
+            if (response.IsSuccessStatusCode)
+            {
+                editStates[post.Id] = false; // Exit edit mode
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+    }
+
+    // change home adress
+
+    private bool isAddressEditable = false; // This variable controls the edit state
+
+    private void ToggleEditAddress()
+    {
+        isAddressEditable = !isAddressEditable; // Toggles the edit state
+    }
+
+    private async Task UpdateAdress()
+    {
+        DiaryDTO sendAdressDTO = new DiaryDTO()
+            {
+                OwnerName = diaryDTO.OwnerName,
+                OwnerHomeCountry = diaryDTO.OwnerHomeCountry,
+                OwnerHomeTown = diaryDTO.OwnerHomeTown
+            };
+        var response = await Http.PostAsJsonAsync("/diary/update-address", sendAdressDTO);
+
+        if (response.IsSuccessStatusCode)
+        {
+            ToggleEditAddress();
+        }
+        else
+        {
+            
+        }
+    }
+
+    
+}

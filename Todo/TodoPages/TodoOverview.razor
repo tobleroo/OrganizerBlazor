@@ -24,8 +24,14 @@
         {
             <!-- Active To-Do List Box -->
             <div class="col-md-6">
-                <div class="border p-3" style="height: 300px; overflow-y: auto;">
-                    <h5>Active To-Dos</h5>
+                <div class="border p-3" style="position: relative; height: 300px; overflow-y: auto; padding-bottom: 60px;">
+                    <!-- Heading and Save Button on the same line -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Active To-Dos</h5>
+                        <button class="btn btn-primary" @onclick="UpdateTodoList">Save</button>
+                    </div>
+
+                    <!-- Todo Items -->
                     @foreach (var todo in todoDocument.ActiveTodos)
                     {
                         <div class="form-check">
@@ -33,14 +39,23 @@
                             <label class="form-check-label" for="@todo.Name">@todo.Name</label>
                         </div>
                     }
-                    <div class="text-center mt-3">
-                        <button class="btn btn-primary" @onclick="UpdateTodoList">Save</button>
+
+                    <!-- Fixed Input for Adding New Todo -->
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background-color: white;">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="New Todo" aria-label="New Todo" @bind="newTodoName">
+                            <button class="btn btn-outline-secondary" type="button" @onclick="AddNewTodo">Add</button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Redesigned 'Get Suggestions' Button -->
+                <div class="text-center mt-3">
+                    <button class="btn btn-info" @onclick="GetTodoSuggestion">Get Suggestions</button>
+                </div>
                 @if(todoSuggestions is not null)
                 {
-                    <div class="border p-3 mt-3" style="height: 300px; overflow-y: auto;">
+                    <div class="border p-3 m-3" style="height: 300px; overflow-y: auto;">
                         <h5>Suggested To-Dos</h5>
                         @foreach (var suggestion in todoSuggestions.SuggestedActivites)
                         {
@@ -65,19 +80,21 @@
 
             <!-- To-Do Categories and Activities Box -->
             <div class="col-md-6">
-                <div class="border p-3" style="height: 300px; overflow-y: auto;">
+                <div class="border p-3 m-3" style="height: 300px; overflow-y: auto;">
                     <h2>All Activities</h2>
                     @foreach (var category in todoDocument.TodoCategories)
                     {
-                        <div>
-                            <h3>@category.CategoryTitle</h3>
+                        <div class="mb-3">
+                            <h3 class="mb-2">@category.CategoryTitle</h3>
                             @foreach (var activity in category.Activities)
                             {
-                                <div class="form-check">
-                                    <label class="form-check-label" for="@activity.Id">
-                                        @activity.Title every @activity.FrequencyAmount @activity.FrequencyType
-                                    </label>
-                                    <button @onclick="() => AddToTodo(activity)">Add</button>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="form-check d-flex align-items-center">
+                                        <label class="form-check-label me-3" for="@activity.Id">
+                                            @activity.Title every @activity.FrequencyAmount @activity.FrequencyType
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => AddToTodo(activity)">Add</button>
                                 </div>
                             }
                         </div>
@@ -85,60 +102,77 @@
                 </div>
                 <!-- Add New Category and To-Do Item Controls -->
                 <div class="mt-3">
-                    <!-- Add New Category -->
-                    <div class="mb-3">
-                        <label for="newCategoryTitle" class="form-label">New Category</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="newCategoryTitle" required placeholder="e.g., Cleaning" @bind="newCategoryTitle">
-                            <button class="btn btn-outline-secondary" type="button" @onclick="() => AddNewCategory(newCategoryTitle)">Add Category</button>
+
+                    <div class="category-input-box">
+                        <!-- Add New Category -->
+                        <div @onclick="ToggleCategoryInputVisibility" class="title-icon-container">
+                            <span class="oi oi-arrow-thick-bottom me-2" aria-hidden="true"></span>
+                            <span>Add a new category</span>
                         </div>
+
+                        <!-- Input Div -->
+                        @if (showCategoryInput)
+                        {
+                            <div class="m-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="newCategoryTitle" required placeholder="e.g., Cleaning" @bind="newCategoryTitle">
+                                    <button class="btn btn-outline-secondary" type="button" @onclick="() => AddNewCategory(newCategoryTitle)">Add Category</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="new-item-input-box mb-3">
+
+                        <div @onclick="ToggleNewItemInputVisibility" class="title-icon-container">
+                            <span class="oi oi-arrow-thick-bottom me-2" aria-hidden="true"></span>
+                            <span>Add a new task</span>
+                        </div>
+
+                        @if (showNewItemInput)
+                        {
+                            <div class="m-3">
+                                <label for="newTodoTitle" class="form-label">Name of new task</label>
+                                <input type="text" class="form-control" id="newTodoTitle" required placeholder="Task name" @bind="newTodoTitle">
+                            </div>
+                            <div class="m-3">
+                                <label for="categorySelect" class="form-label">Choose Category</label>
+                                <select class="form-select" id="categorySelect" @bind="selectedCategoryTitle" required>
+                                    <option value="" selected>Choose category...</option>
+                                    @foreach (var category in todoDocument.TodoCategories)
+                                    {
+                                        <option value="@category.CategoryTitle">@category.CategoryTitle</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-3">
+                                <label for="frequencyAmount" class="form-label">Frequency</label>
+                                <input type="number" class="form-control" id="frequencyAmount" placeholder="Enter frequency" @bind="frequencyAmount" min="1">
+                            </div>
+                            <div class="m-3">
+                                <label for="frequencyTypeSelect" class="form-label">Frequency Period</label>
+                                <select class="form-select" id="frequencyTypeSelect" @bind="selectedFrequencyType">
+                                    <option value="" selected>Period...</option>
+                                    @foreach (var frequencyType in Enum.GetValues<FrequencyTypes>())
+                                    {
+                                        <option value="@frequencyType">@frequencyType</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-3">
+                                <label for="timeToPerform" class="form-label">Time to Perform (Minutes)</label>
+                                <input type="number" class="form-control" id="timeToPerform" placeholder="Enter time in minutes" @bind="timeToPerformMinutes" min="1">
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-outline-secondary" type="button" @onclick="AddTodoItem">Add Item</button>
+                            </div>
+                        }
                     </div>
 
                     <!-- Add New To-Do Item under a Category -->
-                    <div class="mb-3">
-                        <label for="newTodoTitle" class="form-label">New To-Do Item</label>
-                        <input type="text" class="form-control" id="newTodoTitle" required placeholder="Enter item" @bind="newTodoTitle">
-                    </div>
-                    <div class="mb-3">
-                        <label for="categorySelect" class="form-label">Choose Category</label>
-                        <select class="form-select" id="categorySelect" @bind="selectedCategoryTitle" required>
-                            <option value="" selected>Choose category...</option>
-                            @foreach (var category in todoDocument.TodoCategories)
-                            {
-                                <option value="@category.CategoryTitle">@category.CategoryTitle</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="frequencyAmount" class="form-label">Frequency</label>
-                        <input type="number" class="form-control" id="frequencyAmount" placeholder="Enter frequency" @bind="frequencyAmount" min="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="frequencyTypeSelect" class="form-label">Frequency Period</label>
-                        <select class="form-select" id="frequencyTypeSelect" @bind="selectedFrequencyType">
-                            <option value="" selected>Period...</option>
-                            @foreach (var frequencyType in Enum.GetValues<FrequencyTypes>())
-                            {
-                                <option value="@frequencyType">@frequencyType</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="timeToPerform" class="form-label">Time to Perform (Minutes)</label>
-                        <input type="number" class="form-control" id="timeToPerform" placeholder="Enter time in minutes" @bind="timeToPerformMinutes" min="1">
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-outline-secondary" type="button" @onclick="AddTodoItem">Add Item</button>
-                    </div>
                 </div>
             </div>
 
-
-            @* Get suggestions box *@
-            <div>
-
-                <button @onclick=GetTodoSuggestion>Get suggestions</button>
-            </div>
         }else
         {
             <div class="text-center">
@@ -156,13 +190,15 @@
     private string newCategoryTitle;
     private string newTodoTitle;
     private string selectedCategoryTitle;
-    private int frequencyAmount;
+    private int frequencyAmount = 1;
     private int timeToPerformMinutes;
     private FrequencyTypes selectedFrequencyType;
 
     private string? errorMsg = string.Empty;
 
     private TodoSuggestionsDTO? todoSuggestions = null;
+
+    private string newTodoName = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -316,5 +352,29 @@
             errorMsg = string.Empty;
         }
         else errorMsg = "Could not update todo list, try again!";
+    }
+
+    // --- toggle inputs code ---
+
+    private bool showCategoryInput = false;
+
+    private void ToggleCategoryInputVisibility()
+    {
+        showCategoryInput = !showCategoryInput;
+    }
+
+    private bool showNewItemInput = false;
+
+    private void ToggleNewItemInputVisibility()
+    {
+        showNewItemInput = !showNewItemInput;
+    }
+
+    private void AddNewTodo()
+    {
+        ActiveTodoTask OneTimeTask = new ActiveTodoTask() { Name = newTodoName };
+
+        todoDocument.ActiveTodos.Add(OneTimeTask);
+        newTodoName = string.Empty;
     }
 }

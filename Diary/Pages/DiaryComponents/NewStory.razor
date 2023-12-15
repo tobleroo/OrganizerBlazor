@@ -11,25 +11,30 @@
     <hr />
 
     <form @onsubmit="AddDiaryItem">
-        <div class="form-group">
+        <!-- City and Country in One Line -->
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="City" id="cityInput" @bind="newDiaryItem.PublishedInTown">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Country" id="countryInput" @bind="newDiaryItem.PublishedInCountry">
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="form-group mb-3">
             <label for="title">Title:</label>
             <input type="text" class="form-control" id="title" @bind="newDiaryItem.Title" required />
         </div>
 
-        <div class="form-group">
+        <!-- Content -->
+        <div class="form-group mb-3">
             <label for="content">Content:</label>
             <textarea class="form-control" id="content" @bind="newDiaryItem.Content" rows="5" required></textarea>
         </div>
-        <div class="form-group">
-            <label for="cityInput">City:</label>
-            <input type="text" class="form-control" id="cityInput" @bind="newDiaryItem.PublishedInTown">
-        </div>
-        <div class="form-group">
-            <label for="countryInput">Country:</label>
-            <input type="text" class="form-control" id="countryInput" @bind="newDiaryItem.PublishedInCountry">
-        </div>
 
-        <div class="form-group">
+        <!-- Star Rating -->
+        <div class="form-group mb-3">
             <label>How was your day?</label>
             <div class="star-rating">
                 @for (int i = 1; i <= 5; i++)
@@ -48,6 +53,8 @@
                 }
             </div>
         </div>
+
+        <!-- Buttons -->
         <div class="m-3">
             <button type="submit" class="btn btn-primary">
                 @if (isSaving)
@@ -64,8 +71,6 @@
             <button class="btn btn-secondary" @onclick="CancelNewStory">Cancel</button>
         </div>
     </form>
-
-
 </div>
 
 @code {

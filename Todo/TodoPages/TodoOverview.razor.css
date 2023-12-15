@@ -1,0 +1,11 @@
+﻿
+
+.category-input-box, .new-item-input-box{
+    border: solid lightgrey 1px;
+    padding: .6rem .5rem;
+    margin-top: 1rem; 
+}
+
+.category-input-box:hover, .new-item-input-box:hover{
+    cursor: pointer;
+}

@@ -1,0 +1,167 @@
+﻿@page "/bucketlist"
+
+<h3>DEMO</h3>
+
+
+<div class="bucketlist-page">
+
+    @if (!addNewRecipeDisplayed)
+    {
+
+        @foreach (var achievement in achievements)
+        {
+            <div @onclick="() => ToggleDetails(achievement)"
+                 style="cursor: pointer; background-color: @(achievement.IsCompleted ? "#28a745" : "#6c757d"); padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: white;">@achievement.Name</span>
+                <div>
+                    @if (achievement.IsCompleted && achievement.CompletedOn.HasValue)
+                    {
+                        <span style="color: white; margin-right: 10px;">Achieved on: @achievement.CompletedOn.Value.ToString("yyyy-MM-dd")</span>
+                    }
+                    <!-- Icon to click and expand details -->
+                    <i class="bi bi-chevron-down" style="color: white;"></i>
+                </div>
+            </div>
+
+            @if (achievement.ShowDetails)
+            {
+                <div class="details-box" style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: white;">
+                    <p>Requirements:</p>
+                    <ul>
+                        @foreach (var requirement in achievement.Requirements)
+                        {
+                            <li>@requirement.Name</li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+
+        <button class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-3 p-2" style="width: 50px; height: 50px;" @onclick="ToggleNewAchievement">
+            <div class="d-flex align-items-center">
+                <span class="oi oi-plus me-2" aria-hidden="true"></span>
+            </div>
+        </button>
+    }
+    else
+    {
+        <div class="input-form">
+            <h3>Add a new achievement!</h3>
+            <hr class="my-4">
+            <label for="achievementName" class="form-label">Achievement Name:</label>
+            <input type="text" class="form-control mb-3" id="achievementName" @bind="newAchievement.Name">
+
+            <label for="isCompleted" class="form-check-label">Is Completed:</label>
+            <input type="checkbox" class="form-check-input mb-3" id="isCompleted" @bind="newAchievement.IsCompleted">
+
+            @if(newAchievement.IsCompleted == true)
+            {
+                <label for="completedDate" class="form-label">Completed on:</label>
+                <input type="date" class="form-control mb-3" id="completedDate" @bind="newAchievement.CompletedOn">
+            }
+
+            <div class="added-req-box">
+                <h4>Added requirements</h4>
+                @foreach(var req in newAchievement.Requirements)
+                {
+                    <p>@req.Name</p>
+                }
+            </div>
+
+            <div class="mb-3">
+                <input type="text" @bind="newRequirementName" />
+                <button class="btn btn-success" @onclick="AddRequirement">Add Requirement</button>
+            </div>
+
+            <button class="btn btn-primary" @onclick="AddNewAchievement">Add Achievement</button>
+        </div>
+    }
+
+</div>
+
+@code {
+
+    Achievement newAchievement = new Achievement();
+    private string newRequirementName = "";
+
+    private void AddRequirement()
+    {
+        newAchievement.Requirements.Add(new Requirement(){Name = newRequirementName});
+        newRequirementName = "";
+    }
+
+    private void AddNewAchievement()
+    {
+        achievements.Add(newAchievement);
+        newAchievement = new();
+        addNewRecipeDisplayed = false;
+    }
+
+
+
+    List<Achievement> achievements = new List<Achievement>
+{
+    new Achievement
+    {
+        Name = "Climb Mount Everest",
+        IsCompleted = true,
+        CompletedOn = new DateTime(2020, 1, 1),
+        Requirements = new List<Requirement>
+        {
+            new Requirement { Name = "make list" },
+            new Requirement { Name = "make list" },
+            new Requirement { Name = "make list" }
+        }
+    },
+    new Achievement
+    {
+        Name = "Write a Book",
+        IsCompleted = false,
+        Requirements = new List<Requirement>
+        {
+            new Requirement { Name = "make list" },
+            new Requirement { Name = "make list" },
+            new Requirement { Name = "make list" }
+        }
+    },
+    new Achievement
+    {
+        Name = "Run a Marathon",
+        IsCompleted = true,
+        CompletedOn = new DateTime(2021, 5, 15),
+        Requirements = new List<Requirement>
+        {
+            new Requirement { Name = "make list" },
+            new Requirement { Name = "make list" },
+            new Requirement { Name = "make list" }
+        }
+    }
+};
+
+    private bool addNewRecipeDisplayed = false;
+
+    private void ToggleDetails(Achievement achievement)
+    {
+        achievement.ShowDetails = !achievement.ShowDetails;
+    }
+
+    private void ToggleNewAchievement()
+    {
+        addNewRecipeDisplayed = !addNewRecipeDisplayed;
+    }
+
+    public class Achievement
+    {
+        public string Name { get; set; }
+        public bool IsCompleted { get; set; }
+        public DateTime? CompletedOn { get; set; }
+        public List<Requirement> Requirements { get; set; } = new List<Requirement>();
+        public bool ShowDetails { get; set; } = false;
+    }
+
+    public class Requirement
+    {
+        public string Name { get; set; }
+        public bool isCompleted { get; set; } = false;
+    }
+}

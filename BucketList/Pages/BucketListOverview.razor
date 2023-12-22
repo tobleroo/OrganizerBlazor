@@ -1,5 +1,6 @@
 ﻿@page "/bucketlist"
 @using System.Net.Http.Headers
+@using OrganizerBlazor.BucketList.Models
 
 
 @attribute [Authorize]
@@ -7,183 +8,163 @@
 @inject ILocalStorageService LocalStorageService
 @inject HttpClient Http
 
-
-<h3>DEMO</h3>
-
-
 <div class="bucketlist-page">
 
-    @if (!addNewAchievementDisplayed)
+    @if (loadingInitData)
     {
-
-        @foreach (var achievement in achievements)
-        {
-            <div @onclick="() => ToggleDetails(achievement)"
-                 style="cursor: pointer; background-color: @(achievement.IsCompleted ? "#28a745" : "#6c757d"); padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: white;">
-                    @achievement.Name
-                    <!-- Display completion percentage next to the name -->
-                    <span style="margin-left: 10px;">(@achievement.GetProgressInPercentage()%)</span>
-                </span>
-                <div>
-                    <!-- Icon to click and expand details -->
-                    <i class="bi bi-chevron-down" style="color: white;"></i>
-                </div>
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
-
-            @if (achievement.ShowDetails)
-            {
-                <div class="details-box" style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: white;">
-                    <p>Requirements:</p>
-                    @foreach (var requirement in achievement.Requirements)
-                    {
-                        <div>
-                            <!-- Use a checkbox for each requirement with bind directive -->
-                            <input type="checkbox" @bind="requirement.isCompleted" /> @requirement.Name
-                        </div>
-                    }
-                    <!-- Move completed-date-box here -->
-                    <div class="completed-date-box">
-                        @if (achievement.IsCompleted && achievement.CompletedOn.HasValue)
-                        {
-                            <span style="color: black; margin-right: 10px;">Achieved on: @achievement.CompletedOn.Value.ToString("yyyy-MM-dd")</span>
-                        }
-                    </div>
-                    @if (!achievement.IsCompleted)
-                    {
-                        <div class="mark-complete-box">
-                            <button type="button" class="btn btn-success" @onclick="() => MarkAchievmentCompleted(achievement)">Mark as completed</button>
-                        </div>
-                    }
-
-                    <!-- Edit button with Bootstrap icon -->
-                    <div class="edit-achievement-box">
-                        <button type="button" class="btn btn-primary" @onclick="() => EditAchievement(achievement)">
-                            <i class="bi bi-pencil"></i> Edit
-                        </button>
-                    </div>
-                </div>
-            }
-        }
-
-        <button class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-3 p-2" style="width: 50px; height: 50px;" @onclick="ToggleNewAchievement">
-            <div class="d-flex align-items-center">
-                <span class="oi oi-plus me-2" aria-hidden="true"></span>
-            </div>
-        </button>
+        </div>
     }
     else
     {
-        <div class="input-form">
-            <h3>Add a new achievement!</h3>
-            <hr class="my-4">
-            <label for="achievementName" class="form-label">Achievement Name:</label>
-            <input type="text" class="form-control mb-3" id="achievementName" @bind="newAchievement.Name">
+        
+        @if (!addNewAchievementDisplayed)
+        {
 
-            <label for="isCompleted" class="form-check-label">Is Completed:</label>
-            <input type="checkbox" class="form-check-input mb-3" id="isCompleted" @bind="newAchievement.IsCompleted">
-
-            @if (newAchievement.IsCompleted == true)
+            @foreach (var achievement in bucketlist.Achievements)
             {
-                <label for="completedDate" class="form-label">Completed on:</label>
-                <input type="date" class="form-control mb-3" id="completedDate" @bind="newAchievement.CompletedOn">
+                <div @onclick="() => ToggleDetails(achievement)"
+                     style="cursor: pointer; background-color: @(achievement.IsCompleted ? "#28a745" : "#6c757d"); padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: white;">
+                        @achievement.Name
+                        <!-- Display completion percentage next to the name -->
+                        <span style="margin-left: 10px;">(@achievement.GetProgressInPercentage()%)</span>
+                    </span>
+                    <div>
+                        <!-- Icon to click and expand details -->
+                        <i class="bi bi-chevron-down" style="color: white;"></i>
+                    </div>
+                </div>
+
+                @if (achievement.ShowDetails)
+                {
+                    <div class="details-box" style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: white;">
+                        <p>Requirements:</p>
+                        @foreach (var requirement in achievement.Requirements)
+                        {
+                            <div>
+                                <!-- Use a checkbox for each requirement with bind directive -->
+                                <input type="checkbox" @bind="requirement.IsCompleted" disabled /> @requirement.Name
+                            </div>
+                        }
+                        <!-- Move completed-date-box here -->
+                        <div class="completed-date-box">
+                            @if (achievement.IsCompleted && achievement.CompletedOn.HasValue)
+                            {
+                                <span style="color: black; margin-right: 10px;">Achieved on: @achievement.CompletedOn.Value.ToString("yyyy-MM-dd")</span>
+                            }
+                        </div>
+
+                        <!-- Edit button with Bootstrap icon -->
+                        <div class="edit-achievement-box">
+                            <button type="button" class="btn btn-primary" @onclick="() => EditAchievement(achievement)">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                }
             }
 
-            <div class="added-req-box">
-                <h4>Added requirements</h4>
-                @foreach (var req in newAchievement.Requirements)
-                {
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <p class="mb-0">@req.Name</p>
-                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveRequirement(req)">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                }
-            </div>
-
-            <div class="mb-3">
-                <input type="text" @bind="newRequirementName" />
-                <button class="btn btn-success" @onclick="AddRequirement">Add Requirement</button>
-            </div>
-
-            <!-- New section for adding pictures -->
-            <div class="mb-3">
-                <label for="pictureTitle" class="form-label">Picture Title:</label>
-                <input type="text" class="form-control mb-3" id="pictureTitle" @bind="newPicture.Title">
-
-                <label for="pictureFile" class="form-label">Upload Picture:</label>
-                <InputFile class="form-control mb-3" id="pictureFile" OnChange="HandleFileUpload" />
-
-                <button class="btn btn-primary" @onclick="AddPicture">Add Picture</button>
-            </div>
-
-            <!-- Display added pictures -->
-            <div class="added-pictures-box">
-                <h4>Added Pictures</h4>
-                @foreach (var picture in newAchievement.Pictures)
-                {
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <p class="mb-0">@picture.Title</p>
-                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemovePicture(picture)">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                }
-            </div>
-
-            <button class="btn btn-primary" @onclick="() => SaveNewAchievement(newAchievement)">
-                @((addingNewAchievement ? "Add" : "Update") + " Achievement")
+            <button class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-3 p-2" style="width: 50px; height: 50px;" @onclick="ToggleNewAchievement">
+                <div class="d-flex align-items-center">
+                    <span class="oi oi-plus me-2" aria-hidden="true"></span>
+                </div>
             </button>
-            <button type="button" class="btn btn-secondary" @onclick="CancelNewAchievement">Cancel</button>
-        </div>
+        }
+        else
+        {
+            <div class="input-form">
+                <h3>Add a new achievement!</h3>
+                <hr class="my-4">
+                <label for="achievementName" class="form-label">Achievement Name:</label>
+                <input type="text" class="form-control mb-3" id="achievementName" @bind="newAchievement.Name">
+
+                <label for="isCompleted" class="form-check-label">Is Completed:</label>
+                <input type="checkbox" class="form-check-input mb-3" id="isCompleted" @bind="newAchievement.IsCompleted">
+
+                @if (newAchievement.IsCompleted == true)
+                {
+                    <label for="completedDate" class="form-label">Completed on:</label>
+                    <input type="date" class="form-control mb-3" id="completedDate" @bind="newAchievement.CompletedOn">
+                }
+
+                <div class="added-req-box">
+                    <h4>Added requirements</h4>
+                    @foreach (var req in newAchievement.Requirements)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" @bind="req.IsCompleted" />
+                                <label class="form-check-label">@req.Name</label>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveRequirement(req)">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <input type="text" @bind="newRequirementName" />
+                    <button class="btn btn-success" @onclick="AddRequirement">Add Requirement</button>
+                </div>
+
+                @* @if(newAchievement.Pictures.Count != 2)
+                {
+                    <!-- New section for adding pictures -->
+                    <div class="mb-3">
+                        <label for="pictureTitle" class="form-label">Picture Title:</label>
+                        <input type="text" class="form-control mb-3" id="pictureTitle" @bind="newPicture.Title">
+
+                        <label for="pictureFile" class="form-label">Upload Picture:</label>
+                        <InputFile class="form-control mb-3" id="pictureFile" OnChange="HandleFileUpload" accept="image/*" />
+
+                        <button class="btn btn-primary" @onclick="AddPicture">Add Picture</button>
+                    </div>
+                }
+
+                <!-- Display added pictures -->
+                <div class="added-pictures-box">
+                    <h4>Added Pictures</h4>
+                    @foreach (var picture in newAchievement.Pictures)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <p class="mb-0">@picture.Title</p>
+                                <!-- Add the img component here -->
+                                @if (picture.ImageData != null && picture.ImageData.Length > 0)
+                                {
+                                    <img src="@($"data:image/png;base64,{Convert.ToBase64String(picture.ImageData)}")" alt="Achievement Image" style="max-width: 100px; max-height: 100px;" />
+                                }
+                                else
+                                {
+                                    <p>No image available</p>
+                                }
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemovePicture(picture)">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    }
+                </div> *@
+
+                <button class="btn btn-primary" @onclick="() => SaveNewAchievement(newAchievement)">
+                    @((addingNewAchievement ? "Add" : "Update") + " Achievement")
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelNewAchievement">Cancel</button>
+            </div>
+        }
     }
+
 
 </div>
 
 @code {
-
-    //demo data
-    List<Achievement> achievements = new List<Achievement>
-{
-    new Achievement
-    {
-        Name = "Climb Mount Everest",
-        IsCompleted = true,
-        CompletedOn = new DateTime(2020, 1, 1),
-        Requirements = new List<Requirement>
-        {
-            new Requirement { Name = "make list", isCompleted = true },
-            new Requirement { Name = "make list" },
-            new Requirement { Name = "make list" }
-        }
-    },
-    new Achievement
-    {
-        Name = "Write a Book",
-        IsCompleted = false,
-        Requirements = new List<Requirement>
-        {
-            new Requirement { Name = "make list", isCompleted = true },
-            new Requirement { Name = "make list", isCompleted = true },
-            new Requirement { Name = "make list" }
-        }
-    },
-    new Achievement
-    {
-        Name = "Run a Marathon",
-        IsCompleted = true,
-        CompletedOn = new DateTime(2021, 5, 15),
-        Requirements = new List<Requirement>
-        {
-            new Requirement { Name = "make list", isCompleted = true },
-            new Requirement { Name = "make list", isCompleted = true },
-            new Requirement { Name = "make list", isCompleted = true }
-        }
-    }
-};
-
-
+    private bool loadingInitData = true;
+    BucketlistDocument bucketlist = new();
     Achievement newAchievement = new Achievement();
     private string newRequirementName = "";
     private bool addNewAchievementDisplayed = false;
@@ -191,42 +172,25 @@
 
     private AchievementPicture newPicture = new AchievementPicture();
 
-    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    protected override async Task OnInitializedAsync()
     {
-        var imageFile = e.GetMultipleFiles().FirstOrDefault();
+        string token = await LocalStorageService.GetItemAsync<string>("JwtToken");
+        // Set the Authorization header with the JWT token
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        if (imageFile != null)
+        var response = await Http.GetAsync("/bucketlist/get");
+        if (response.IsSuccessStatusCode)
         {
-            using (var stream = imageFile.OpenReadStream())
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await stream.CopyToAsync(memoryStream);
-                    newPicture.ImageData = memoryStream.ToArray();
-                }
-            }
+            bucketlist = await response.Content.ReadFromJsonAsync<BucketlistDocument>();
+            loadingInitData = false;
+            StateHasChanged();
         }
-    }
+        else
+        {
+            // errorMsg = "Something went wrong!, check internet connection!";
+            StateHasChanged();
+        }
 
-    private void RemovePicture(AchievementPicture picture)
-    {
-        newAchievement.Pictures.Remove(picture);
-    }
-
-    private void AddPicture()
-    {
-        // Create a new picture and set its properties
-        var picture = new AchievementPicture
-            {
-                Title = newPicture.Title,
-                ImageData = newPicture.ImageData
-            };
-
-        // Add the picture to the achievement
-        newAchievement.AddPicture(picture);
-
-        // Reset the newPicture for the next upload
-        newPicture = new AchievementPicture();
     }
 
     private void AddRequirement()
@@ -239,19 +203,19 @@
     {
         //check if its new or updated achievement
         // Check if it's a new or updated achievement
-        int existingIndex = achievements.FindIndex(achievement => achievement.id == ach.id);
+        int existingIndex = bucketlist.Achievements.FindIndex(achievement => achievement.id == ach.id);
         if (existingIndex != -1)
         {
             // Replace if ID already exists
-            achievements[existingIndex] = ach;
+            bucketlist.Achievements[existingIndex] = ach;
         }
-        else achievements.Add(newAchievement);
+        else bucketlist.Achievements.Add(newAchievement);
 
         string tokenToSet = await LocalStorageService.GetItemAsync<string>("JwtToken");
         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenToSet);
 
         //make http post to save the achievement to the db
-        var response = await Http.PostAsJsonAsync("save-new-achievement", ach);
+        var response = await Http.PostAsJsonAsync("/bucketlist/save-achievement", ach);
 
         // Check if the request was successful (you may need to adjust this based on your backend response)
         if (response.IsSuccessStatusCode)
@@ -269,12 +233,6 @@
         addNewAchievementDisplayed = false;
     }
 
-    private void MarkAchievmentCompleted(Achievement achievement)
-    {
-        achievement.IsCompleted = true;
-        achievement.CompletedOn = DateTime.Today;
-    }
-
     private void EditAchievement(Achievement ach)
     {
         newAchievement = ach;
@@ -287,8 +245,6 @@
         newAchievement.Requirements.Remove(req);
     }
 
-
-
     private void ToggleDetails(Achievement achievement)
     {
         achievement.ShowDetails = !achievement.ShowDetails;
@@ -297,65 +253,5 @@
     private void ToggleNewAchievement()
     {
         addNewAchievementDisplayed = !addNewAchievementDisplayed;
-    }
-
-    public class Achievement
-    {
-        public Guid id = new Guid();
-        public string Name { get; set; }
-        public bool IsCompleted { get; set; }
-        public DateTime? CompletedOn { get; set; } = null;
-        public List<Requirement> Requirements { get; set; } = new List<Requirement>();
-        public bool ShowDetails { get; set; } = false;
-        public List<AchievementPicture> Pictures { get; set; } = new List<AchievementPicture>();
-
-        public int GetProgressInPercentage()
-        {
-            if (Requirements.Count == 0)
-            {
-                return 0; // No requirements, progress is 0%
-            }
-
-            // Calculate percentage based on completed requirements
-            int completedReqs = Requirements.Count(req => req.isCompleted);
-            int progress = (completedReqs * 100) / Requirements.Count;
-
-            if (progress == 100){
-                IsCompleted = true;
-                if(CompletedOn == null)
-                { 
-                    CompletedOn = DateTime.Today;
-                }
-            }
-
-            return progress;
-        }
-
-        // Limit the number of pictures to 2
-        public void AddPicture(AchievementPicture picture)
-        {
-            if (Pictures.Count < 2)
-            {
-                Pictures.Add(picture);
-            }
-            else
-            {
-                // Handle the case when trying to add more than 2 pictures
-                // You may want to throw an exception or handle it in some way
-            }
-        }
-    }
-
-    public class Requirement
-    {
-        public string Name { get; set; }
-        public bool isCompleted { get; set; } = false;
-    }
-
-    public class AchievementPicture
-    {
-        public Guid id { get; set; } = new Guid();
-        public string Title { get; set; } = "";
-        public byte[]? ImageData { get; set; } = null;
     }
 }

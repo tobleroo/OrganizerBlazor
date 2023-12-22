@@ -4,4 +4,5 @@ public class Ingredient
     public string Name { get; set; } = "new ingredient";
     public double? Quantity { get; set; }
     public string? Unit { get; set; }
+    public bool Finished { get; set; } = false;
 }
